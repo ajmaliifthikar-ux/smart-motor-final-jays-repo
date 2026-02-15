@@ -35,7 +35,7 @@ export async function logEvent({ eventType, resource, metadata }: LogEventParams
         const city = headerList.get('x-vercel-ip-city') || 'Musaffah'
 
         // Log to database
-        await (prisma as any).analyticsLog.create({
+        await prisma.analyticsLog.create({
             data: {
                 eventType,
                 resource,
@@ -56,7 +56,7 @@ export async function logEvent({ eventType, resource, metadata }: LogEventParams
  * Fetch aggregated data for the UAE Heatmap
  */
 export async function getHeatmapData() {
-    const data = await (prisma as any).analyticsLog.groupBy({
+    const data = await prisma.analyticsLog.groupBy({
         by: ['emirate'],
         _count: {
             _all: true
@@ -77,7 +77,7 @@ export async function getTrafficTrends() {
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-    const logs = await (prisma as any).analyticsLog.findMany({
+    const logs = await prisma.analyticsLog.findMany({
         where: {
             createdAt: {
                 gte: sevenDaysAgo
