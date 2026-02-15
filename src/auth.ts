@@ -20,7 +20,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             },
             authorize: async (credentials) => {
                 const parsedCredentials = z
-                    .object({ email: z.string().email(), password: z.string().min(6) })
+                    .object({
+                        email: z.string().email(),
+                        // Keep minimum length 6 for login to support legacy users who created accounts before the policy update
+                        password: z.string().min(6)
+                    })
                     .safeParse(credentials);
 
                 if (parsedCredentials.success) {
