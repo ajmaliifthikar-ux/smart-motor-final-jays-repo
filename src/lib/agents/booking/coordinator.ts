@@ -1,10 +1,10 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
 import { calendarTools } from '@/lib/tools/calendar-tools'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 
 export class BookingCoordinator {
-    private model: any
+    private model: GenerativeModel
 
     constructor() {
         this.model = genAI.getGenerativeModel({

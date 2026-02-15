@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
 import { AgentConfig, Message, ToolDefinition } from '../core/types'
 import { memoryManager } from '../core/memory'
 import { knowledgeBase } from '../core/knowledge'
@@ -6,7 +6,7 @@ import { knowledgeBase } from '../core/knowledge'
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 
 export class SmartAssistant {
-    private model: any
+    private model: GenerativeModel
     private config: AgentConfig
 
     constructor() {

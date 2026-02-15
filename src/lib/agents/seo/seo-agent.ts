@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
@@ -9,10 +9,10 @@ export interface SEOAgentConfig {
 }
 
 export class SEOSpecialistAgent {
-    private model: any
+    private model: GenerativeModel
     private config: SEOAgentConfig
 
-    constructor(config: SEOAgentConfig = { tone: 'professional', targetAudience: 'car_owners' }, model?: any) {
+    constructor(config: SEOAgentConfig = { tone: 'professional', targetAudience: 'car_owners' }, model?: GenerativeModel) {
         // Use a model capable of JSON response for meta tags if possible, or fallback to text
         this.model = model || genAI.getGenerativeModel({
             model: process.env.GEMINI_MODEL || 'gemini-3-flash-preview',
