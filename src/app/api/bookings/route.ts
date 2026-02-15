@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { auth } from '@/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -56,15 +57,11 @@ export async function POST(req: Request) {
                 throw new Error('SLOT_TAKEN')
             }
 
-            // 2. Find or Create User (Mock Guest Strategy for MVP)
-            // In a real app, we might check session.user first
-            let userId = null
-
-            // Check if user exists by email, if so, attach them
-            const user = await tx.user.findUnique({ where: { email: data.email } })
-            if (user) {
-                userId = user.id
-            }
+            // 2. Identify User via Session
+            // We use the authenticated session to link the booking to a user.
+            // This prevents unauthorized users from attaching bookings to others' accounts.
+            const session = await auth()
+            const userId = session?.user?.id || null
 
             // 3. Create Booking
             const booking = await tx.booking.create({
