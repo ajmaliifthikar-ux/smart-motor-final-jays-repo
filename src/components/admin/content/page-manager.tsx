@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { updateContentBlock } from '@/actions/cms-actions'
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 
 interface Block {
     key: string
@@ -134,6 +135,3 @@ export function PageManager({ initialPages }: PageManagerProps) {
     )
 }
 
-function cn(...classes: any[]) {
-    return classes.filter(Boolean).join(' ')
-}
