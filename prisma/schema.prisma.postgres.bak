@@ -1,0 +1,315 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "darwin-arm64", "rhel-openssl-1.0.x", "rhel-openssl-3.0.x", "debian-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── AUTHENTICATION (NextAuth) ───
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?   // For Credentials provider (bcrypt)
+  role          Role      @default(CUSTOMER)
+  
+  accounts      Account[]
+  sessions      Session[]
+  bookings      Booking[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime? // Soft Delete
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+  SUPPORT
+  EDITOR
+}
+
+// ─── BOOKING ENGINE ───
+model Booking {
+  id            String        @id @default(cuid())
+  userId        String?
+  user          User?         @relation(fields: [userId], references: [id])
+  
+  // Guest Details (if no user)
+  guestName     String?
+  guestEmail    String?
+  guestPhone    String?
+  
+  vehicleBrand  String?
+  vehicleModel  String?
+  
+  serviceId     String
+  service       Service       @relation(fields: [serviceId], references: [id])
+  
+  date          DateTime      // The day of booking
+  slot          String        // e.g., "09:00"
+  status        BookingStatus @default(PENDING)
+  notes         String?       @db.Text
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@unique([date, slot])    // 🔒 The Core Logic: Prevent double booking on DB level
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  LOCKED
+}
+
+// ─── CATALOG & CMS ───
+model Service {
+  id                  String    @id @default(cuid())
+  slug                String    @unique
+  name                String
+  nameAr              String
+  description         String    @db.Text
+  descriptionAr       String?   @db.Text
+  detailedDescription String?   @db.Text
+  category            String?
+  basePrice           Float?
+  duration            String
+  
+  // Visuals
+  icon                String?
+  iconImage           String?
+  image               String?
+  
+  // Rich Content (JSON)
+  process             Json?     // Array of { step, title, desc }
+  subServices         Json?     // Array of { title, description, features }
+  seo                 Json?     // { title, description }
+  
+  isEnabled           Boolean   @default(true)
+  bookings            Booking[]
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Brand {
+  id          String   @id @default(cuid()) // internal ID
+  slug        String?  @unique // e.g., 'bmw', 'mercedes'
+  name        String   @unique
+  nameAr      String?
+  category    String?  // 'european', 'japanese', etc.
+  
+  // Visuals
+  logoUrl     String?
+  logoFile    String?
+  heroImage   String?
+  color       String?
+  
+  // Content
+  description String?  @db.Text
+  heritage    String?  @db.Text
+  heritageAr  String?  @db.Text
+  
+  // Lists
+  models      String[]
+  specialties String[]
+  services    String[] // Specific services offered for this brand
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ServicePackage {
+  id            String   @id @default(cuid())
+  title         String
+  subtitle      String?
+  isPromotional Boolean  @default(false)
+  bestFor       String?
+  features      String[]
+  validity      String?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model BlogPost {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  excerpt   String   @db.Text
+  content   String   @db.Text
+  image     String?
+  
+  author    String?
+  category  String?
+  publishedAt DateTime? // Date string parsed to DateTime
+  
+  isPublished Boolean @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FAQ {
+  id         String   @id @default(cuid())
+  question   String
+  questionAr String?
+  answer     String   @db.Text
+  answerAr   String?  @db.Text
+  category   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// For editable text on the website (CMS)
+model ContentBlock {
+  key       String   @id // e.g., "hero_title"
+  value     String   @db.Text
+  valueAr   String?  @db.Text
+  type      String   @default("text") // text, image, json, html
+  status    ContentStatus @default(PUBLISHED)
+  
+  // For modularity
+  parentKey String?  // To group blocks (e.g., all blocks for "About Page")
+  order     Int      @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  content     String   @db.Text
+  
+  // SEO & AI Metadata
+  seoTitle    String?
+  seoDesc     String?
+  keywords    String?
+  
+  isPublished Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── AI & ANALYTICS ───
+// Minimal Vector Store schema (if pgvector is enabled later)
+model DocumentEmbedding {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  // vector    Unsupported("vector(1536)")? // Requires pgvector extension - Commented out for troubleshooting WASM error
+  metadata  Json?
+  
+  createdAt DateTime @default(now())
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  resource  String?
+  details   Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+}
+
+model AIUsageLog {
+  id          String   @id @default(cuid())
+  userId      String
+  action      String
+  model       String
+  prompt      String?  @db.Text
+  tokenCount  Int?
+  cost        Float?
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ─── REAL-TIME ANALYTICS ───
+model AnalyticsLog {
+  id          String   @id @default(cuid())
+  eventType   String   // e.g., "page_view", "click", "conversion"
+  resource    String?  // e.g., "/new-home", "booking_form_cta"
+  
+  // Metadata for the heatmaps and reporting
+  emirate     String?  // e.g., "Abu Dhabi", "Dubai"
+  city        String?
+  device      String?  // e.g., "mobile", "desktop"
+  browser     String?
+  ipHash      String?  // Anonymized IP for privacy
+  
+  metadata    Json?    // Any additional contextual data
+  
+  createdAt   DateTime @default(now())
+
+  @@index([eventType])
+  @@index([emirate])
+  @@index([createdAt])
+}
+
+// ─── SEO AGENTIC REPORTS ───
+model SEOReport {
+  id              String   @id @default(cuid())
+  url             String
+  score           Int      // 0-100
+  
+  // Complex analysis results stored as JSON
+  technicalLogs   Json?    // Performance, LCP, CLS, FID
+  onPageLogs      Json?    // Titles, Meta, Headers
+  contentLogs     Json?    // Keyword density, Readability
+  recommendations Json?    // Actionable AI suggestions
+  
+  createdAt       DateTime @default(now())
+
+  @@index([url])
+  @@index([createdAt])
+}

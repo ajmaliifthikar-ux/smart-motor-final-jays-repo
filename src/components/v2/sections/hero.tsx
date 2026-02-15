@@ -1,0 +1,128 @@
+'use client'
+
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Button } from '@/components/ui/button'
+import { CallbackModal } from '@/components/sections/callback-modal'
+import { useLanguage } from '@/lib/language-context'
+import { cn, publicPath } from '@/lib/utils'
+import { useTilt } from '@/lib/hooks/useTilt'
+import { Tooltip } from '@/components/ui/tooltip'
+
+export function Hero() {
+    const [isCallbackModalOpen, setIsCallbackModalOpen] = useState(false)
+    const { isRTL } = useLanguage()
+
+    const bookTilt = useTilt({ maxDegrees: 6, perspective: 800 })
+    const callbackTilt = useTilt({ maxDegrees: 6, perspective: 800 })
+
+    return (
+        <section className="relative flex-1 min-h-screen flex items-center overflow-hidden bg-white pt-32 pb-20">
+            {/* Added top padding to avoid nav overlap and centering */}
+
+            {/* Full-width vehicle image — positioned right */}
+            <div className="absolute inset-0 z-0">
+                <div
+                    className="absolute inset-0 bg-cover bg-center md:bg-[center_top_0px]"
+                    style={{ backgroundImage: `url(${publicPath('/images/hero/Hero-Wagon.webp')})` }}
+                />
+                <div className={`absolute inset-0 pointer-events-none ${isRTL
+                    ? 'bg-gradient-to-l from-transparent via-white/50 to-white/98'
+                    : 'bg-gradient-to-r from-white/95 via-white/80 to-transparent' // Slightly stronger fade for text readability
+                    }`} />
+            </div>
+
+            {/* Content centered */}
+            <div className={`relative z-[2] w-full max-w-7xl mx-auto flex flex-col justify-center items-center text-center px-6 md:px-20 ${isRTL ? 'ml-auto' : ''}`}>
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: 'easeOut' }}
+                    className="flex flex-col items-center"
+                >
+                    {/* Badge */}
+                    <div className="relative inline-flex items-center gap-2.5 px-6 py-2 rounded-full mb-8 shadow-2xl bg-white/10 backdrop-blur-md border border-white/20">
+                        <span className="relative z-10 w-2 h-2 bg-[#E62329] rounded-full animate-pulse shadow-[0_0_10px_#E62329]" />
+                        <span className="relative z-10 text-[11px] font-black uppercase tracking-[0.2em] text-[#121212]">
+                            Smart Choices Start Here
+                        </span>
+                    </div>
+
+                    <h1 className={`flex flex-col items-center mb-8 tracking-tighter text-[#121212] ${isRTL ? 'font-arabic tracking-normal' : ''}`}>
+                        <span className="text-3xl md:text-5xl font-black leading-tight uppercase block opacity-90 mb-2">
+                            PROFESSIONAL AUTOMOTIVE
+                        </span>
+                        <span className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.85] silver-shine block">
+                            SERVICE CENTER
+                        </span>
+                    </h1>
+
+                    <p className={`text-gray-600 text-base md:text-lg lg:text-xl max-w-3xl leading-relaxed mb-8 font-medium px-2 ${isRTL ? 'font-arabic' : ''}`}>
+                        Your trusted automotive partner in Abu Dhabi. Expert Repair, Diagnostics & Maintenance for Luxury, Sports & European Cars.
+                    </p>
+
+                    {/* CTA Buttons */}
+                    <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-6 mb-10 w-full sm:w-auto px-4 sm:px-0">
+                        <Button
+                            style={bookTilt.tiltStyle}
+                            onMouseMove={bookTilt.tiltHandlers.onMouseMove}
+                            onMouseLeave={bookTilt.tiltHandlers.onMouseLeave}
+                            className="bg-[#121212] text-white button-overlay rounded-full px-10 py-4 text-xs font-black tracking-widest uppercase hover:bg-[#E62329] transition-all shadow-xl hover:scale-105 h-auto opacity-100 hover:opacity-100 relative overflow-hidden group"
+                            onClick={() => document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' })}
+                        >
+                            <span className="relative z-10">Book Appointment</span>
+                            <div className="absolute inset-0 bg-[url('/public/textures/car-paint-texture.png')] opacity-30 mix-blend-overlay pointer-events-none group-hover:opacity-50 transition-opacity" />
+                        </Button>
+                        <Button
+                            style={callbackTilt.tiltStyle}
+                            onMouseMove={callbackTilt.tiltHandlers.onMouseMove}
+                            onMouseLeave={callbackTilt.tiltHandlers.onMouseLeave}
+                            className="bg-gradient-to-t from-[var(--yellow-dark)] to-[var(--yellow-light)] text-[#121212] button-overlay rounded-full px-10 py-4 text-xs font-black tracking-widest uppercase hover:brightness-110 transition-all shadow-lg border border-yellow-400 h-auto relative overflow-hidden group"
+                            onClick={() => setIsCallbackModalOpen(true)}
+                        >
+                            <span className="relative z-10 flex items-center gap-2">
+                                <span className="w-2 h-2 bg-[#121212] rounded-full animate-pulse" />
+                                Call: 02 555 5443
+                            </span>
+                            <div className="absolute inset-0 bg-[url('/public/textures/car-paint-texture.png')] opacity-20 mix-blend-overlay pointer-events-none" />
+                        </Button>
+                    </div>
+
+                    {/* Stats Row */}
+                    <div className="flex flex-wrap items-center justify-center gap-6 md:gap-12 border-t border-b border-gray-100 py-5 mb-10 w-full max-w-2xl">
+                        <Tooltip content="Serving Abu Dhabi since 2009" position="bottom">
+                            <div className="text-center">
+                                <p className="text-2xl md:text-3xl font-black text-[#121212] leading-none mb-1">15+</p>
+                                <p className="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Years Exp</p>
+                            </div>
+                        </Tooltip>
+                        <div className="hidden sm:block w-px h-10 bg-gray-200" />
+                        <Tooltip content="Trusted by 1000+ vehicle owners" position="bottom">
+                            <div className="text-center">
+                                <p className="text-2xl md:text-3xl font-black text-[#121212] leading-none mb-1">1k+</p>
+                                <p className="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Happy Customers</p>
+                            </div>
+                        </Tooltip>
+                        <div className="hidden sm:block w-px h-10 bg-gray-200" />
+                        <Tooltip content="Expert technicians across all brands" position="bottom">
+                            <div className="text-center">
+                                <p className="text-2xl md:text-3xl font-black text-[#121212] leading-none mb-1">50+</p>
+                                <p className="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Brand Specialists</p>
+                            </div>
+                        </Tooltip>
+                    </div>
+
+
+                </motion.div>
+            </div>
+
+            {/* Scroll Indicator */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-[2] opacity-50">
+                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-gray-500">Scroll</span>
+                <div className="w-px h-8 bg-gradient-to-b from-gray-400 to-transparent" />
+            </div>
+
+            <CallbackModal isOpen={isCallbackModalOpen} onClose={() => setIsCallbackModalOpen(false)} />
+        </section>
+    )
+}

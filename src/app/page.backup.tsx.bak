@@ -1,0 +1,52 @@
+import { Navbar } from '@/components/layout/navbar'
+import { Footer } from '@/components/layout/footer'
+import { Hero } from '@/components/sections/hero'
+import { EmergencyFAB } from '@/components/ui/emergency-fab'
+import { Services } from '@/components/sections/services'
+import { Testimonials } from '@/components/sections/testimonials'
+import { FAQ } from '@/components/sections/faq'
+import { BookingForm } from '@/components/sections/booking-form'
+import { BrandMarquee } from '@/components/sections/brand-marquee'
+import { getServices, getFAQs } from './actions'
+
+export const dynamic = 'force-dynamic'
+
+export default async function Home() {
+  const [services, faqs] = await Promise.all([
+    getServices(),
+    getFAQs()
+  ])
+
+  return (
+    <main className="h-screen overflow-y-scroll snap-y snap-mandatory scroll-smooth">
+      {/* SECTION 1: Hero & Trust (First Screen) */}
+      <section className="h-screen snap-start flex flex-col relative overflow-hidden">
+        <Navbar />
+        <div className="flex-1 flex flex-col">
+          <Hero />
+          <BrandMarquee />
+        </div>
+      </section>
+
+      {/* SECTION 2: Services */}
+      <section className="min-h-screen snap-start bg-premium-gradient">
+        <Services initialServices={services} />
+      </section>
+
+      {/* SECTION 3: Booking & Testimonials */}
+      <section className="min-h-screen snap-start bg-white">
+        <BookingForm />
+        <Testimonials />
+      </section>
+
+      {/* SECTION 4: FAQ & Footer */}
+      <section className="min-h-screen snap-start bg-gray-50 flex flex-col justify-between">
+        <FAQ initialFaqs={faqs} />
+        <Footer />
+      </section>
+
+      {/* Floating Elements */}
+      <EmergencyFAB />
+    </main>
+  )
+}
