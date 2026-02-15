@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 
@@ -10,11 +10,11 @@ interface BookingState {
 }
 
 export class BookingCoordinatorAgent {
-    private model: any
+    private model: GenerativeModel
     // In a real app, this would be persisted in Redis/DB per user session
     private state: BookingState = { step: 'IDLE' }
 
-    constructor(model?: any) {
+    constructor(model?: GenerativeModel) {
         this.model = model || genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-3-flash-preview' })
     }
 
