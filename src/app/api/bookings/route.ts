@@ -1,3 +1,4 @@
+import { verifyRecaptcha } from '@/lib/recaptcha'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
@@ -29,11 +30,10 @@ export async function POST(req: Request) {
             if (!data.recaptchaToken) {
                 return NextResponse.json({ success: false, error: 'reCAPTCHA token required' }, { status: 400 })
             }
-            const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${data.recaptchaToken}`
-            const verifyRes = await fetch(verifyUrl, { method: 'POST' })
-            const verifyData = await verifyRes.json()
 
-            if (!verifyData.success || (verifyData.score !== undefined && verifyData.score < 0.5)) {
+            const verification = await verifyRecaptcha(data.recaptchaToken)
+
+            if (!verification.success || (verification.score !== undefined && verification.score < 0.5)) {
                 return NextResponse.json({ success: false, error: 'reCAPTCHA verification failed' }, { status: 400 })
             }
         }
@@ -89,9 +89,14 @@ export async function POST(req: Request) {
         return NextResponse.json({ success: true, bookingId: result.id })
 
     } catch (error: any) {
-        console.error('Booking Error:', error)
+        // Log safe error message
+        if (error instanceof Error) {
+            console.error('Booking Error:', error.message)
+        } else {
+            console.error('Booking Error: Unknown error occurred')
+        }
 
-        if (error.message === 'SLOT_TAKEN') {
+        if (error?.message === 'SLOT_TAKEN') {
             return NextResponse.json({
                 success: false,
                 error: 'Slot already taken',
