@@ -286,3 +286,64 @@ export async function sendWelcomeEmail(email: string, name: string) {
         text: `Hi ${name}, welcome to Smart Motor! Visit ${process.env.NEXT_PUBLIC_APP_URL} to get started.`,
     })
 }
+
+/**
+ * Send newsletter welcome email
+ */
+export async function sendNewsletterWelcomeEmail(email: string) {
+    const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #121212; color: white; padding: 30px; text-align: center; }
+        .content { background: #f9f9f9; padding: 30px; }
+        .button { background: #E62329; color: white; padding: 14px 28px; text-decoration: none;
+                  border-radius: 4px; display: inline-block; margin: 20px 0; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Welcome to Smart Motor Newsletter!</h1>
+        </div>
+        <div class="content">
+          <h2>Thank you for subscribing!</h2>
+          <p>You've successfully joined the Smart Motor Performance community.</p>
+          <p>We're excited to share our latest updates, exclusive offers, and automotive insights with you.</p>
+
+          <h3>What to Expect:</h3>
+          <ul>
+            <li>🚗 Expert car care tips</li>
+            <li>💎 Exclusive service promotions</li>
+            <li>📰 Industry news and trends</li>
+            <li>🎁 Early access to special events</li>
+          </ul>
+
+          <a href="${process.env.NEXT_PUBLIC_APP_URL}/services" class="button">
+            Explore Our Services
+          </a>
+
+          <p>Need assistance? Contact us at <a href="tel:+97126551234">+971 2 655 1234</a></p>
+        </div>
+        <div class="footer">
+          <p>Smart Motor Performance</p>
+          <p>Musaffah M9, Abu Dhabi | Nadd Al Hamar, Dubai</p>
+          <p>© 2026 Smart Motor. All rights reserved.</p>
+          <p><a href="${process.env.NEXT_PUBLIC_APP_URL}/unsubscribe">Unsubscribe</a></p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+
+    return sendEmail({
+        to: email,
+        subject: 'Welcome to Smart Motor Newsletter',
+        html,
+        text: `Thank you for subscribing to Smart Motor Newsletter! We're excited to have you on board. Visit ${process.env.NEXT_PUBLIC_APP_URL} for more.`,
+    })
+}
