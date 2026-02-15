@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, X, Bot, User, Loader2, Sparkles, ChevronRight } from 'lucide-react'
+import { Send, X, Bot, User, Loader2, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -137,7 +137,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 bg-[#121212] rounded-full flex items-center justify-center relative overflow-hidden">
                                     <div className="absolute inset-0 bg-gradient-to-tr from-[#E62329] to-[#121212] opacity-20" />
-                                    <Sparkles size={20} className="text-[#E62329]" />
+                                    <Sparkles size={20} className="text-[#E62329]" aria-hidden="true" />
                                 </div>
                                 <div>
                                     <h3 className="text-sm font-black uppercase tracking-widest text-[#121212]">Smart Assistant</h3>
@@ -147,13 +147,19 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                                     </div>
                                 </div>
                             </div>
-                            <Button variant="ghost" onClick={onClose} className="rounded-full hover:bg-gray-100 w-10 h-10 p-0 flex items-center justify-center">
-                                <X size={20} />
+                            <Button variant="ghost" onClick={onClose} aria-label="Close chat" className="rounded-full hover:bg-gray-100 w-10 h-10 p-0 flex items-center justify-center">
+                                <X size={20} aria-hidden="true" />
                             </Button>
                         </div>
 
                         {/* Messages Area */}
-                        <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/50">
+                        <div
+                            ref={scrollRef}
+                            className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/50"
+                            role="log"
+                            aria-live="polite"
+                            aria-label="Chat messages"
+                        >
                             {messages.map((msg) => (
                                 <motion.div
                                     key={msg.id}
@@ -170,7 +176,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                                             ? "bg-white border-gray-100 text-gray-600"
                                             : "bg-[#121212] border-transparent text-white"
                                     )}>
-                                        {msg.role === 'user' ? <User size={14} /> : <Bot size={14} />}
+                                        {msg.role === 'user' ? <User size={14} aria-hidden="true" /> : <Bot size={14} aria-hidden="true" />}
                                     </div>
 
                                     <div className={cn(
@@ -193,10 +199,10 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                             {isLoading && (
                                 <div className="flex gap-4 max-w-[85%]">
                                     <div className="w-8 h-8 rounded-full bg-[#121212] flex items-center justify-center shrink-0">
-                                        <Bot size={14} className="text-white" />
+                                        <Bot size={14} className="text-white" aria-hidden="true" />
                                     </div>
                                     <div className="bg-white border border-gray-100 p-4 rounded-2xl rounded-tl-none flex items-center gap-2 text-gray-400">
-                                        <Loader2 size={16} className="animate-spin" />
+                                        <Loader2 size={16} className="animate-spin" aria-hidden="true" />
                                         <span className="text-xs font-bold uppercase tracking-wider">Thinking...</span>
                                     </div>
                                 </div>
@@ -212,11 +218,13 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyDown={handleKeyDown}
                                     placeholder="Ask anything about your car..."
+                                    aria-label="Type your message"
                                     className="pr-12 h-14 rounded-2xl bg-gray-50 border-transparent focus:bg-white focus:border-gray-200 transition-all font-medium"
                                 />
                                 <Button
                                     onClick={handleSend}
                                     disabled={!input.trim() || isLoading}
+                                    aria-label="Send message"
                                     className={cn(
                                         "absolute right-2 w-10 h-10 rounded-xl transition-all duration-300",
                                         input.trim()
@@ -231,7 +239,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                             </div>
                             <div className="flex justify-center mt-3">
                                 <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider flex items-center gap-1">
-                                    Powered by Gemini AI <Sparkles size={8} />
+                                    Powered by Gemini AI <Sparkles size={8} aria-hidden="true" />
                                 </span>
                             </div>
                         </div>
