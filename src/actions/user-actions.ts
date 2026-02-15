@@ -21,20 +21,21 @@ export async function toggleUserRole(userId: string, currentRole: string) {
 
     const newRole = currentRole === "ADMIN" ? "CUSTOMER" : "ADMIN"
 
-    await prisma.user.update({
-        where: { id: userId },
-        data: { role: newRole },
-    })
-
-    // 📝 Audit Log
-    await prisma.auditLog.create({
-        data: {
-            userId: adminId,
-            action: "TOGGLE_ROLE",
-            resource: `user:${userId}`,
-            details: JSON.stringify({ from: currentRole, to: newRole }) // Stringify for SQLite
-        }
-    })
+    await prisma.$transaction([
+        prisma.user.update({
+            where: { id: userId },
+            data: { role: newRole },
+        }),
+        // 📝 Audit Log
+        prisma.auditLog.create({
+            data: {
+                userId: adminId,
+                action: "TOGGLE_ROLE",
+                resource: `user:${userId}`,
+                details: JSON.stringify({ from: currentRole, to: newRole }) // Stringify for SQLite
+            }
+        })
+    ])
 
     revalidatePath("/admin/users")
     return { success: true, message: `User role updated to ${newRole}` }
@@ -53,21 +54,22 @@ export async function deleteUser(userId: string) {
         throw new Error("Cannot delete your own account")
     }
 
-    // 🛡️ Soft Delete (Preserve data)
-    await prisma.user.update({
-        where: { id: userId },
-        data: { deletedAt: new Date() } // Mark as deleted
-    })
-
-    // 📝 Audit Log
-    await prisma.auditLog.create({
-        data: {
-            userId: session.user.id,
-            action: "DELETE_USER",
-            resource: `user:${userId}`,
-            details: JSON.stringify({ method: "soft_delete" }) // Stringify
-        }
-    })
+    await prisma.$transaction([
+        // 🛡️ Soft Delete (Preserve data)
+        prisma.user.update({
+            where: { id: userId },
+            data: { deletedAt: new Date() } // Mark as deleted
+        }),
+        // 📝 Audit Log
+        prisma.auditLog.create({
+            data: {
+                userId: session.user.id,
+                action: "DELETE_USER",
+                resource: `user:${userId}`,
+                details: JSON.stringify({ method: "soft_delete" }) // Stringify
+            }
+        })
+    ])
 
     revalidatePath("/admin/users")
     return { success: true, message: "User deleted successfully" }
@@ -82,19 +84,20 @@ export async function updateUser(userId: string, data: { name: string, email: st
 
     const { name, email, role } = data
 
-    await prisma.user.update({
-        where: { id: userId },
-        data: { name, email, role }
-    })
-
-    await prisma.auditLog.create({
-        data: {
-            userId: session.user.id,
-            action: "UPDATE_USER",
-            resource: `user:${userId}`,
-            details: JSON.stringify({ name, role }) // Stringify
-        }
-    })
+    await prisma.$transaction([
+        prisma.user.update({
+            where: { id: userId },
+            data: { name, email, role }
+        }),
+        prisma.auditLog.create({
+            data: {
+                userId: session.user.id,
+                action: "UPDATE_USER",
+                resource: `user:${userId}`,
+                details: JSON.stringify({ name, role }) // Stringify
+            }
+        })
+    ])
 
     revalidatePath("/admin/users")
     return { success: true, message: "User updated successfully" }
