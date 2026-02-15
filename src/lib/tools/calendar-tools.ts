@@ -14,7 +14,7 @@ export async function getAvailableSlots(date: Date): Promise<TimeSlot[]> {
     const slots: TimeSlot[] = []
     for (let h = WORK_HOURS.start; h < WORK_HOURS.end; h++) {
         // Hourly slots for simplicity
-        const timeString = \`\${h.toString().padStart(2, '0')}:00\`
+        const timeString = `${h.toString().padStart(2, '0')}:00`
         slots.push({ time: timeString, available: true })
     }
 

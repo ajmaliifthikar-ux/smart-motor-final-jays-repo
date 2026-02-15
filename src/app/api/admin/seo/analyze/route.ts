@@ -55,12 +55,12 @@ export async function POST(req: NextRequest) {
         const analysis = JSON.parse(jsonStr)
 
         // 3. Save to database
-        const report = await (prisma as any).sEOReport.create({
+        const report = await prisma.sEOReport.create({
             data: {
                 url,
                 score: analysis.score,
                 technicalLogs: analysis.technical,
-                onPageLogs: { headers: analysis.technical.issues }, // Mapping simplified for now
+                onPageLogs: JSON.stringify({ headers: analysis.technical.issues }), // Mapping simplified for now
                 contentLogs: analysis.content,
                 recommendations: analysis.recommendations
             }

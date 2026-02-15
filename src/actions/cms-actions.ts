@@ -54,7 +54,7 @@ export async function addBrand(formData: FormData) {
     // For now, we'll assume logoUrl is passed or handle upload separately.
     // This is a simple impl for the database record.
 
-    await (prisma as any).brand.create({
+    await prisma.brand.create({
         data: {
             name,
             nameAr,

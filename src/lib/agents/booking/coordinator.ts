@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
+import { GoogleGenerativeAI, GenerativeModel, SchemaType } from '@google/generative-ai'
 import { calendarTools } from '@/lib/tools/calendar-tools'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
@@ -33,10 +33,10 @@ export class BookingCoordinator {
                             name: "checkAvailability",
                             description: "Checks available appointment slots for a specific date.",
                             parameters: {
-                                type: "OBJECT",
+                                type: SchemaType.OBJECT,
                                 properties: {
                                     dateString: {
-                                        type: "STRING",
+                                        type: SchemaType.STRING,
                                         description: "Date in YYYY-MM-DD format"
                                     }
                                 },
