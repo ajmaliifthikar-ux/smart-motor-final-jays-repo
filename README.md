@@ -14,7 +14,7 @@ This project follows the **Citadel Architecture**.
 | ├── **[01-product/](documentation/01-product/)** | Plans, Roadmap, Research | Product Managers |
 | ├── **[02-developer/](documentation/02-developer/)** | Architecture, API, Deployment | Engineers |
 | ├── **[03-agentic-ai/](documentation/03-agentic-ai/)** | Smart Assistant & Agents | AI Specialists |
-| └── **[04-credentials/](documentation/04-credentials/)** | 🔒 **Secure Vault** | Start Here for Keys |
+| ├── **[03-agentic-ai/](documentation/03-agentic-ai/)** | Smart Assistant & Agents | AI Specialists |
 
 ## 🚀 Quick Start (Developers)
 
