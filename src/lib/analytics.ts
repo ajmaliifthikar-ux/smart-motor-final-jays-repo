@@ -77,23 +77,37 @@ export async function getTrafficTrends() {
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-    const logs = await (prisma as any).analyticsLog.findMany({
-        where: {
-            createdAt: {
-                gte: sevenDaysAgo
-            }
-        },
-        orderBy: {
-            createdAt: 'asc'
-        }
-    })
+    // Using raw SQL for efficient aggregation instead of fetching all rows
+    const isProduction = process.env.NODE_ENV === 'production'
 
-    // Group by day (simplified for demo)
-    const trends: Record<string, number> = {}
-    logs.forEach((log: any) => {
-        const date = log.createdAt.toISOString().split('T')[0]
-        trends[date] = (trends[date] || 0) + 1
-    })
+    let result: { date: string | Date, count: bigint }[]
 
-    return Object.entries(trends).map(([date, count]) => ({ date, count }))
+    if (isProduction) {
+        // MySQL (Production)
+        // GreenGeeks uses MySQL. DATE() extracts the date part.
+        result = await prisma.$queryRaw`
+            SELECT DATE(createdAt) as date, COUNT(*) as count
+            FROM AnalyticsLog
+            WHERE createdAt >= ${sevenDaysAgo}
+            GROUP BY DATE(createdAt)
+            ORDER BY date ASC
+        `
+    } else {
+        // SQLite (Development)
+        // SQLite stores dates as unix timestamps (milliseconds) or strings depending on configuration.
+        // Prisma default for SQLite is numeric timestamp (milliseconds).
+        result = await prisma.$queryRaw`
+            SELECT strftime('%Y-%m-%d', createdAt / 1000, 'unixepoch') as date, COUNT(*) as count
+            FROM AnalyticsLog
+            WHERE createdAt >= ${sevenDaysAgo}
+            GROUP BY date
+            ORDER BY date ASC
+        `
+    }
+
+    // Map BigInt count to number and ensure date is formatted as YYYY-MM-DD string
+    return result.map(r => ({
+        date: typeof r.date === 'string' ? r.date : (r.date as Date).toISOString().split('T')[0],
+        count: Number(r.count)
+    }))
 }
