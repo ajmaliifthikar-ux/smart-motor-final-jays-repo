@@ -84,3 +84,4 @@ google-services.json
 /Documentation/
 /_backup/
 
+prisma/*.db
