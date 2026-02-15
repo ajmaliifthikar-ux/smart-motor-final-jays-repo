@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { sendNewsletterWelcomeEmail } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,7 +36,8 @@ export async function POST(req: Request) {
             data: { email },
         })
 
-        // TODO: Send welcome email via Resend/Nodemailer (Phase 3)
+        // Send welcome email via Resend/Nodemailer (Phase 3)
+        await sendNewsletterWelcomeEmail(email)
 
         return NextResponse.json({ success: true, message: 'Thank you for subscribing!' })
 
