@@ -224,6 +224,7 @@ model AIUsageLog {
 
   @@index([userId])
   @@index([createdAt])
+  @@index([userId, action, createdAt])
 }
 
 model AnalyticsLog {

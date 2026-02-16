@@ -223,6 +223,21 @@ model DocumentEmbedding {
   createdAt DateTime @default(now())
 }
 
+model IntegrationTrace {
+  id        String   @id @default(cuid())
+  service   String   // e.g., "Firebase", "Gemini", "Redis", "Resend"
+  operation String   // e.g., "auth_verify", "generate_content", "cache_set"
+  status    String   // "SUCCESS" | "FAILURE"
+  duration  Int      // milliseconds
+  error     String?  // Error message if FAILURE
+  metadata  String?  // JSON string for extra context
+  timestamp DateTime @default(now())
+
+  @@index([service])
+  @@index([status])
+  @@index([timestamp])
+}
+
 model AuditLog {
   id        String   @id @default(cuid())
   userId    String
@@ -249,6 +264,7 @@ model AIUsageLog {
 
   @@index([userId])
   @@index([createdAt])
+  @@index([userId, action, createdAt])
 }
 
 // ─── REAL-TIME ANALYTICS ───
