@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { MenuIcon, XIcon, PhoneIcon } from 'lucide-react'
-import { InstagramIcon, WhatsAppIcon } from '@/components/ui/icons'
 import { cn, publicPath } from '@/lib/utils'
 import { motion } from 'framer-motion'
 import { Tooltip } from '@/components/ui/tooltip'
