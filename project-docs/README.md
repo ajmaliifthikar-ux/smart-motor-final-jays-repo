@@ -23,3 +23,7 @@ Audits, benchmarks, and progress reports.
 
 ---
 *Note: This hub is the source of truth for all project documentation.*
+
+### [Technical](project-docs/technical/)
+Deep dives into specific modules, systems, and architecture.
+- [Live Chat System](project-docs/technical/live-chat-system.md): Bidirectional Gemini streaming with memory persistence and real-time token display.
