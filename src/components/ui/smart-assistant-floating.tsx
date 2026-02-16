@@ -273,7 +273,7 @@ export function SmartAssistantFloating() {
                       )}
                     </div>
                     <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest mt-2 px-2">
-                      {msg.role === 'user' ? 'Customer' : 'Smart Motor AI'} • {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-numeric', minute: '2-numeric' })}
+                      {msg.role === 'user' ? 'Customer' : 'Smart Motor AI'} • {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </motion.div>
                 ))}

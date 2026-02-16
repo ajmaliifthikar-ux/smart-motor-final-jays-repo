@@ -281,7 +281,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                     ) : (
                       <><Bot size={10} /> Smart Motor AI</>
                     )}
-                    • {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-numeric', minute: '2-numeric' })}
+                    • {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </motion.div>
               ))}
