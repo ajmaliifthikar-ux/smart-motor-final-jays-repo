@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
 import { AgentConfig } from '../core/types'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
@@ -9,7 +9,7 @@ interface BookingState {
 }
 
 export class BookingCoordinator {
-    private model: any
+    private model: GenerativeModel
     private config: AgentConfig
 
     constructor() {

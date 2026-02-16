@@ -3,7 +3,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
-import { checkRateLimit } from "@/lib/rate-limit"
+import { checkRateLimit, incrementRateLimit } from "@/lib/rate-limit"
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
@@ -76,6 +76,8 @@ export async function generateContent(formData: FormData) {
                 // cost: 0.000... (Calculate if needed)
             }
         })
+
+        await incrementRateLimit(userId, "GENERATE_ARTICLE", 3600)
 
         return {
             success: true,

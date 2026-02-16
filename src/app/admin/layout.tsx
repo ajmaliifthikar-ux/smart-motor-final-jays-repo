@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { LayoutDashboard, Users, Settings, LogOut, FileText } from "lucide-react"
+import { LayoutDashboard, Users, Settings, LogOut, FileText, Calendar } from "lucide-react"
 
 export default function AdminLayout({
   children,
@@ -18,6 +18,7 @@ export default function AdminLayout({
 
         <nav className="flex-1 px-4 space-y-2">
           <NavItem href="/admin" icon={LayoutDashboard} label="Dashboard" />
+          <NavItem href="/admin/service-config" icon={Calendar} label="Booking Config" />
           <NavItem href="/admin/users" icon={Users} label="Users" />
           <NavItem href="/admin/content" icon={FileText} label="Content" />
           <NavItem href="/admin/settings" icon={Settings} label="Settings" />

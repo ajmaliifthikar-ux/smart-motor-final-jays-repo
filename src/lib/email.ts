@@ -286,3 +286,56 @@ export async function sendWelcomeEmail(email: string, name: string) {
         text: `Hi ${name}, welcome to Smart Motor! Visit ${process.env.NEXT_PUBLIC_APP_URL} to get started.`,
     })
 }
+
+/**
+ * Send newsletter welcome email
+ */
+export async function sendNewsletterWelcomeEmail(email: string) {
+    const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #121212; color: white; padding: 30px; text-align: center; }
+        .content { background: #f9f9f9; padding: 30px; }
+        .button { background: #E62329; color: white; padding: 14px 28px; text-decoration: none;
+                  border-radius: 4px; display: inline-block; margin: 20px 0; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Welcome to our Newsletter!</h1>
+        </div>
+        <div class="content">
+          <h2>Hi there,</h2>
+          <p>Thank you for joining the Smart Motor Performance newsletter!</p>
+          <p>You're now part of our elite club. You'll receive exclusive offers, maintenance tips, and early access to campaigns directly in your inbox.</p>
+
+          <a href="${process.env.NEXT_PUBLIC_APP_URL}/services" class="button">
+            Explore Services
+          </a>
+
+          <p>If you have any questions, feel free to reply to this email.</p>
+        </div>
+        <div class="footer">
+          <p>Smart Motor Performance</p>
+          <p>Musaffah M9, Abu Dhabi | Nadd Al Hamar, Dubai</p>
+          <p>© 2026 Smart Motor. All rights reserved.</p>
+          <p><a href="${process.env.NEXT_PUBLIC_APP_URL}/unsubscribe?email=${encodeURIComponent(email)}">Unsubscribe</a></p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+
+    return sendEmail({
+        to: email,
+        subject: 'Welcome to the Smart Motor Elite Club! 🏎️',
+        html,
+        text: `Thank you for joining the Smart Motor Performance newsletter! Visit ${process.env.NEXT_PUBLIC_APP_URL}/services to explore our services.`,
+    })
+}

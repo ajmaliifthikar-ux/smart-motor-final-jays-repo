@@ -24,21 +24,22 @@ export async function updateContentBlock(formData: FormData) {
     // Valid statuses: DRAFT, PUBLISHED, ARCHIVED. Default to PUBLISHED for backward compat if not provided
     const status = (formData.get("status") as "DRAFT" | "PUBLISHED" | "ARCHIVED") || "PUBLISHED"
 
-    await prisma.contentBlock.upsert({
-        where: { key },
-        update: { value, valueAr, type, status },
-        create: { key, value, valueAr, type, status },
-    })
-
-    // 📝 Audit Log
-    await prisma.auditLog.create({
-        data: {
-            userId: adminId,
-            action: "UPDATE_CONTENT",
-            resource: `content:${key}`,
-            details: JSON.stringify({ status, type, valueSnippet: value.slice(0, 50) }) // Stringified
-        }
-    })
+    await prisma.$transaction([
+        prisma.contentBlock.upsert({
+            where: { key },
+            update: { value, valueAr, type, status },
+            create: { key, value, valueAr, type, status },
+        }),
+        // 📝 Audit Log
+        prisma.auditLog.create({
+            data: {
+                userId: adminId,
+                action: "UPDATE_CONTENT",
+                resource: `content:${key}`,
+                details: JSON.stringify({ status, type, valueSnippet: value.slice(0, 50) }) // Stringified
+            }
+        })
+    ])
 
     revalidatePath("/")
     revalidatePath("/admin/content")
@@ -53,7 +54,7 @@ export async function addBrand(formData: FormData) {
     // For now, we'll assume logoUrl is passed or handle upload separately.
     // This is a simple impl for the database record.
 
-    await (prisma as any).brand.create({
+    await prisma.brand.create({
         data: {
             name,
             nameAr,

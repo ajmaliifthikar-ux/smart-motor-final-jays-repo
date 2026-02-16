@@ -70,6 +70,30 @@ export default async function ServiceDetailPage(props: Props) {
         return notFound()
     }
 
+    // Safely parse subServices
+    let subServicesList: any[] = []
+    if (typeof serviceData.subServices === 'string') {
+        try {
+            subServicesList = JSON.parse(serviceData.subServices)
+        } catch (e) {
+            console.warn('Failed to parse subServices:', e)
+        }
+    } else if (Array.isArray(serviceData.subServices)) {
+        subServicesList = serviceData.subServices
+    }
+
+    // Safely parse process
+    let processList: any[] = []
+    if (typeof serviceData.process === 'string') {
+        try {
+            processList = JSON.parse(serviceData.process)
+        } catch (e) {
+            console.warn('Failed to parse process:', e)
+        }
+    } else if (Array.isArray(serviceData.process)) {
+        processList = serviceData.process
+    }
+
     // Cast Prisma result to Service type
     const service: Service = {
         ...serviceData,
@@ -78,15 +102,15 @@ export default async function ServiceDetailPage(props: Props) {
         basePrice: serviceData.basePrice || undefined,
         category: (serviceData.category as any) || 'mechanical',
         icon: serviceData.icon || 'wrench',
-        process: serviceData.process as any,
-        subServices: serviceData.subServices as any,
+        process: processList,
+        subServices: subServicesList,
         seo: serviceData.seo as any,
         detailedDescription: serviceData.detailedDescription || undefined,
         image: serviceData.image || undefined,
         iconImage: serviceData.iconImage || undefined
     }
 
-    const itemOffered = (service.subServices || []).map((sub): Offer => ({
+    const itemOffered = subServicesList.map((sub): Offer => ({
         "@type": "Offer",
         itemOffered: {
             "@type": "Service",

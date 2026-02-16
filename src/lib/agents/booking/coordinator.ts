@@ -1,10 +1,10 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenerativeAI, GenerativeModel, SchemaType } from '@google/generative-ai'
 import { calendarTools } from '@/lib/tools/calendar-tools'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 
 export class BookingCoordinator {
-    private model: any
+    private model: GenerativeModel
 
     constructor() {
         this.model = genAI.getGenerativeModel({
@@ -33,10 +33,10 @@ export class BookingCoordinator {
                             name: "checkAvailability",
                             description: "Checks available appointment slots for a specific date.",
                             parameters: {
-                                type: "OBJECT",
+                                type: SchemaType.OBJECT,
                                 properties: {
                                     dateString: {
-                                        type: "STRING",
+                                        type: SchemaType.STRING,
                                         description: "Date in YYYY-MM-DD format"
                                     }
                                 },
@@ -66,7 +66,7 @@ export class BookingCoordinator {
                 // Handle Function Call (Tool Use)
                 const call = functionCalls[0]
                 if (call.name === 'checkAvailability') {
-                    const { dateString } = call.args
+                    const { dateString } = (call.args || {}) as { dateString: string }
                     const toolResult = await calendarTools.checkAvailability(dateString)
 
                     // Send tool result back to model
