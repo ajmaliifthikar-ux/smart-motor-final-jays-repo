@@ -1,6 +1,6 @@
-export const dynamic = "force-dynamic"
-
 'use client'
+
+export const dynamic = "force-dynamic"
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
@@ -12,15 +12,22 @@ import { Card } from '@/components/ui/card'
 import { toast } from 'sonner'
 
 export default function ServiceConfigPage() {
-  const { data: session, status } = useSession()
   const router = useRouter()
+  const [isMounted, setIsMounted] = useState(false)
+  const [session, setSession] = useState<any>(null)
+  const [status, setStatus] = useState('loading')
   const [configs, setConfigs] = useState<(ServiceSlotConfig & { id: string })[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [editingConfig, setEditingConfig] = useState<(ServiceSlotConfig & { id: string }) | null>(null)
-  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    setIsMounted(true)
+    const loadSession = async () => {
+      const sessionData = await fetch('/api/auth/session').then(r => r.json())
+      setSession(sessionData?.user || null)
+      setStatus(sessionData?.user ? 'authenticated' : 'unauthenticated')
+      setIsMounted(true)
+    }
+    loadSession()
   }, [])
 
   useEffect(() => {
