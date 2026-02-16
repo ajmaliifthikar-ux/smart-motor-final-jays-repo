@@ -1,1 +1,5 @@
-# Project Tracks\n\nThis file tracks all major tracks for the project. Each track has its own detailed plan in its respective folder.\n\n---\n\n- [x] **Track: Stabilize Core Systems & Dynamic Data Migration**\n  *Link: [./tracks/stabilize_core_20260216/](./tracks/stabilize_core_20260216/)*
+# Project Tracks
+
+This file tracks all major tracks for the project. Each track has its own detailed plan in its respective folder.
+
+---
