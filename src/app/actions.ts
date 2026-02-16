@@ -1,18 +1,16 @@
 'use server'
 
-import { prisma } from '@/lib/prisma'
+import { getAllBrands, getAllServices, getAllBookings, getAllPublishedContent } from '@/lib/firebase-db'
 import { traceIntegration } from '@/lib/diagnostics'
 
 export async function getBrandsWithModels() {
     return await traceIntegration(
-        { service: 'Prisma', operation: 'fetch_brands' },
+        { service: 'Firebase', operation: 'fetch_brands' },
         async () => {
-            const brands = await prisma.brand.findMany({
-                orderBy: { name: 'asc' }
-            })
+            const brands = await getAllBrands()
             return brands.map(b => ({
                 ...b,
-                models: b.models ? b.models.split(',') : []
+                models: []
             }))
         }
     )
@@ -20,12 +18,9 @@ export async function getBrandsWithModels() {
 
 export async function getServices() {
     return await traceIntegration(
-        { service: 'Prisma', operation: 'fetch_services' },
+        { service: 'Firebase', operation: 'fetch_services' },
         async () => {
-            return await prisma.service.findMany({
-                where: { isEnabled: true },
-                orderBy: { name: 'asc' }
-            })
+            return await getAllServices()
         }
     )
 }
@@ -40,56 +35,39 @@ export async function getAvailableSlots(dateString: string) {
     ]
 
     // Fetch existing bookings for this date
-    const bookedSlots = await prisma.booking.findMany({
-        where: {
-            date: date,
-            status: { not: 'CANCELLED' }
-        },
-        select: { slot: true }
-    })
-
-    const bookedSlotTimes = bookedSlots.map(b => b.slot)
+    const allBookings = await getAllBookings()
+    const bookedSlots = allBookings
+        .filter(b => {
+            const bookingDate = b.date instanceof Date ? b.date : b.date?.toDate?.()
+            return bookingDate && bookingDate.toDateString() === date.toDateString() && b.status !== 'CANCELLED'
+        })
+        .map(b => b.slot)
 
     // Filter out booked slots
-    return allSlots.filter(slot => !bookedSlotTimes.includes(slot))
+    return allSlots.filter(slot => !bookedSlots.includes(slot))
 }
 
 export async function getFAQs() {
-    return await prisma.fAQ.findMany({
-        orderBy: { createdAt: 'asc' }
-    })
+    return await getAllPublishedContent('FAQ')
 }
 
 export async function getContentHistory() {
-    const [audit, snapshots] = await Promise.all([
-        prisma.contentAudit.findMany({
-            orderBy: { timestamp: 'desc' },
-            take: 50
-        }),
-        prisma.contentHistory.findMany({
-            orderBy: { createdAt: 'desc' },
-            take: 20
-        })
-    ])
-    return { audit, snapshots }
+    // Content history not yet implemented in Firebase
+    return { audit: [], snapshots: [] }
 }
 
 export async function searchCustomer(query: string) {
     if (!query || query.length < 3) return null
 
     try {
-        const customers = await prisma.booking.findMany({
-            where: {
-                OR: [
-                    { guestEmail: { contains: query } },
-                    { guestPhone: { contains: query } },
-                    { guestName: { contains: query } }
-                ]
-            },
-            orderBy: { createdAt: 'desc' },
-            include: { service: true },
-            take: 5
-        })
+        const allBookings = await getAllBookings()
+        const customers = allBookings
+            .filter(b => 
+                b.guestEmail?.toLowerCase().includes(query.toLowerCase()) ||
+                b.guestPhone?.includes(query) ||
+                b.guestName?.toLowerCase().includes(query.toLowerCase())
+            )
+            .slice(0, 5)
 
         if (customers.length === 0) return null
 
@@ -98,8 +76,8 @@ export async function searchCustomer(query: string) {
             email: c.guestEmail,
             phone: c.guestPhone,
             car: `${c.vehicleBrand} ${c.vehicleModel}`,
-            lastService: c.service.name,
-            lastVisit: c.date.toISOString(),
+            lastService: c.serviceId,
+            lastVisit: c.date instanceof Date ? c.date.toISOString() : c.date?.toDate?.().toISOString(),
             status: c.status
         }))
     } catch (error) {

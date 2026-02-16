@@ -1,6 +1,5 @@
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
-import { prisma } from '@/lib/prisma'
 import { ServicePackage } from '@/types/v2'
 import { PackagesList } from '@/components/v2/sections/packages-list'
 import { Metadata } from 'next'
@@ -15,9 +14,8 @@ export const revalidate = 3600
 export default async function PackagesPage() {
     let packagesData: any[] = []
     try {
-        packagesData = await prisma.servicePackage.findMany({
-            orderBy: { createdAt: 'asc' }
-        })
+        // Service packages not yet in Firebase schema
+        packagesData = []
     } catch (e) {
         console.error("DB Error", e);
     }

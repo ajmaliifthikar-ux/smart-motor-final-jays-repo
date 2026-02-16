@@ -1,7 +1,7 @@
 import { getAdminSession } from "@/lib/session"
 import { redirect } from "next/navigation"
 import { StrategyLabClient } from "./client"
-import { prisma } from "@/lib/prisma"
+import { getAllBookings } from "@/lib/firebase-db"
 
 export default async function StrategyLabPage() {
     const session = await getAdminSession()
@@ -10,10 +10,19 @@ export default async function StrategyLabPage() {
     }
 
     // Fetch snapshot of current business data
-    const stats = await prisma.booking.groupBy({
-        by: ['status'],
-        _count: true
+    const bookings = await getAllBookings()
+    
+    // Manually aggregate by status
+    const statusCount: Record<string, number> = {}
+    bookings.forEach(b => {
+        const status = b.status || 'UNKNOWN'
+        statusCount[status] = (statusCount[status] || 0) + 1
     })
+    
+    const stats = Object.entries(statusCount).map(([status, count]) => ({
+        status,
+        _count: count
+    }))
 
     return (
         <div className="space-y-8">

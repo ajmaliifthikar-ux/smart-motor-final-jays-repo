@@ -1,6 +1,7 @@
 'use server'
 
-import { prisma } from '@/lib/prisma'
+import { createBooking, getAllBookings } from '@/lib/firebase-db'
+import { Timestamp } from 'firebase/firestore'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
@@ -41,31 +42,34 @@ export async function bookSlot(prevState: BookingState, formData: FormData): Pro
     const bookingDate = new Date(data.date)
 
     try {
-        // 🔒 TRANSACTION: Robust Race Condition Handling
-        // logic: We rely on the @@unique([date, slot]) constraint in the DB.
-        // If a booking exists, create() will throw a P2002 error.
+        // Check if slot is already taken
+        const allBookings = await getAllBookings()
+        const slotTaken = allBookings.some(b => {
+            const bDate = b.date instanceof Date ? b.date : b.date?.toDate?.()
+            return bDate && bDate.toDateString() === bookingDate.toDateString() && 
+                   b.slot === data.slot && 
+                   b.status !== 'CANCELLED'
+        })
 
-        await prisma.booking.create({
-            data: {
-                serviceId: data.serviceId,
-                date: bookingDate,
-                slot: data.slot,
-                userId: data.userId || null,
-                guestName: data.guestName,
-                guestEmail: data.guestEmail,
-                guestPhone: data.guestPhone,
-                status: 'LOCKED', // Initial status is LOCKED until confirmed? Or PENDING based on MVP. 
-                // Using LOCKED as per recent schema update to signify it's held.
-            }
+        if (slotTaken) {
+            return { success: false, message: 'This slot has already been taken.' }
+        }
+
+        await createBooking({
+            serviceId: data.serviceId,
+            date: Timestamp.fromDate(bookingDate),
+            slot: data.slot,
+            userId: data.userId || undefined,
+            guestName: data.guestName,
+            guestEmail: data.guestEmail,
+            guestPhone: data.guestPhone,
+            status: 'PENDING',
         })
 
         revalidatePath('/admin')
         return { success: true, message: 'Slot reserved successfully!' }
 
     } catch (error: any) {
-        if (error.code === 'P2002') {
-            return { success: false, message: 'This slot has already been taken.' }
-        }
         console.error('Booking error:', error)
         return { success: false, message: 'System error. Please try again.' }
     }

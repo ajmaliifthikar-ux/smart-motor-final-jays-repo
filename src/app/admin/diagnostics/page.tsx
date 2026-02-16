@@ -1,6 +1,5 @@
 import { getAdminSession } from "@/lib/session"
 import { redirect } from "next/navigation"
-import { prisma } from "@/lib/prisma"
 import { runSystemDiagnostics } from "@/lib/diagnostics"
 import { Card } from "@/components/ui/card"
 import { Activity, ShieldCheck, Database, Zap, Clock, AlertTriangle, CheckCircle2, ChevronRight } from "lucide-react"
@@ -14,13 +13,8 @@ export default async function DiagnosticsPage() {
         redirect('/auth')
     }
 
-    const [realtimeHealth, recentTraces] = await Promise.all([
-        runSystemDiagnostics(),
-        prisma.integrationTrace.findMany({
-            orderBy: { timestamp: 'desc' },
-            take: 50
-        })
-    ])
+    const realtimeHealth = await runSystemDiagnostics()
+    const recentTraces: Array<{ id: string; timestamp: number; service: string; operation: string; latency: number; duration: number; status: string; error?: string }> = [] // Integration traces not yet in Firebase
 
     return (
         <div className="space-y-10">

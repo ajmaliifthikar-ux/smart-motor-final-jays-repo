@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { prisma } from '@/lib/prisma'
+import { getAllServices, getAllBrands, getAllPublishedContent } from '@/lib/firebase-db'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://smartmotor.ae'
@@ -11,9 +11,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         '/new-home/about',
         '/new-home/contact',
         '/new-home/brands',
-        // '/new-home/services', // Removed as page.tsx doesn't exist in that folder
         '/new-home/smart-tips',
-        '/new-home/packages', // Added packages
+        '/new-home/packages',
     ]
 
     const staticEntries = routes.map((route) => ({
@@ -29,17 +28,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     try {
         const [s, b, p] = await Promise.all([
-            prisma.service.findMany({
-                select: { slug: true, updatedAt: true },
-                where: { isEnabled: true }
-            }),
-            prisma.brand.findMany({
-                select: { slug: true, id: true, updatedAt: true }
-            }),
-            prisma.blogPost.findMany({
-                where: { isPublished: true },
-                select: { slug: true, updatedAt: true, publishedAt: true }
-            }),
+            getAllServices(),
+            getAllBrands(),
+            getAllPublishedContent('BLOG')
         ])
         services = s
         brands = b
@@ -50,21 +41,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     const serviceRoutes = services.map((service) => ({
         url: `${baseUrl}/new-home/services/${service.slug}`,
-        lastModified: service.updatedAt,
+        lastModified: service.updatedAt?.toDate?.() || new Date(),
         changeFrequency: 'weekly' as const,
         priority: 0.9,
     }))
 
     const brandRoutes = brands.map((brand) => ({
         url: `${baseUrl}/new-home/brands/${brand.slug || brand.id}`,
-        lastModified: brand.updatedAt,
+        lastModified: brand.updatedAt?.toDate?.() || new Date(),
         changeFrequency: 'monthly' as const,
         priority: 0.8,
     }))
 
     const blogRoutes = posts.map((post) => ({
         url: `${baseUrl}/new-home/smart-tips/${post.slug}`,
-        lastModified: post.publishedAt || post.updatedAt,
+        lastModified: post.updatedAt?.toDate?.() || new Date(),
         changeFrequency: 'monthly' as const,
         priority: 0.7,
     }))
