@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import { prisma } from '@/lib/prisma'
+import { createSEOReport } from '@/lib/firebase-db'
 import { requireAdmin } from '@/lib/session'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
@@ -52,18 +52,23 @@ export async function POST(req: NextRequest) {
         const analysis = JSON.parse(jsonStr)
 
         // 3. Save to database
-        const report = await prisma.sEOReport.create({
-            data: {
-                url,
-                score: analysis.score,
-                technicalLogs: analysis.technical,
-                onPageLogs: JSON.stringify({ headers: analysis.technical.issues }), // Mapping simplified for now
-                contentLogs: analysis.content,
-                recommendations: analysis.recommendations
-            }
+        const reportId = await createSEOReport({
+            url,
+            score: analysis.score,
+            technicalLogs: analysis.technical,
+            onPageLogs: JSON.stringify({ headers: analysis.technical.issues }), // Mapping simplified for now
+            contentLogs: analysis.content,
+            recommendations: analysis.recommendations
         })
 
-        return NextResponse.json(report)
+        return NextResponse.json({
+            id: reportId,
+            url,
+            score: analysis.score,
+            technicalLogs: analysis.technical,
+            contentLogs: analysis.content,
+            recommendations: analysis.recommendations
+        })
     } catch (error) {
         console.error('SEO Analysis failed:', error)
         return NextResponse.json({ error: 'Failed to perform SEO analysis' }, { status: 500 })

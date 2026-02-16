@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getAllPublishedContent, createContent } from '@/lib/firebase-db'
 import { auth } from '@/auth'
 import { z } from 'zod'
 
@@ -22,12 +22,26 @@ export async function GET(req: Request) {
             return new NextResponse('Unauthorized', { status: 401 })
         }
 
-        const articles = await prisma.article.findMany({
-            orderBy: { createdAt: 'desc' }
-        })
+        // Get all published articles/content
+        const articles = await getAllPublishedContent('BLOG')
 
-        return NextResponse.json(articles)
+        // Transform for backward compatibility
+        const formattedArticles = articles.map(article => ({
+            id: article.id,
+            title: article.title,
+            slug: article.slug,
+            content: article.content,
+            seoTitle: article.title,
+            seoDesc: article.content?.substring(0, 160),
+            keywords: article.type,
+            isPublished: article.published,
+            createdAt: article.createdAt,
+            updatedAt: article.updatedAt,
+        }))
+
+        return NextResponse.json(formattedArticles)
     } catch (error) {
+        console.error('[ARTICLES_GET]', error)
         return new NextResponse('Internal Error', { status: 500 })
     }
 }
@@ -50,19 +64,25 @@ export async function POST(req: Request) {
             .replace(/[\s_-]+/g, '-')
             .replace(/^-+|-+$/g, '') + '-' + Date.now().toString().slice(-4)
 
-        const article = await prisma.article.create({
-            data: {
-                title,
-                slug,
-                content,
-                seoTitle,
-                seoDesc: seoDesc || title,
-                keywords: keywords || '',
-                isPublished
-            }
+        const articleId = await createContent({
+            type: 'BLOG',
+            title,
+            slug,
+            content,
+            author: session.user.name || 'Admin',
+            published: isPublished,
         })
 
-        return NextResponse.json(article)
+        return NextResponse.json({
+            id: articleId,
+            title,
+            slug,
+            content,
+            seoTitle,
+            seoDesc: seoDesc || title,
+            keywords: keywords || '',
+            isPublished,
+        })
     } catch (error) {
         console.error('[ARTICLES_POST]', error)
         return new NextResponse('Internal Error', { status: 500 })

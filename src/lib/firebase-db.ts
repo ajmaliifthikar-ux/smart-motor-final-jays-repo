@@ -370,6 +370,96 @@ export async function updateContent(contentId: string, updates: Partial<Firebase
   }
 }
 
+export async function deleteContent(contentId: string): Promise<void> {
+  try {
+    await deleteDoc(doc(db, 'content', contentId))
+  } catch (error) {
+    console.error('Error deleting content:', error)
+    throw error
+  }
+}
+
+// ─── SEO REPORTS ───
+
+export interface FirebaseSEOReport {
+  id?: string
+  url: string
+  score: number
+  technicalLogs: any
+  onPageLogs: any
+  contentLogs: any
+  recommendations: string[]
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+export async function createSEOReport(reportData: Omit<FirebaseSEOReport, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  try {
+    const newDocRef = doc(collection(db, 'seoReports'))
+    const now = Timestamp.now()
+    await setDoc(newDocRef, {
+      ...reportData,
+      createdAt: now,
+      updatedAt: now,
+    })
+    return newDocRef.id
+  } catch (error) {
+    console.error('Error creating SEO report:', error)
+    throw error
+  }
+}
+
+// ─── SUBSCRIBER MANAGEMENT ───
+
+export interface FirebaseSubscriber {
+  email: string
+  isActive: boolean
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+export async function getSubscriber(email: string): Promise<FirebaseSubscriber | null> {
+  try {
+    const q = query(collection(db, 'subscribers'), where('email', '==', email))
+    const snapshot = await getDocs(q)
+    
+    if (snapshot.empty) return null
+    
+    const doc = snapshot.docs[0]
+    return { email: doc.id, ...doc.data() } as FirebaseSubscriber
+  } catch (error) {
+    console.error('Error getting subscriber:', error)
+    throw error
+  }
+}
+
+export async function createSubscriber(email: string): Promise<void> {
+  try {
+    const now = Timestamp.now()
+    await setDoc(doc(db, 'subscribers', email), {
+      email,
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+    })
+  } catch (error) {
+    console.error('Error creating subscriber:', error)
+    throw error
+  }
+}
+
+export async function updateSubscriber(email: string, updates: Partial<FirebaseSubscriber>): Promise<void> {
+  try {
+    await updateDoc(doc(db, 'subscribers', email), {
+      ...updates,
+      updatedAt: Timestamp.now(),
+    })
+  } catch (error) {
+    console.error('Error updating subscriber:', error)
+    throw error
+  }
+}
+
 // ─── BATCH OPERATIONS ───
 
 export async function batchWrite(callback: (batch: WriteBatch) => Promise<void>): Promise<void> {

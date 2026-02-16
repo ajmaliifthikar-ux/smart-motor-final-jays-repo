@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import { prisma } from '@/lib/prisma'
+import { getUser } from '@/lib/firebase-db'
+import { db } from '@/lib/firebase-db'
+import { getDocs, collection } from 'firebase/firestore'
 import redis from '@/lib/redis'
 
 export const dynamic = 'force-dynamic'
@@ -9,9 +11,9 @@ export async function GET() {
     const results: any = {
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV,
-        database: {
-            url_present: !!process.env.DATABASE_URL,
-            host: process.env.DATABASE_URL?.split('@')[1]?.split(':')[0] || 'Unknown'
+        firebase: {
+            projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'Unknown',
+            database: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL?.includes('firebaseio.com') ? 'Configured' : 'Not configured'
         },
         services: []
     }
@@ -26,9 +28,10 @@ export async function GET() {
         }
     }
 
-    // 1. Test GreenGeeks DB
-    results.services.push(await test('Database (GreenGeeks)', async () => {
-        return await prisma.brand.count()
+    // 1. Test Firebase Firestore
+    results.services.push(await test('Firebase Firestore', async () => {
+        const snapshot = await getDocs(collection(db, 'users'))
+        return `Connected (${snapshot.size} users)`
     }))
 
     // 2. Test Redis Cloud

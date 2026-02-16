@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getUserByEmail, createBooking } from '@/lib/firebase-db'
 import { getServiceSlots } from '@/lib/booking-utils'
 import { z } from 'zod'
 import { traceIntegration } from '@/lib/diagnostics'
+import { Timestamp } from 'firebase/firestore'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,37 +43,36 @@ export async function POST(req: Request) {
             }, { status: 409 })
         }
 
-        // 2. Proceed with Booking (Optimistic Locking not strictly needed due to high capacity, but good practice)
-        // We'll trust the check above for now, or we could double-check inside a transaction count.
-
+        // 2. Proceed with Booking
         let userId: string | null = null
 
-        // Try to link to existing user
-        const existingUser = await prisma.user.findUnique({ where: { email: data.email } })
+        // Try to link to existing user via Firebase
+        const existingUser = await getUserByEmail(data.email)
         if (existingUser) {
             userId = existingUser.id
         }
 
-        const booking = await traceIntegration(
-            { service: 'Prisma', operation: 'create_booking', metadata: { email: data.email, car: `${data.brand} ${data.model}` } },
-            () => prisma.booking.create({
-                data: {
+        const bookingData = await traceIntegration(
+            { service: 'Firebase', operation: 'create_booking', metadata: { email: data.email, car: `${data.brand} ${data.model}` } },
+            async () => {
+                const bookingId = await createBooking({
                     serviceId: data.serviceId,
-                    date: bookingDate,
+                    date: Timestamp.fromDate(bookingDate),
                     slot: data.time,
-                    userId: userId,
+                    userId: userId || undefined,
                     guestName: data.fullName,
                     guestEmail: data.email,
                     guestPhone: data.phone,
                     vehicleBrand: data.brand,
                     vehicleModel: data.model,
                     notes: data.notes,
-                    status: 'PENDING'
-                }
-            })
+                    status: 'PENDING',
+                })
+                return { id: bookingId }
+            }
         )
 
-        return NextResponse.json({ success: true, bookingId: booking.id })
+        return NextResponse.json({ success: true, bookingId: bookingData.id })
 
     } catch (error: any) {
         console.error('Booking Error:', error)

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getSubscriber, createSubscriber, updateSubscriber } from '@/lib/firebase-db'
 import { z } from 'zod'
 import { sendNewsletterWelcomeEmail } from '@/lib/email'
 
@@ -15,26 +15,19 @@ export async function POST(req: Request) {
         const { email } = subscribeSchema.parse(body)
 
         // Check if already subscribed
-        const existing = await prisma.subscriber.findUnique({
-            where: { email },
-        })
+        const existing = await getSubscriber(email)
 
         if (existing) {
             if (!existing.isActive) {
                 // Reactivate
-                await prisma.subscriber.update({
-                    where: { email },
-                    data: { isActive: true },
-                })
+                await updateSubscriber(email, { isActive: true })
                 return NextResponse.json({ success: true, message: 'Welcome back! You have been resubscribed.' })
             }
             return NextResponse.json({ success: true, message: 'You are already subscribed to our newsletter.' })
         }
 
         // Create new subscriber
-        await prisma.subscriber.create({
-            data: { email },
-        })
+        await createSubscriber(email)
 
         // Send welcome email via Resend/Nodemailer (Phase 3)
         await sendNewsletterWelcomeEmail(email)
