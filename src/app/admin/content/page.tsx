@@ -5,6 +5,7 @@ import { BrandManager } from "@/components/admin/content/brand-manager"
 import { ContentEditor } from "@/components/admin/content/content-editor"
 import { SEODashboard } from "@/components/admin/seo/seo-dashboard"
 import { PageManager } from "@/components/admin/content/page-manager"
+import { HistoryViewer } from "@/components/admin/content/history-viewer"
 
 export default async function ContentPage() {
     // 1. Fetch Data
@@ -54,6 +55,16 @@ export default async function ContentPage() {
             content: <BrandManager brands={brands} />
         },
         {
+            id: "pages",
+            label: "Page Layouts",
+            content: <PageManager initialPages={pageBlocks} />
+        },
+        {
+            id: "history",
+            label: "Version History",
+            content: <HistoryViewer />
+        },
+        {
             id: "ai-writer",
             label: "AI Content Studio",
             content: <ContentEditor />
@@ -62,11 +73,6 @@ export default async function ContentPage() {
             id: "seo",
             label: "SEO Intelligence",
             content: <SEODashboard />
-        },
-        {
-            id: "pages",
-            label: "Page Layouts",
-            content: <PageManager initialPages={pageBlocks} />
         }
     ]
 

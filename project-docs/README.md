@@ -6,7 +6,8 @@ Welcome to the centralized documentation hub for the Smart Motor Platform. All t
 
 ### [Management](file:///project-docs/management/)
 Strategic plans, PRDs, and handover documents.
-- [Handover Document](file:///project-docs/management/handover-document.md): Current status and CI/CD architecture handover for new agents.
+- [FINAL HANDOVER FEB 2026](file:///project-docs/management/FINAL_HANDOVER_FEB_2026.md): **Current Stable Handover** including Gemini 2.5/3 integration and session fix.
+- [Handover Document](file:///project-docs/management/handover-document.md): Legacy architecture handover for new agents.
 
 ### [General](file:///project-docs/general/)
 High-level project standards and rules.

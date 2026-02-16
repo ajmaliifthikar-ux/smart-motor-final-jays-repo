@@ -146,6 +146,14 @@ export default function RootLayout({
         <LanguageProvider>
           <RecaptchaProvider>
             {children}
+            <script dangerouslySetInnerHTML={{ __html: `
+              document.addEventListener('click', function() {
+                if (typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext)) {
+                  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                  if (ctx.state === 'suspended') ctx.resume();
+                }
+              }, { once: true });
+            `}} />
           </RecaptchaProvider>
         </LanguageProvider>
       </body>

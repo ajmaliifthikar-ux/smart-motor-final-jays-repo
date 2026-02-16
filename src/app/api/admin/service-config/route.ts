@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/auth'
+import { requireAdmin } from '@/lib/session'
 import { adminDb } from '@/lib/firebase-admin'
 import { ServiceSlotConfig } from '@/lib/booking-system'
 
@@ -23,13 +23,8 @@ export async function GET(req: NextRequest) {
 
 // POST: Create new service configuration
 export async function POST(req: NextRequest) {
-  const session = await auth()
-
-  if (!session || session.user?.role !== 'ADMIN') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
   try {
+    await requireAdmin()
     const config: ServiceSlotConfig = await req.json()
 
     const docRef = await adminDb.collection('serviceConfigs').add({
@@ -46,13 +41,8 @@ export async function POST(req: NextRequest) {
 
 // PUT: Update service configuration
 export async function PUT(req: NextRequest) {
-  const session = await auth()
-
-  if (!session || session.user?.role !== 'ADMIN') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
   try {
+    await requireAdmin()
     const { id, ...config } = await req.json()
 
     await adminDb.collection('serviceConfigs').doc(id).update({
@@ -68,13 +58,8 @@ export async function PUT(req: NextRequest) {
 
 // DELETE: Remove service configuration
 export async function DELETE(req: NextRequest) {
-  const session = await auth()
-
-  if (!session || session.user?.role !== 'ADMIN') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
   try {
+    await requireAdmin()
     const { searchParams } = new URL(req.url)
     const id = searchParams.get('id')
 

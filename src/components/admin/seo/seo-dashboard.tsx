@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Search, Loader2, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { SEOOpportunities } from './seo-opportunities'
 
 interface SEOReport {
     id: string
@@ -40,7 +41,7 @@ export function SEODashboard() {
     }
 
     return (
-        <div className="space-y-8 pb-20">
+        <div className="space-y-12 pb-20">
             {/* Header / Input Area */}
             <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.03)]">
                 <div className="flex flex-col md:flex-row gap-6 items-end">
@@ -80,6 +81,8 @@ export function SEODashboard() {
                     </button>
                 </div>
             </div>
+
+            <SEOOpportunities />
 
             {report && (
                 <motion.div

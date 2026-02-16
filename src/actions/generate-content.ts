@@ -5,7 +5,7 @@ import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { checkRateLimit, incrementRateLimit } from "@/lib/rate-limit"
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk")
 
 export async function generateContent(formData: FormData) {
     const session = await auth()
@@ -43,7 +43,7 @@ export async function generateContent(formData: FormData) {
     }
 
     try {
-        const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-3-flash-preview' })
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
         const prompt = `
       Write a professional SEO-optimized article about "${topic}".
@@ -70,7 +70,7 @@ export async function generateContent(formData: FormData) {
             data: {
                 userId: userId,
                 action: "GENERATE_ARTICLE",
-                model: "gemini-1.5-flash",
+                model: "gemini-2.5-flash",
                 prompt: `Topic: ${topic} | Tone: ${tone}`,
                 tokenCount: estimatedTokens,
                 // cost: 0.000... (Calculate if needed)

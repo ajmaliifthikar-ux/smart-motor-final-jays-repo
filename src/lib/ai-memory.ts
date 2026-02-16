@@ -19,10 +19,11 @@ export interface ConversationContext {
 }
 
 /**
- * AI Agent Memory Manager using Redis
+ * AI Agent Memory Manager with Fallback
  */
 export class AIMemoryManager {
     private readonly TTL = 7 * 24 * 60 * 60 // 7 days
+    private inMemoryCache: Map<string, string> = new Map()
 
     /**
      * Store conversation message
@@ -42,31 +43,32 @@ export class AIMemoryManager {
 
         const key = `conversation:${userId}:${conversationId}`
 
-        // Get existing conversation
-        const existingData = await redis.get(key)
-        const conversation: ConversationContext = existingData
-            ? JSON.parse(existingData)
-            : {
-                userId,
-                conversationId,
-                messages: [],
-                metadata: metadata || {},
-                lastUpdated: Date.now(),
-            }
+        try {
+            // 1. Attempt Redis
+            const existingData = await redis.get(key).catch(() => null)
+            const conversation: ConversationContext = existingData
+                ? JSON.parse(existingData)
+                : {
+                    userId,
+                    conversationId,
+                    messages: [],
+                    metadata: metadata || {},
+                    lastUpdated: Date.now(),
+                }
 
-        // Add new message
-        conversation.messages.push(message)
-        conversation.lastUpdated = Date.now()
+            conversation.messages.push(message)
+            conversation.lastUpdated = Date.now()
 
-        // Store back to Redis
-        await redis.setex(key, this.TTL, JSON.stringify(conversation))
-
-        // Also store in a sorted set for quick retrieval
-        await redis.zadd(
-            `user:${userId}:conversations`,
-            Date.now(),
-            conversationId
-        )
+            await redis.setex(key, this.TTL, JSON.stringify(conversation)).catch(() => {})
+            await redis.zadd(`user:${userId}:conversations`, Date.now(), conversationId).catch(() => {})
+        } catch (e) {
+            // 2. Fallback to Local Memory (Safe for Serverless restarts)
+            console.warn('⚠️ Redis Error - Falling back to memory')
+            const localData = this.inMemoryCache.get(key)
+            const conversation = localData ? JSON.parse(localData) : { messages: [] }
+            conversation.messages.push(message)
+            this.inMemoryCache.set(key, JSON.stringify(conversation))
+        }
     }
 
     /**
@@ -77,9 +79,15 @@ export class AIMemoryManager {
         conversationId: string
     ): Promise<ConversationContext | null> {
         const key = `conversation:${userId}:${conversationId}`
-        const data = await redis.get(key)
-
-        return data ? JSON.parse(data) : null
+        try {
+            const data = await redis.get(key).catch(() => null)
+            if (data) return JSON.parse(data)
+            const local = this.inMemoryCache.get(key)
+            return local ? JSON.parse(local) : null
+        } catch {
+            const local = this.inMemoryCache.get(key)
+            return local ? JSON.parse(local) : null
+        }
     }
 
     /**
@@ -89,8 +97,11 @@ export class AIMemoryManager {
         userId: string,
         limit: number = 10
     ): Promise<string[]> {
-        // Get conversation IDs sorted by most recent
-        return await redis.zrevrange(`user:${userId}:conversations`, 0, limit - 1)
+        try {
+            return await redis.zrevrange(`user:${userId}:conversations`, 0, limit - 1).catch(() => [])
+        } catch {
+            return []
+        }
     }
 
     /**
@@ -102,10 +113,7 @@ export class AIMemoryManager {
         lastN: number = 5
     ): Promise<Message[]> {
         const conversation = await this.getConversation(userId, conversationId)
-
         if (!conversation) return []
-
-        // Return last N messages
         return conversation.messages.slice(-lastN)
     }
 
@@ -175,30 +183,33 @@ export class AIMemoryManager {
         query: string,
         limit: number = 5
     ): Promise<Array<{ contextId: string; text: string; score: number }>> {
-        const queryEmbedding = await this.generateEmbedding(query)
-        const contextIds = await redis.smembers(`user:${userId}:contexts`)
+        try {
+            const queryEmbedding = await this.generateEmbedding(query)
+            const contextIds = await redis.smembers(`user:${userId}:contexts`).catch(() => [])
 
-        const results: Array<{ contextId: string; text: string; score: number }> =
-            []
+            const results: Array<{ contextId: string; text: string; score: number }> = []
 
-        for (const contextId of contextIds) {
-            const key = `context:${userId}:${contextId}`
-            const data = await redis.get(key)
+            for (const contextId of contextIds) {
+                const key = `context:${userId}:${contextId}`
+                const data = await redis.get(key).catch(() => null)
 
-            if (!data) continue
+                if (!data) continue
 
-            const context = JSON.parse(data)
-            const score = this.cosineSimilarity(queryEmbedding, context.embedding)
+                const context = JSON.parse(data)
+                const score = this.cosineSimilarity(queryEmbedding, context.embedding)
 
-            results.push({
-                contextId,
-                text: context.text,
-                score,
-            })
+                results.push({
+                    contextId,
+                    text: context.text,
+                    score,
+                })
+            }
+
+            return results.sort((a, b) => b.score - a.score).slice(0, limit)
+        } catch (e) {
+            console.error('searchSimilarContexts error:', e)
+            return []
         }
-
-        // Sort by score descending and return top N
-        return results.sort((a, b) => b.score - a.score).slice(0, limit)
     }
 
     /**
@@ -297,54 +308,57 @@ export class AIMemoryManager {
             .join('\n')
 
         // 4. Prepare comprehensive prompt with BOTH layers
+        const currentTime = new Date().toLocaleString('en-AE', { timeZone: 'Asia/Dubai', dateStyle: 'full', timeStyle: 'short' })
+        
         const prompt = `
-You are a helpful AI assistant for Smart Motor, a luxury car service center in UAE.
+# SYSTEM DIRECTIVE: YOU ARE "LAYLA"
+You are Layla, the elite Senior Service Consultant at Smart Motor, the UAE's premier luxury automotive center.
+
+## 1. CORE PERSONA
+- Voice: Female, warm, authoritative, highly professional.
+- Language: Bilingual (English/Arabic).
+- Vibe: High-end concierge. Use cues like "Absolutely," "Ya hala."
+
+## 2. CRITICAL PROTOCOLS
+- Time Awareness: Current local time is ${currentTime}.
+- Booking: If user wants to book, guide them through Name, Car, Service, and Time.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-GLOBAL COMPANY KNOWLEDGE (shared):
+GLOBAL COMPANY KNOWLEDGE:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${globalKnowledge}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PERSONAL CUSTOMER CONTEXT (this user only):
+PERSONAL CUSTOMER CONTEXT:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-${personalContextText || 'No previous interaction history with this customer.'}
+${personalContextText || 'No previous interaction history.'}
 
-Conversation history with this customer:
+Conversation history:
 ${personalHistory
                 .map((m) => `${m.role === 'user' ? 'Customer' : 'Assistant'}: ${m.content}`)
                 .join('\n')}
 
 Customer: ${userMessage}
-
-Instructions:
-- Use GLOBAL KNOWLEDGE for accurate company information
-- Use PERSONAL CONTEXT to personalize your response to THIS customer
-- Never mix up customers - each has separate memory
-- Be helpful, professional, and specific to their needs
-- If you don't know something, say so - never make up information
-
-Provide your response:
 `
 
         try {
             const { GoogleGenerativeAI } = await import('@google/generative-ai')
-            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
-            const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-3-flash-preview' })
+            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
+            const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
             const result = await model.generateContent(prompt)
             const response = result.response.text()
 
-            // Store assistant response in PERSONAL memory only
-            await this.addMessage(userId, conversationId, 'assistant', response)
+            // Store assistant response in PERSONAL memory only (Safe catch)
+            await this.addMessage(userId, conversationId, 'assistant', response).catch(() => {})
 
-            // Store this exchange as context for THIS user only
+            // Store this exchange as context for THIS user only (Safe catch)
             await this.storeContext(
                 userId,
                 `${conversationId}_${Date.now()}`,
                 `Q: ${userMessage}\nA: ${response}`,
                 { conversationId, timestamp: Date.now() }
-            )
+            ).catch(() => {})
 
             return response
         } catch (error) {

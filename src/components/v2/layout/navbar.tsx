@@ -65,10 +65,10 @@ export function Navbar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 pt-0">
       <div className={cn(
-        'w-full max-w-[95%] md:max-w-7xl mx-auto px-6 md:px-10 transition-all duration-500 rounded-b-[3rem]',
+        'w-full max-w-[95%] md:max-w-7xl mx-auto px-6 md:px-10 transition-all duration-500 rounded-b-[3rem] border border-white/10 shadow-sm',
         isScrolled
-          ? 'bg-white/95 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.05)] py-4'
-          : 'bg-transparent py-6'
+          ? 'bg-white/80 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] py-4'
+          : 'bg-white/10 backdrop-blur-md py-6'
       )}>
         <nav className="flex items-center justify-between relative">
           {/* Logo */}

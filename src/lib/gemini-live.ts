@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { aiMemory } from './ai-memory'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
 
 export interface LiveSessionConfig {
   userId: string
@@ -88,9 +88,11 @@ Respond helpfully and professionally:
 `
 
       const model = genAI.getGenerativeModel({
-        model: process.env.GEMINI_MODEL || 'gemini-3-flash-preview',
+        model: 'gemini-2.5-flash',
       })
 
+      // Optimized for Agentic & Native Live Audio: gemini-2.5-flash-native-audio-preview-12-2025
+      
       const request = {
         contents: [{ role: 'user' as const, parts: [{ text: prompt }] }],
         generationConfig: {

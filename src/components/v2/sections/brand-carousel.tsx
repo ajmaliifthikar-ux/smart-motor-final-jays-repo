@@ -3,42 +3,25 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { Tooltip } from '@/components/ui/tooltip'
+import { getBrandsWithModels } from '@/app/actions'
+import { Loader2 } from 'lucide-react'
 
-const carouselBrands = [
-    { id: 'mercedes', name: 'Mercedes-Benz', src: '/brands-carousel/mercedes-logo.png', slug: 'mercedes' },
-    { id: 'bmw', name: 'BMW', src: '/brands-carousel/bmw-logo.png', slug: 'bmw' },
-    { id: 'audi', name: 'Audi', src: '/brands-carousel/audi-logo-150x150-1.png', slug: 'audi' },
-    { id: 'porsche', name: 'Porsche', src: '/brands-carousel/porsche-logo.png', slug: 'porsche' },
-    { id: 'bentley', name: 'Bentley', src: '/brands-carousel/bentley-logo-150x150-1.png', slug: 'bentley' },
-    { id: 'land-rover', name: 'Range Rover', src: '/brands-carousel/land-rover-logo.png', slug: 'land-rover' },
-    { id: 'ferrari', name: 'Ferrari', src: '/brands-carousel/ferrari-logo.png', slug: 'ferrari' },
-    { id: 'lamborghini', name: 'Lamborghini', src: '/brands-carousel/lamborghini-logo-150x150-1.png', slug: 'lamborghini' },
-    { id: 'rolls-royce', name: 'Rolls Royce', src: '/brands-carousel/rolls-royce-logo.png', slug: 'rolls-royce' },
-    { id: 'maserati', name: 'Maserati', src: '/brands-carousel/maserati-logo.png', slug: 'maserati' },
-    { id: 'mclaren', name: 'McLaren', src: '/brands-carousel/mclaren-logo.png', slug: 'mclaren' },
-    { id: 'aston-martin', name: 'Aston Martin', src: '/brands-carousel/aston-martin-logo.png', slug: 'aston-martin' },
-    { id: 'bugatti', name: 'Bugatti', src: '/brands-carousel/Bugatti-logo.png', slug: 'bugatti' },
-    { id: 'jaguar', name: 'Jaguar', src: '/brands-carousel/jaguar-logo.png', slug: 'jaguar' },
-    { id: 'lotus', name: 'Lotus', src: '/brands-carousel/lotus-logo.png', slug: 'lotus' },
-    { id: 'cadillac', name: 'Cadillac', src: '/brands-carousel/cadillac.png', slug: 'cadillac' },
-]
-
-// Scale pattern: slot 1=1.0, 2=1.2, 3=1.5, 4=1.8 (center), 5=1.5, 6=1.2, 7=1.0
+// Scale pattern for the 3D-like carousel effect
 const DESKTOP_SCALES = [1.0, 1.2, 1.5, 1.8, 1.5, 1.2, 1.0]
 const DESKTOP_VISIBLE = 7
 
-// Mobile: 3 visible, center scaled
 const MOBILE_SCALES = [1.0, 1.4, 1.0]
 const MOBILE_VISIBLE = 3
 
-function getVisibleItems(centerIndex: number, count: number, total: number) {
+function getVisibleItems(centerIndex: number, count: number, total: number, brands: any[]) {
+    if (total === 0) return []
     const half = Math.floor(count / 2)
-    const items: { brand: typeof carouselBrands[0]; slotIndex: number; originalIndex: number }[] = []
+    const items: { brand: any; slotIndex: number; originalIndex: number }[] = []
 
     for (let i = -half; i <= half; i++) {
         const originalIndex = ((centerIndex + i) % total + total) % total
         items.push({
-            brand: carouselBrands[originalIndex],
+            brand: brands[originalIndex],
             slotIndex: i + half,
             originalIndex,
         })
@@ -51,7 +34,7 @@ function BrandSlot({
     scale,
     isMobile,
 }: {
-    brand: typeof carouselBrands[0]
+    brand: any
     scale: number
     isMobile: boolean
 }) {
@@ -60,9 +43,9 @@ function BrandSlot({
     const baseSize = isMobile ? 64 : 80
 
     return (
-        <Tooltip content={`View ${brand.name} services`} position="bottom">
+        <Tooltip content={`View ${brand.name} specialized care`} position="bottom">
             <Link
-                href={`/new-home/brands#${brand.slug}`}
+                href={`/brand/${brand.slug || brand.id}`}
                 className="flex flex-col items-center justify-center group cursor-pointer"
                 style={{
                     transform: `scale(${scale})`,
@@ -73,28 +56,28 @@ function BrandSlot({
                 }}
             >
                 <div
-                    className="flex items-center justify-center rounded-2xl bg-white border border-gray-100 shadow-sm group-hover:shadow-lg group-hover:border-gray-200 transition-all duration-300"
+                    className="flex items-center justify-center rounded-2xl bg-white border border-gray-100 shadow-sm group-hover:shadow-xl group-hover:border-[#E62329]/20 transition-all duration-500"
                     style={{ width: baseSize, height: baseSize, padding: 12 }}
                 >
-                    {!imgError ? (
+                    {!imgError && brand.logoFile ? (
                         <img
-                            src={brand.src}
+                            src={`/brands-carousel/${brand.logoFile}`}
                             alt={brand.name}
                             onError={() => setImgError(true)}
-                            className="w-full h-full object-contain transition-all duration-500 group-hover:scale-110"
+                            className="w-full h-full object-contain transition-all duration-700 group-hover:scale-110"
                             draggable={false}
                         />
                     ) : (
-                        <span className="text-xs font-black uppercase text-gray-500 tracking-tighter text-center leading-tight">
-                            {brand.name}
+                        <span className="text-[10px] font-black uppercase text-gray-400 tracking-tighter text-center leading-tight">
+                            {brand.name.substring(0, 3)}
                         </span>
                     )}
                 </div>
                 <span
-                    className="mt-2 text-[9px] font-black uppercase tracking-wider text-gray-400 group-hover:text-[#121212] transition-colors text-center leading-tight"
+                    className="mt-3 text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 group-hover:text-[#E62329] transition-all text-center leading-tight italic"
                     style={{
-                        opacity: isCenter ? 1 : 0.6,
-                        transition: 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                        opacity: isCenter ? 1 : 0.4,
+                        transform: `translateY(${isCenter ? '0' : '4px'})`,
                     }}
                 >
                     {brand.name}
@@ -105,11 +88,27 @@ function BrandSlot({
 }
 
 export function BrandCarousel() {
+    const [brands, setBrands] = useState<any[]>([])
+    const [isLoading, setIsLoading] = useState(true)
     const [centerIndex, setCenterIndex] = useState(0)
     const [isMobile, setIsMobile] = useState(false)
     const [isPaused, setIsPaused] = useState(false)
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-    const total = carouselBrands.length
+
+    useEffect(() => {
+        async function fetchBrands() {
+            try {
+                const data = await getBrandsWithModels()
+                // Focus on top luxury brands for the carousel or just use all
+                setBrands(data)
+            } catch (err) {
+                console.error("Carousel fetch error:", err)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+        fetchBrands()
+    }, [])
 
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768)
@@ -119,40 +118,54 @@ export function BrandCarousel() {
     }, [])
 
     const advance = useCallback(() => {
-        setCenterIndex(prev => (prev + 1) % total)
-    }, [total])
+        if (brands.length === 0) return
+        setCenterIndex(prev => (prev + 1) % brands.length)
+    }, [brands.length])
 
-    // Auto-advance
     useEffect(() => {
-        if (isPaused) return
-        intervalRef.current = setInterval(advance, 3000)
+        if (isPaused || brands.length === 0) return
+        intervalRef.current = setInterval(advance, 3500)
         return () => {
             if (intervalRef.current) clearInterval(intervalRef.current)
         }
-    }, [advance, isPaused])
+    }, [advance, isPaused, brands.length])
+
+    if (isLoading) {
+        return (
+            <div className="w-full py-20 flex flex-col items-center justify-center gap-4 bg-white">
+                <Loader2 className="w-8 h-8 animate-spin text-gray-200" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-gray-300">Synchronizing Marques</span>
+            </div>
+        )
+    }
+
+    const total = brands.length
+    if (total === 0) return null
 
     const visibleCount = isMobile ? MOBILE_VISIBLE : DESKTOP_VISIBLE
     const scales = isMobile ? MOBILE_SCALES : DESKTOP_SCALES
-    const visibleItems = getVisibleItems(centerIndex, visibleCount, total)
+    const visibleItems = getVisibleItems(centerIndex, visibleCount, total, brands)
 
     return (
         <div
             id="brands"
-            className="relative w-full py-10 md:py-14 overflow-hidden bg-white"
+            className="relative w-full py-16 md:py-24 overflow-hidden bg-white technical-grid"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
         >
-            <div className="max-w-7xl mx-auto px-6 mb-8 md:mb-10 text-center">
-                <span className="text-[#E62329] font-black text-[10px] uppercase tracking-[0.4em] mb-3 block">
-                    Elite Performance
+            <div className="absolute inset-0 micro-noise opacity-[0.03]" />
+            
+            <div className="max-w-7xl mx-auto px-6 mb-16 md:mb-20 text-center relative z-10">
+                <span className="text-[#E62329] font-black text-[10px] uppercase tracking-[0.5em] mb-4 block">
+                    Luxury Heritage
                 </span>
-                <h2 className="text-2xl md:text-3xl font-black text-[#121212] tracking-tighter uppercase">
-                    Trusted by <span className="silver-shine">Leading Brands</span>
+                <h2 className="text-3xl md:text-5xl font-black text-[#121212] tracking-tighter uppercase italic leading-none">
+                    Certified <span className="silver-shine">Specialists</span>
                 </h2>
             </div>
 
             {/* Carousel Track */}
-            <div className="flex items-center justify-center gap-2 md:gap-6 px-4 md:px-12 min-h-[140px] md:min-h-[160px]">
+            <div className="flex items-center justify-center gap-4 md:gap-10 px-4 md:px-12 min-h-[180px] md:min-h-[220px] relative z-10">
                 {visibleItems.map(({ brand, slotIndex }) => (
                     <BrandSlot
                         key={`${brand.id}-${slotIndex}`}
@@ -164,27 +177,28 @@ export function BrandCarousel() {
             </div>
 
             {/* Dot indicators */}
-            <div className="flex justify-center gap-1.5 mt-6 md:mt-8">
-                {carouselBrands.map((_, i) => (
+            <div className="flex justify-center gap-2 mt-12 md:mt-16 relative z-10">
+                {brands.map((_, i) => (
                     <button
                         key={i}
                         onClick={() => setCenterIndex(i)}
-                        className={`rounded-full transition-all duration-300 ${
+                        className={`transition-all duration-500 rounded-full ${
                             i === centerIndex
-                                ? 'w-6 h-1.5 bg-[#E62329]'
+                                ? 'w-10 h-1.5 bg-[#E62329] shadow-lg shadow-[#E62329]/20'
                                 : 'w-1.5 h-1.5 bg-gray-200 hover:bg-gray-400'
                         }`}
-                        aria-label={`Go to ${carouselBrands[i].name}`}
+                        aria-label={`Focus ${brands[i].name}`}
                     />
                 ))}
             </div>
 
-            <div className="text-center mt-6 md:mt-8">
+            <div className="text-center mt-12 relative z-10">
                 <Link
-                    href="/new-home/brands"
-                    className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-gray-400 hover:text-[#E62329] transition-colors border-b border-transparent hover:border-[#E62329] pb-0.5"
+                    href="/services"
+                    className="group inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 hover:text-[#121212] transition-all"
                 >
-                    View All Capabilities <span aria-hidden="true">&rarr;</span>
+                    Explore All Capabilities 
+                    <div className="w-8 h-[1px] bg-gray-200 group-hover:w-12 group-hover:bg-[#E62329] transition-all duration-500" />
                 </Link>
             </div>
         </div>

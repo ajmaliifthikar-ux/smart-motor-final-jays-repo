@@ -48,11 +48,11 @@ export function Hero() {
                         </span>
                     </div>
 
-                    <h1 className={`flex flex-col items-center mb-8 tracking-tighter text-[#121212] ${isRTL ? 'font-arabic tracking-normal' : ''}`}>
-                        <span className="text-3xl md:text-5xl font-black leading-tight uppercase block opacity-90 mb-2">
+                    <h1 className={`flex flex-col items-center mb-10 tracking-tighter text-[#121212] ${isRTL ? 'font-arabic tracking-normal' : ''}`}>
+                        <span className="text-4xl md:text-6xl font-black leading-tight uppercase block mb-2 drop-shadow-sm">
                             PROFESSIONAL AUTOMOTIVE
                         </span>
-                        <span className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.85] silver-shine block">
+                        <span className="text-6xl md:text-8xl lg:text-9xl font-black leading-[0.8] silver-shine block drop-shadow-md">
                             SERVICE CENTER
                         </span>
                     </h1>
@@ -77,11 +77,11 @@ export function Hero() {
                             style={callbackTilt.tiltStyle}
                             onMouseMove={callbackTilt.tiltHandlers.onMouseMove}
                             onMouseLeave={callbackTilt.tiltHandlers.onMouseLeave}
-                            className="bg-gradient-to-t from-[var(--yellow-dark)] to-[var(--yellow-light)] text-[#121212] button-overlay rounded-full px-10 py-4 text-xs font-black tracking-widest uppercase hover:brightness-110 transition-all shadow-lg border border-yellow-400 h-auto relative overflow-hidden group"
+                            className="bg-white/80 backdrop-blur-md text-[#121212] button-overlay rounded-full px-10 py-4 text-xs font-black tracking-widest uppercase hover:bg-[#FFD700] hover:text-[#121212] transition-all shadow-lg border border-white/20 h-auto relative overflow-hidden group"
                             onClick={() => setIsCallbackModalOpen(true)}
                         >
                             <span className="relative z-10 flex items-center gap-2">
-                                <span className="w-2 h-2 bg-[#121212] rounded-full animate-pulse" />
+                                <span className="w-2 h-2 bg-[#E62329] rounded-full animate-pulse" />
                                 Call: 02 555 5443
                             </span>
                             <div className="absolute inset-0 bg-[url('/public/textures/car-paint-texture.png')] opacity-20 mix-blend-overlay pointer-events-none" />

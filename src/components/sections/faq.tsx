@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDownIcon } from '@/components/ui/icons'
+import { ChevronDownIcon, PhoneIcon } from '@/components/ui/icons'
 import { faqs } from '@/lib/data'
 import { cn } from '@/lib/utils'
 import { Tooltip } from '@/components/ui/tooltip'
@@ -101,20 +101,23 @@ export function FAQ({ initialFaqs }: { initialFaqs?: FAQType[] }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-center mt-16 p-12 bg-black rounded-[3rem] shadow-2xl"
+          className="text-center mt-16 p-12 bg-black rounded-[3rem] shadow-2xl carbon-fiber border border-white/5"
         >
-          <h3 className="text-3xl font-black text-white mb-4 uppercase tracking-tighter">
-            Still Seeking Clarity?
+          <h3 className="text-3xl font-black text-white mb-4 uppercase tracking-tighter italic">
+            Still Seeking <span className="silver-shine">Clarity?</span>
           </h3>
-          <p className="text-gray-400 mb-8 font-medium">
+          <p className="text-white/60 mb-8 font-medium">
             Our concierge team is here for personalized assistance.
           </p>
           <Tooltip content="Tap to call our team directly" position="top">
             <a
-              href="tel:+97126666789"
-              className="inline-flex items-center gap-2 text-[#F0C225] font-black uppercase tracking-widest text-sm hover:text-white transition-colors"
+              href="tel:+97125555443"
+              className="inline-flex items-center gap-4 text-[#FFD700] font-black uppercase tracking-widest text-sm hover:text-white transition-all group"
             >
-              Connect at +971 2 666 6789
+              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-[#FFD700] group-hover:text-black transition-all">
+                <PhoneIcon size={18} />
+              </div>
+              <span>Connect at +971 2 555 5443</span>
             </a>
           </Tooltip>
         </motion.div>

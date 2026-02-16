@@ -6,11 +6,13 @@ import {
     MapPinIcon,
     ClockIcon,
     InstagramIcon,
-    WhatsAppIcon
+    WhatsAppIcon,
+    FacebookIcon,
+    TikTokIcon,
+    ThreadsIcon
 } from '@/components/ui/icons'
 import { publicPath } from '@/lib/utils'
-// Assuming these exist in generic location
-import { VisaIcon, MastercardIcon, ApplePayIcon, GooglePayIcon, AmexIcon } from '@/components/ui/payment-icons'
+import { VisaIcon, MastercardIcon, ApplePayIcon } from '@/components/ui/payment-icons'
 import { Tooltip } from '@/components/ui/tooltip'
 
 const services = [
@@ -25,11 +27,11 @@ const services = [
 
 const quickLinks = [
     { label: 'Home', href: '/new-home' },
-    { label: 'About Us', href: '#about' },
-    { label: 'Services', href: '#services' },
-    { label: 'Brands', href: '#brands' },
-    { label: 'Packages', href: '#packages' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'About Us', href: '/about' },
+    { label: 'Services', href: '/services' },
+    { label: 'FAQ', href: '/faq' },
+    { label: 'Careers', href: '/careers' },
+    { label: 'Contact', href: '/contact' },
 ]
 
 export function Footer() {
@@ -41,28 +43,8 @@ export function Footer() {
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#E62329]/5 blur-[120px] rounded-full -mr-64 -mt-64 pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-                {/* Newsletter Section */}
-                <div className="bg-[#121212] border border-white/10 rounded-[3rem] p-12 mb-24 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#E62329]/10 blur-[100px] rounded-full -mr-32 -mt-32 pointer-events-none" />
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-                        <div>
-                            <h3 className="text-3xl font-black uppercase tracking-tighter mb-4">Join Our Exclusive Club</h3>
-                            <p className="text-gray-400 text-lg">Subscribe for exclusive offers, maintenance tips, and VIP event invitations.</p>
-                        </div>
-                        <form className="flex flex-col sm:flex-row gap-4">
-                            <input
-                                type="email"
-                                placeholder="Enter your email address"
-                                className="flex-grow bg-white/5 border border-white/10 rounded-full px-8 py-5 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#E62329] transition-colors"
-                            />
-                            <button className="bg-[#E62329] text-white px-10 py-5 rounded-full font-black uppercase tracking-widest text-xs hover:bg-white hover:text-[#E62329] transition-all">
-                                Subscribe
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-24">
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-24 pt-12">
 
                     {/* Column 1: About */}
                     <div>
@@ -76,15 +58,30 @@ export function Footer() {
                         <p className="text-gray-400 font-medium leading-relaxed mb-8 text-sm">
                             Smart Motor Auto Repair is a professional automotive service center dedicated to delivering top-notch solutions for all your vehicle needs.
                         </p>
-                        <div className="flex gap-4">
-                            <Tooltip content="Follow us on Instagram" position="top">
-                                <a href="https://instagram.com/smartmotor_autorepair" className="w-10 h-10 flex items-center justify-center bg-gray-900 rounded-full hover:bg-white hover:text-black transition-all">
-                                    <InstagramIcon size={18} />
+                        <div className="flex flex-wrap gap-3">
+                            <Tooltip content="Instagram" position="top">
+                                <a href="https://instagram.com/smartmotor_autorepair" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
+                                    <InstagramIcon size={16} />
                                 </a>
                             </Tooltip>
-                            <Tooltip content="Chat on WhatsApp" position="top">
-                                <a href="https://wa.me/97126666789" className="w-10 h-10 flex items-center justify-center bg-gray-900 rounded-full hover:bg-white hover:text-black transition-all">
-                                    <WhatsAppIcon size={18} />
+                            <Tooltip content="WhatsApp" position="top">
+                                <a href="https://wa.me/97125555443" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
+                                    <WhatsAppIcon size={16} />
+                                </a>
+                            </Tooltip>
+                            <Tooltip content="Facebook" position="top">
+                                <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
+                                    <FacebookIcon size={16} />
+                                </a>
+                            </Tooltip>
+                            <Tooltip content="TikTok" position="top">
+                                <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
+                                    <TikTokIcon size={16} />
+                                </a>
+                            </Tooltip>
+                            <Tooltip content="Threads" position="top">
+                                <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
+                                    <ThreadsIcon size={16} />
                                 </a>
                             </Tooltip>
                         </div>
@@ -92,7 +89,7 @@ export function Footer() {
 
                     {/* Column 2: Quick Links */}
                     <div>
-                        <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-8">Quick Links</h3>
+                        <h3 className="text-[10px] font-black text-white uppercase tracking-[0.3em] mb-8">Quick Links</h3>
                         <ul className="space-y-4">
                             {quickLinks.map((link) => (
                                 <li key={link.label}>
@@ -106,11 +103,11 @@ export function Footer() {
 
                     {/* Column 3: Services */}
                     <div>
-                        <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-8">Our Services</h3>
+                        <h3 className="text-[10px] font-black text-white uppercase tracking-[0.3em] mb-8">Our Services</h3>
                         <ul className="space-y-4">
                             {services.map((service) => (
                                 <li key={service}>
-                                    <Link href="#services" className="text-gray-400 font-bold hover:text-white transition-colors text-sm uppercase tracking-wide">
+                                    <Link href="/services" className="text-gray-400 font-bold hover:text-white transition-colors text-sm uppercase tracking-wide">
                                         {service}
                                     </Link>
                                 </li>
@@ -120,7 +117,7 @@ export function Footer() {
 
                     {/* Column 4: Contact */}
                     <div>
-                        <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-8">Contact Us</h3>
+                        <h3 className="text-[10px] font-black text-white uppercase tracking-[0.3em] mb-8">Contact Us</h3>
                         <ul className="space-y-6">
                             <li className="flex items-start gap-4">
                                 <Tooltip content="Visit us in Musaffah" position="left">
@@ -135,7 +132,7 @@ export function Footer() {
                                 <Tooltip content="Call us now" position="left">
                                     <PhoneIcon size={18} className="text-[#E62329] flex-shrink-0" />
                                 </Tooltip>
-                                <a href="tel:+97126666789" className="text-gray-400 font-bold hover:text-white transition-colors text-sm">
+                                <a href="tel:+97125555443" className="text-gray-400 font-bold hover:text-white transition-colors text-sm">
                                     +971 2 555 5443
                                 </a>
                             </li>
@@ -164,8 +161,8 @@ export function Footer() {
                         </div>
                     </div>
                     <div className="flex gap-12 text-[10px] font-black uppercase tracking-widest text-gray-600">
-                        <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-                        <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
+                        <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                        <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
                     </div>
                 </div>
             </div>

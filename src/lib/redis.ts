@@ -7,9 +7,11 @@ const redis = new Redis({
     password: process.env.REDIS_PASSWORD,
     db: parseInt(process.env.REDIS_DB || '0'),
     lazyConnect: true,
+    connectTimeout: 1000, // 1 second timeout
+    commandTimeout: 1000, // 1 second timeout
+    maxRetriesPerRequest: 1, // Don't hang on failures
     retryStrategy(times) {
-        const delay = Math.min(times * 50, 2000)
-        return delay
+        return null // Stop retrying immediately if it fails
     },
 })
 

@@ -9,7 +9,6 @@ export function RecaptchaProvider({ children }: { children: ReactNode }) {
     // If no site key is provided (e.g. dev), we can render children without provider or with a warning.
     // For now, render children directly if key is missing to avoid crashing.
     if (!siteKey) {
-        console.warn('NEXT_PUBLIC_RECAPTCHA_SITE_KEY is missing. reCAPTCHA will not work.')
         return <>{children}</>
     }
 

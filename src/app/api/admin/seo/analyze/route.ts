@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { prisma } from '@/lib/prisma'
-import { auth } from '@/auth'
+import { requireAdmin } from '@/lib/session'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
 
 export async function POST(req: NextRequest) {
     try {
-        const session = await auth()
-        if (!session || session.user?.role !== 'ADMIN') {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-        }
+        await requireAdmin()
 
         const { url } = await req.json()
 
@@ -24,7 +21,7 @@ export async function POST(req: NextRequest) {
         const html = await response.text()
 
         // 2. Prepare the prompt for Gemini
-        const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-3-flash-preview' })
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
         const prompt = `
             Analyze the following HTML content for SEO purposes. 

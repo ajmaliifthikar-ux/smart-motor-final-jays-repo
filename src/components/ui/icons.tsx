@@ -230,6 +230,22 @@ export function FacebookIcon({ size = 24, ...props }: IconProps) {
   )
 }
 
+export function TikTokIcon({ size = 24, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.86-.6-4.12-1.43-.13 1.15-.14 2.3-.14 3.45 0 1.93-.31 3.93-1.43 5.53-1.33 1.97-3.66 3.12-6.04 3.12-2.13 0-4.22-.88-5.51-2.52-1.4-1.77-1.6-4.26-.51-6.18 1.03-1.86 3.17-3.01 5.3-2.88.01 1.41.01 2.82.01 4.23-.83-.11-1.72.11-2.35.73-.74.72-.87 1.85-.38 2.73.45.82 1.43 1.22 2.35 1.02.88-.18 1.51-.98 1.51-1.88 0-2.82-.01-5.64-.01-8.46V.02z" />
+    </svg>
+  )
+}
+
+export function ThreadsIcon({ size = 24, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M14.103 20.101c-7.095-.275-7.01-10.336 1.141-10.031 2.144.08 4.123.612 4.123 3.363 0 2.259-1.59 3.386-4.114 3.386-3.7 0-3.7-5.135-.14-5.135 1.412 0 2.519.209 2.519.209l.044-2.903s-1.143-.234-2.543-.234c-6.41 0-6.41 10.683 0 10.683 6.255 0 6.255-8.874 0-8.874-.738 0-1.547.078-1.547.078v-2.011s1.251-.234 2.251-.234c7.954 0 7.954 12.112 0 12.112-1.154 0-1.735-.118-1.735-.118z" />
+    </svg>
+  )
+}
+
 export function AwardIcon({ size = 24, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>

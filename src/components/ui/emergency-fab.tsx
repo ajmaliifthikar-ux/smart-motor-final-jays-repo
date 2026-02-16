@@ -35,7 +35,7 @@ export function EmergencyFAB() {
             label: 'WhatsApp',
             color: 'bg-[#25D366]',
             textColor: 'text-white',
-            onClick: () => window.open('https://wa.me/97126666789', '_blank'),
+            onClick: () => window.open('https://wa.me/97125555443', '_blank'),
             delay: 0.1
         },
         {
@@ -44,7 +44,7 @@ export function EmergencyFAB() {
             label: 'Call Us',
             color: 'bg-[#E62329]',
             textColor: 'text-white',
-            onClick: () => window.open('tel:+97126666789', '_self'),
+            onClick: () => window.open('tel:+97125555443', '_self'),
             delay: 0.2
         },
         {
@@ -52,8 +52,8 @@ export function EmergencyFAB() {
             icon: <Sparkles size={24} />,
             label: 'AI Assistant',
             color: 'bg-[#121212]',
-            textColor: 'text-[#FFCC00]',
-            borderColor: 'border-[#FFCC00]/20',
+            textColor: 'text-[#FFD700]',
+            borderColor: 'border-[#FFD700]/20',
             onClick: toggleChat,
             delay: 0.3,
             main: true
@@ -62,8 +62,8 @@ export function EmergencyFAB() {
 
     return (
         <>
-            {/* Always Visible Stacked FABs */}
-            <div className="fixed bottom-8 right-6 z-[100] flex flex-col gap-4 items-end pointer-events-none">
+            {/* Always Visible Stacked FABs - Lifted significantly to avoid reCAPTCHA */}
+            <div className="fixed bottom-32 right-6 z-[100] flex flex-col gap-4 items-end pointer-events-none">
                 {fabs.map((fab) => (
                     <motion.div
                         key={fab.id}

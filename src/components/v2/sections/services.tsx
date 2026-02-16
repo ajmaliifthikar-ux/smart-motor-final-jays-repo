@@ -119,10 +119,11 @@ export function Services({ services }: { services: Service[] }) {
                             COMPREHENSIVE AUTOMOTIVE SOLUTIONS
                         </span>
                         <h2 className={cn(
-                            "text-4xl md:text-5xl font-black text-black tracking-tighter uppercase leading-[0.9]",
-                            isRTL && "font-arabic tracking-normal text-3xl md:text-5xl"
+                            "text-5xl md:text-7xl font-black text-[#121212] tracking-tighter uppercase leading-[0.85] italic",
+                            isRTL && "font-arabic tracking-normal text-4xl md:text-6xl"
                         )}>
-                            UNDER ONE <span className="silver-shine leading-none block">ROOF</span>
+                            UNDER ONE <br />
+                            <span className="silver-shine leading-none block">ROOF</span>
                         </h2>
                     </motion.div>
 

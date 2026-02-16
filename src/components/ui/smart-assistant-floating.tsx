@@ -220,20 +220,20 @@ export function SmartAssistantFloating() {
               className="fixed top-0 right-0 z-50 w-full md:w-[450px] h-full bg-white shadow-[-20px_0_50px_rgba(0,0,0,0.1)] flex flex-col overflow-hidden"
             >
               {/* Header */}
-              <div className="bg-[#121212] px-8 py-8 flex items-center justify-between border-b border-white/5 relative overflow-hidden">
+              <div className="bg-[#121212] px-8 py-10 flex items-center justify-between border-b border-white/5 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#E62329]/10 blur-3xl rounded-full" />
                 <div className="flex items-center gap-4 relative z-10">
-                  <div className="w-12 h-12 bg-[#E62329] rounded-2xl flex items-center justify-center shadow-lg shadow-[#E62329]/20">
-                    <Bot className="w-6 h-6 text-white" />
+                  <div className="w-14 h-14 bg-[#E62329] rounded-2xl flex items-center justify-center shadow-lg shadow-[#E62329]/20">
+                    <Bot className="w-7 h-7 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-white font-black text-lg uppercase tracking-tighter">
-                      Smart Assistant
+                    <h3 className="text-white font-black text-xl uppercase tracking-tighter">
+                      Smart <span className="silver-shine">Specialist</span>
                     </h3>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-                        {liveMode ? 'Gemini Live Active' : 'Online & Ready'}
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
+                      <p className="text-[11px] text-white/60 font-bold uppercase tracking-widest">
+                        {liveMode ? 'Gemini 2.5 Live' : 'Precision Engine Active'}
                       </p>
                     </div>
                   </div>
@@ -361,16 +361,19 @@ export function SmartAssistantFloating() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-4 right-4 z-40 w-14 h-14 rounded-full bg-[#E62329] text-white shadow-2xl flex items-center justify-center hover:bg-[#121212] transition-colors"
+        className="fixed bottom-12 right-6 z-40 w-16 h-16 rounded-full bg-[#121212] text-white shadow-2xl flex items-center justify-center hover:bg-[#E62329] transition-all border border-white/10"
       >
         <AnimatePresence mode="wait">
           {isOpen ? (
             <motion.div key="close" initial={{ opacity: 0, rotate: -180 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: 180 }} transition={{ duration: 0.2 }}>
-              <ChevronDown className="w-6 h-6" />
+              <ChevronDown className="w-7 h-7" />
             </motion.div>
           ) : (
             <motion.div key="open" initial={{ opacity: 0, rotate: 180 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: -180 }} transition={{ duration: 0.2 }}>
-              <Bot className="w-6 h-6" />
+              <div className="relative">
+                <Bot className="w-7 h-7" />
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-[#E62329] rounded-full border-2 border-[#121212] animate-pulse" />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

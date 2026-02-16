@@ -17,8 +17,12 @@ export class KnowledgeBase {
     }
 
     async getEntry(id: string): Promise<KnowledgeEntry | null> {
-        const data = await redis.get(`knowledge:${id}`)
-        return data ? JSON.parse(data) : null
+        try {
+            const data = await redis.get(`knowledge:${id}`).catch(() => null)
+            return data ? JSON.parse(data) : null
+        } catch (e) {
+            return null
+        }
     }
 }
 

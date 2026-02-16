@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getServiceSlots } from '@/lib/booking-utils'
 import { z } from 'zod'
+import { traceIntegration } from '@/lib/diagnostics'
 
 export const dynamic = 'force-dynamic'
 
@@ -52,21 +53,24 @@ export async function POST(req: Request) {
             userId = existingUser.id
         }
 
-        const booking = await prisma.booking.create({
-            data: {
-                serviceId: data.serviceId,
-                date: bookingDate,
-                slot: data.time,
-                userId: userId,
-                guestName: data.fullName,
-                guestEmail: data.email,
-                guestPhone: data.phone,
-                vehicleBrand: data.brand,
-                vehicleModel: data.model,
-                notes: data.notes,
-                status: 'PENDING'
-            }
-        })
+        const booking = await traceIntegration(
+            { service: 'Prisma', operation: 'create_booking', metadata: { email: data.email, car: `${data.brand} ${data.model}` } },
+            () => prisma.booking.create({
+                data: {
+                    serviceId: data.serviceId,
+                    date: bookingDate,
+                    slot: data.time,
+                    userId: userId,
+                    guestName: data.fullName,
+                    guestEmail: data.email,
+                    guestPhone: data.phone,
+                    vehicleBrand: data.brand,
+                    vehicleModel: data.model,
+                    notes: data.notes,
+                    status: 'PENDING'
+                }
+            })
+        )
 
         return NextResponse.json({ success: true, bookingId: booking.id })
 

@@ -56,44 +56,53 @@ export class KnowledgeBaseManager {
      * Search knowledge by keywords
      */
     async searchKnowledge(query: string, limit: number = 5): Promise<KnowledgeEntry[]> {
-        const keywords = query.toLowerCase().split(' ')
-        const matchedIds = new Set<string>()
+        try {
+            const keywords = query.toLowerCase().split(' ')
+            const matchedIds = new Set<string>()
 
-        // Find entries matching keywords
-        for (const keyword of keywords) {
-            const ids = await redis.smembers(`knowledge:keyword:${keyword}`)
-            ids.forEach(id => matchedIds.add(id))
-        }
+            // Find entries matching keywords
+            for (const keyword of keywords) {
+                const ids = await redis.smembers(`knowledge:keyword:${keyword}`).catch(() => [])
+                ids.forEach(id => matchedIds.add(id))
+            }
 
-        // Load all matched entries
-        const results: KnowledgeEntry[] = []
-        for (const id of Array.from(matchedIds).slice(0, limit)) {
-            // Try all types
-            for (const type of ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']) {
-                const entry = await this.getKnowledge(type, id)
-                if (entry) {
-                    results.push(entry)
-                    break
+            // Load all matched entries
+            const results: KnowledgeEntry[] = []
+            for (const id of Array.from(matchedIds).slice(0, limit)) {
+                // Try all types
+                for (const type of ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']) {
+                    const entry = await this.getKnowledge(type, id)
+                    if (entry) {
+                        results.push(entry)
+                        break
+                    }
                 }
             }
-        }
 
-        return results
+            return results
+        } catch (e) {
+            console.error('Search Knowledge error:', e)
+            return []
+        }
     }
 
     /**
      * Get all knowledge of a specific type
      */
     async getKnowledgeByType(type: string): Promise<KnowledgeEntry[]> {
-        const ids = await redis.smembers(`knowledge:index:${type}`)
-        const entries: KnowledgeEntry[] = []
+        try {
+            const ids = await redis.smembers(`knowledge:index:${type}`).catch(() => [])
+            const entries: KnowledgeEntry[] = []
 
-        for (const id of ids) {
-            const entry = await this.getKnowledge(type, id)
-            if (entry) entries.push(entry)
+            for (const id of ids) {
+                const entry = await this.getKnowledge(type, id)
+                if (entry) entries.push(entry)
+            }
+
+            return entries
+        } catch (e) {
+            return []
         }
-
-        return entries
     }
 
     /**

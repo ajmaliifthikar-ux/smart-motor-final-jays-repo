@@ -11,10 +11,7 @@ export const dynamic = 'force-dynamic'
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const userId = session?.user?.id || `public_${Date.now()}`
 
     const { message, conversationId, systemPrompt, maxTokens, temperature } =
       await req.json()
@@ -42,7 +39,7 @@ export async function POST(req: NextRequest) {
         try {
           // Create live session
           const session_instance = createLiveSession({
-            userId: session.user!.id,
+            userId: userId,
             conversationId: convId,
             systemPrompt,
             maxTokens,

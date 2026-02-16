@@ -7,40 +7,36 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-// ─── AUTHENTICATION (NextAuth) ───
 model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  password      String?   // For Credentials provider (bcrypt)
-  role          String    @default("CUSTOMER") // SQLite doesn't support enums
-  
-  accounts      Account[]
-  sessions      Session[]
-  bookings      Booking[]
-  
+  password      String?
+  role          String    @default("CUSTOMER")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  deletedAt     DateTime? // Soft Delete
+  deletedAt     DateTime?
+  accounts      Account[]
+  bookings      Booking[]
+  sessions      Session[]
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String? 
-  access_token       String? 
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? 
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -53,88 +49,66 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// ─── BOOKING ENGINE ───
 model Booking {
-  id            String        @id @default(cuid())
-  userId        String?
-  user          User?         @relation(fields: [userId], references: [id])
-  
-  // Guest Details (if no user)
-  guestName     String?
-  guestEmail    String?
-  guestPhone    String?
-  
-  vehicleBrand  String?
-  vehicleModel  String?
-  
-  serviceId     String
-  service       Service       @relation(fields: [serviceId], references: [id])
-  
-  date          DateTime      // The day of booking
-  slot          String        // e.g., "09:00"
-  status        String        @default("PENDING") // Enum -> String
-  notes         String?       
-  
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id           String   @id @default(cuid())
+  userId       String?
+  guestName    String?
+  guestEmail   String?
+  guestPhone   String?
+  vehicleBrand String?
+  vehicleModel String?
+  serviceId    String
+  date         DateTime
+  slot         String
+  status       String   @default("PENDING")
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  service      Service  @relation(fields: [serviceId], references: [id])
+  user         User?    @relation(fields: [userId], references: [id])
 
-  @@unique([date, slot])    // 🔒 The Core Logic
+  @@unique([date, slot])
 }
 
-// ─── CATALOG & CMS ───
 model Service {
   id                  String    @id @default(cuid())
   slug                String    @unique
   name                String
   nameAr              String
-  description         String    
-  descriptionAr       String?   
-  detailedDescription String?   
+  description         String
+  descriptionAr       String?
+  detailedDescription String?
   category            String?
   basePrice           Float?
   duration            String
-  
-  // Visuals
   icon                String?
   iconImage           String?
   image               String?
-  
-  // Rich Content (JSON) - SQLite supports Strings for simple JSON
-  process             String?     // Stored as JSON string
-  subServices         String?     // Stored as JSON string
-  seo                 String?     // Stored as JSON string
-  
+  process             String?
+  subServices         String?
+  seo                 String?
   isEnabled           Boolean   @default(true)
-  bookings            Booking[]
-  
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
+  bookings            Booking[]
 }
 
 model Brand {
-  id          String   @id @default(cuid()) 
-  slug        String?  @unique 
+  id          String   @id @default(cuid())
+  slug        String?  @unique
   name        String   @unique
   nameAr      String?
-  category    String?  
-  
-  // Visuals
+  category    String?
   logoUrl     String?
   logoFile    String?
   heroImage   String?
   color       String?
-  
-  // Content
-  description String?  
-  heritage    String?  
-  heritageAr  String?  
-  
-  // Lists (Arrays not supported in SQLite, must handle in app or relation)
-  // Simplified for SQLite: Stored as comma-separated strings or JSON strings
-  models      String? // e.g. "M4, X5"
+  description String?
+  heritage    String?
+  heritageAr  String?
+  models      String?
   specialties String?
-  services    String? 
-  
+  services    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -145,54 +119,46 @@ model ServicePackage {
   subtitle      String?
   isPromotional Boolean  @default(false)
   bestFor       String?
-  features      String?  // JSON string
+  features      String?
   validity      String?
-  
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
 
 model BlogPost {
-  id        String   @id @default(cuid())
-  slug      String   @unique
-  title     String
-  excerpt   String   
-  content   String   
-  image     String?
-  
-  author    String?
-  category  String?
-  publishedAt DateTime? 
-  
-  isPublished Boolean @default(true)
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  excerpt     String
+  content     String
+  image       String?
+  author      String?
+  category    String?
+  publishedAt DateTime?
+  isPublished Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model FAQ {
   id         String   @id @default(cuid())
   question   String
   questionAr String?
-  answer     String   
-  answerAr   String?  
+  answer     String
+  answerAr   String?
   category   String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
 
-// For editable text on the website (CMS)
 model ContentBlock {
-  key       String   @id 
-  value     String   
-  valueAr   String?  
-  type      String   @default("text") 
+  key       String   @id
+  value     String
+  valueAr   String?
+  type      String   @default("text")
   status    String   @default("PUBLISHED")
-  
-  // For modularity
-  parentKey String?  
+  parentKey String?
   order     Int      @default(0)
-  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -201,26 +167,35 @@ model Article {
   id          String   @id @default(cuid())
   slug        String   @unique
   title       String
-  content     String   
-  
-  // SEO & AI Metadata
+  content     String
   seoTitle    String?
   seoDesc     String?
   keywords    String?
-  
   isPublished Boolean  @default(false)
-  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-// ─── AI & ANALYTICS ───
 model DocumentEmbedding {
   id        String   @id @default(cuid())
-  content   String   
-  metadata  String?  // JSON string
-  
+  content   String
+  metadata  String?
   createdAt DateTime @default(now())
+}
+
+model IntegrationTrace {
+  id        String   @id @default(cuid())
+  service   String   // e.g., "Firebase", "Gemini", "Redis", "Resend"
+  operation String   // e.g., "auth_verify", "generate_content", "cache_set"
+  status    String   // "SUCCESS" | "FAILURE"
+  duration  Int      // milliseconds
+  error     String?  // Error message if FAILURE
+  metadata  String?  // JSON string for extra context
+  timestamp DateTime @default(now())
+
+  @@index([service])
+  @@index([status])
+  @@index([timestamp])
 }
 
 model AuditLog {
@@ -228,7 +203,7 @@ model AuditLog {
   userId    String
   action    String
   resource  String?
-  details   String?  // JSON string
+  details   String?
   ipAddress String?
   userAgent String?
   createdAt DateTime @default(now())
@@ -238,51 +213,44 @@ model AuditLog {
 }
 
 model AIUsageLog {
-  id          String   @id @default(cuid())
-  userId      String
-  action      String
-  model       String
-  prompt      String?  
-  tokenCount  Int?
-  cost        Float?
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  userId     String
+  action     String
+  model      String
+  prompt     String?
+  tokenCount Int?
+  cost       Float?
+  createdAt  DateTime @default(now())
 
   @@index([userId])
   @@index([createdAt])
 }
 
-// ─── REAL-TIME ANALYTICS ───
 model AnalyticsLog {
-  id          String   @id @default(cuid())
-  eventType   String   
-  resource    String?  
-  
-  emirate     String?  
-  city        String?
-  device      String?  
-  browser     String?
-  ipHash      String?  
-  
-  metadata    String?    // JSON string
-  
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  eventType String
+  resource  String?
+  emirate   String?
+  city      String?
+  device    String?
+  browser   String?
+  ipHash    String?
+  metadata  String?
+  createdAt DateTime @default(now())
 
   @@index([eventType])
   @@index([emirate])
   @@index([createdAt])
 }
 
-// ─── SEO AGENTIC REPORTS ───
 model SEOReport {
   id              String   @id @default(cuid())
   url             String
-  score           Int      
-  
-  technicalLogs   String?    // JSON string
-  onPageLogs      String?    // JSON string
-  contentLogs     String?    // JSON string
-  recommendations String?    // JSON string
-  
+  score           Int
+  technicalLogs   String?
+  onPageLogs      String?
+  contentLogs     String?
+  recommendations String?
   createdAt       DateTime @default(now())
 
   @@index([url])
@@ -295,4 +263,30 @@ model Subscriber {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ContentAudit {
+  id            String   @id @default(cuid())
+  key           String
+  entityType    String
+  previousValue String?
+  newValue      String?
+  updatedBy     String
+  timestamp     DateTime @default(now())
+
+  @@index([key])
+  @@index([entityType])
+}
+
+model ContentHistory {
+  id           String   @id @default(cuid())
+  key          String
+  entityType   String
+  snapshot     String
+  versionLabel String?
+  createdBy    String
+  createdAt    DateTime @default(now())
+
+  @@index([key])
+  @@index([entityType])
 }

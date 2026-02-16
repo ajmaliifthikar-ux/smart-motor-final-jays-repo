@@ -5,7 +5,7 @@
   --color-secondary: #F4F3F1;
   --color-tertiary: #ECECEA;
   --color-text-primary: #121212;
-  --color-text-secondary: #4A4A4A;
+  --color-text-secondary: #666666; /* 40% black shade for improved contrast */
   --color-accent: #E62329;
   --color-charcoal: #1A1A1A;
 }
@@ -20,74 +20,23 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-primary: var(--color-charcoal); /* Charcoal #1A1A1A */
+    --bg-primary: var(--color-charcoal);
     --bg-secondary: #222222;
     --bg-tertiary: #2D2D2D;
     --text-primary: #FAFAF9;
-    --text-secondary: #A1A1AA;
+    --text-secondary: #999999; /* Lighter shade for dark mode readability */
   }
 }
 
-/* German Engineering Utilities */
-.technical-grid {
-  background-image: radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.03) 1px, transparent 0);
-  background-size: 24px 24px;
-}
-
-/* Premium Gradient - Darker Grey + Car Paint Texture */
-.bg-premium-gradient {
-  background: radial-gradient(circle at 50% 0%, #E5E7EB 0%, #D1D5DB 50%, #9CA3AF 100%);
-  position: relative;
-}
-
-.bg-premium-gradient::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.15;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-}
-
-.precision-line {
-  position: relative;
-}
-
-.font-arabic {
-  font-family: 'Cairo', 'IBM Plex Sans Arabic', sans-serif;
-}
-
-[dir="rtl"] .precision-line::after {
-  left: auto;
-  right: 0;
-}
-
-[dir="rtl"] .technical-grid {
-  background-position: right top;
-}
-
-.micro-noise {
-  position: relative;
-}
-
-.micro-noise::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: 0.03;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-}
-
+/* Enhanced Carbon Fiber Texture */
 .carbon-fiber {
-  background:
+  background: 
     linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px,
     linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px,
-    linear-gradient(27deg, #222 5px, transparent 5px) 0px 10px,
-    linear-gradient(207deg, #222 5px, transparent 5px) 10px 5px,
-    linear-gradient(90deg, #1b1b1b 10px, transparent 10px),
-    linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
+    linear-gradient(27deg, #1b1b1b 5px, transparent 5px) 0px 10px,
+    linear-gradient(207deg, #1b1b1b 5px, transparent 5px) 10px 5px,
+    linear-gradient(90deg, #111 10px, transparent 10px),
+    linear-gradient(#1a1a1a 25%, #151515 25%, #151515 50%, transparent 50%, transparent 75%, #1d1d1d 75%, #1d1d1d);
   background-color: #131313;
   background-size: 20px 20px;
 }
@@ -245,13 +194,55 @@ html {
 }
 
 body {
-  background-color: var(--bg-primary);
+  background-color: #FAFAF9; /* Off-white */
+  background-image: radial-gradient(circle at 50% 50%, #F4F3F1 0%, #FAFAF9 100%);
+  background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   min-height: 100vh;
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.nav-scrolled {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.card-depth {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  box-shadow: 
+    0 10px 25px -5px rgba(0, 0, 0, 0.02),
+    0 8px 10px -6px rgba(0, 0, 0, 0.02);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card-depth:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 20px 40px -12px rgba(0, 0, 0, 0.05),
+    0 12px 16px -8px rgba(0, 0, 0, 0.04);
+}
+
+.field-depth {
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.field-depth:focus {
+  box-shadow: 
+    inset 0 2px 4px 0 rgba(0, 0, 0, 0.01),
+    0 0 0 2px rgba(230, 35, 41, 0.1);
 }
 
 /* Warm noise texture overlay for depth */

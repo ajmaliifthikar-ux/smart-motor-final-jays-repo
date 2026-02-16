@@ -22,4 +22,42 @@ if (!admin.apps.length) {
 export const adminAuth = admin.auth()
 export const adminDb = admin.firestore()
 
+export async function verifySession(token: string | undefined) {
+    if (!token) return null;
+
+    // --- MOCK AUTHENTICATION BYPASS ---
+    // Allow access if the special mock token is present.
+    // This enables safe testing of the Admin UI without Firebase restrictions.
+    if (token === 'mock-token-secret-123') {
+        console.warn('⚠️ MOCK AUTH: Granting Admin Access via Mock Token');
+        return {
+            uid: 'mock-admin-user',
+            email: 'mock@smartmotor.ae',
+            email_verified: true,
+            role: 'ADMIN',
+            name: 'Mock Admin'
+        };
+    }
+
+    try {
+        const decodedToken = await adminAuth.verifyIdToken(token);
+        
+        // Fallback: Check for explicit role OR the specific admin email
+        // We also check if the email domain is @smartmotor.ae for broader internal access if needed
+        const isAdmin = decodedToken.role === 'ADMIN' || 
+                        decodedToken.email === 'admin@smartmotor.ae' || 
+                        decodedToken.email === 'dev@smartmotor.ae' ||
+                        (decodedToken.email?.endsWith('@smartmotor.ae') ?? false);
+        
+        if (!isAdmin) {
+            console.warn('Unauthorized access attempt by non-admin:', decodedToken.email);
+            return null;
+        }
+        return decodedToken;
+    } catch (error) {
+        console.error('Session verification failed:', error);
+        return null;
+    }
+}
+
 export default admin

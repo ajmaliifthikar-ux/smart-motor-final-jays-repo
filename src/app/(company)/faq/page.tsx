@@ -1,74 +1,78 @@
-import type { Metadata } from 'next'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { faqs } from '@/lib/data'
-import { HelpCircleIcon, MessageCircleIcon, PhoneIcon } from 'lucide-react'
-import Link from 'next/link'
+import { Navbar } from '@/components/v2/layout/navbar'
+import { Footer } from '@/components/v2/layout/footer'
+import { FAQ as FAQComponent } from '@/components/sections/faq'
+import { prisma } from '@/lib/prisma'
+import { HelpCircle, Shield, Clock, Wrench } from 'lucide-react'
 
-export const metadata: Metadata = {
-    title: 'Frequently Asked Questions | Smart Motor',
-    description: 'Find answers to common questions about our luxury car services, pricing, warranty, and booking process.',
-}
+export const revalidate = 3600
 
-export default function FAQPage() {
+export default async function FAQPage() {
+    let faqs: any[] = []
+    try {
+        faqs = await prisma.fAQ.findMany({
+            orderBy: { createdAt: 'asc' }
+        })
+    } catch (e) {
+        console.error(e)
+    }
+
     return (
-        <div className="min-h-screen bg-[#FAFAF9] pt-32 pb-24">
-            {/* Header */}
-            <div className="container max-w-4xl mx-auto px-6 mb-16 text-center">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E62329]/10 text-[#E62329] text-[10px] font-black uppercase tracking-widest mb-6">
-                    <HelpCircleIcon size={14} />
-                    <span>Support Center</span>
+        <main className="min-h-screen bg-[#FAFAF9]">
+            <Navbar />
+            
+            <section className="pt-40 pb-16 relative overflow-hidden">
+                <div className="absolute inset-0 micro-noise opacity-5 pointer-events-none" />
+                <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10 text-center">
+                    <span className="text-[#E62329] font-black text-[10px] uppercase tracking-[0.5em] mb-6 block">
+                        Knowledge Base
+                    </span>
+                    <h1 className="text-5xl md:text-8xl font-black text-[#121212] tracking-tighter uppercase leading-[0.85] italic mb-8">
+                        ELITE <br />
+                        <span className="silver-shine leading-none">INSIGHTS</span>
+                    </h1>
+                    <p className="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
+                        Answers to the most common engineering and service inquiries from our global clientele.
+                    </p>
                 </div>
-                <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-[#121212] mb-6">
-                    Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E62329] to-[#E62329]/70">Questions</span>
-                </h1>
-                <p className="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                    Everything you need to know about our premium services, from booking appointments to warranty coverage.
-                </p>
+            </section>
+
+            <div className="pb-24">
+                <FAQComponent initialFaqs={faqs} />
             </div>
-
-            {/* FAQ Accordion */}
-            <div className="container max-w-3xl mx-auto px-6">
-                <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100">
-                    <Accordion type="single" collapsible className="w-full space-y-4">
-                        {faqs.map((faq, index) => (
-                            <AccordionItem key={index} value={`item-${index}`} className="border-b border-gray-100 last:border-0 px-2">
-                                <AccordionTrigger className="text-left font-bold text-[#121212] hover:text-[#E62329] text-base md:text-lg py-6 hover:no-underline transition-colors">
-                                    {faq.question}
-                                </AccordionTrigger>
-                                <AccordionContent className="text-gray-500 leading-relaxed text-base pb-6">
-                                    {faq.answer}
-                                </AccordionContent>
-                            </AccordionItem>
-                        ))}
-                    </Accordion>
-                </div>
-            </div>
-
-            {/* Contact CTA */}
-            <div className="container max-w-4xl mx-auto px-6 mt-24">
-                <div className="bg-[#121212] rounded-[2.5rem] p-12 relative overflow-hidden text-center">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-[#E62329]/10 blur-[100px] rounded-full -mr-32 -mt-32 pointer-events-none" />
-
-                    <div className="relative z-10 flex flex-col items-center">
-                        <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight mb-4">
-                            Still have questions?
-                        </h3>
-                        <p className="text-gray-400 mb-8 max-w-lg">
-                            Our expert advisors are ready to help you with any specific inquiries about your vehicle.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <Link href="/new-home#contact" className="inline-flex items-center gap-2 bg-[#E62329] text-white px-8 py-4 rounded-full font-black uppercase tracking-widest text-xs hover:bg-white hover:text-[#E62329] transition-all">
-                                <MessageCircleIcon size={16} />
-                                Contact Support
-                            </Link>
-                            <a href="tel:80076278" className="inline-flex items-center gap-2 bg-white/10 text-white border border-white/10 px-8 py-4 rounded-full font-black uppercase tracking-widest text-xs hover:bg-white hover:text-[#121212] transition-all">
-                                <PhoneIcon size={16} />
-                                800 SMART
-                            </a>
+            
+            <section className="pb-32 px-6">
+                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-precision">
+                        <div className="w-12 h-12 rounded-2xl bg-[#E62329]/10 flex items-center justify-center text-[#E62329] mb-6">
+                            <Shield size={24} />
                         </div>
+                        <h3 className="text-xl font-black text-[#121212] uppercase tracking-tight mb-4 italic">Global Warranty</h3>
+                        <p className="text-gray-500 text-sm leading-relaxed font-medium">
+                            Our standard 6-month warranty on labor ensures your peace of mind across all Abu Dhabi regions.
+                        </p>
+                    </div>
+                    <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-precision">
+                        <div className="w-12 h-12 rounded-2xl bg-[#121212] flex items-center justify-center text-white mb-6">
+                            <Wrench size={24} />
+                        </div>
+                        <h3 className="text-xl font-black text-[#121212] uppercase tracking-tight mb-4 italic">OEM Only</h3>
+                        <p className="text-gray-500 text-sm leading-relaxed font-medium">
+                            Zero compromise on quality. We use only 100% genuine parts for luxury and performance vehicles.
+                        </p>
+                    </div>
+                    <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-precision">
+                        <div className="w-12 h-12 rounded-2xl bg-[#FFD700]/10 flex items-center justify-center text-[#FFD700] mb-6">
+                            <Clock size={24} />
+                        </div>
+                        <h3 className="text-xl font-black text-[#121212] uppercase tracking-tight mb-4 italic">Rapid Turnaround</h3>
+                        <p className="text-gray-500 text-sm leading-relaxed font-medium">
+                            Most minor services are completed within 2-3 hours using our synchronized workshop orchestration.
+                        </p>
                     </div>
                 </div>
-            </div>
-        </div>
+            </section>
+
+            <Footer />
+        </main>
     )
 }

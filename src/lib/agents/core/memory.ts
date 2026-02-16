@@ -11,27 +11,35 @@ export class MemoryManager {
     }
 
     async addMessage(userId: string, sessionId: string, message: Message): Promise<void> {
-        const key = this.getKey(userId, sessionId)
-        const context = await this.getContext(userId, sessionId)
+        try {
+            const key = this.getKey(userId, sessionId)
+            const context = await this.getContext(userId, sessionId)
 
-        // Add timestamp if missing
-        if (!message.timestamp) message.timestamp = Date.now()
+            // Add timestamp if missing
+            if (!message.timestamp) message.timestamp = Date.now()
 
-        context.messages.push(message)
-        context.metadata = { ...context.metadata, lastUpdated: Date.now() }
+            context.messages.push(message)
+            context.metadata = { ...context.metadata, lastUpdated: Date.now() }
 
-        await redis.setex(key, this.TTL, JSON.stringify(context))
+            await redis.setex(key, this.TTL, JSON.stringify(context)).catch(() => {})
+        } catch (e) {
+            console.warn('MemoryManager.addMessage error:', e)
+        }
     }
 
     async getContext(userId: string, sessionId: string): Promise<ConversationContext> {
-        const key = this.getKey(userId, sessionId)
-        const data = await redis.get(key)
+        try {
+            const key = this.getKey(userId, sessionId)
+            const data = await redis.get(key).catch(() => null)
 
-        if (data) {
-            return JSON.parse(data) as ConversationContext
+            if (data) {
+                return JSON.parse(data) as ConversationContext
+            }
+        } catch (e) {
+            console.warn('MemoryManager.getContext error:', e)
         }
 
-        // Return empty context if new
+        // Return empty context if new or error
         return {
             userId,
             sessionId,

@@ -1,5 +1,6 @@
 'use client'
 
+import { Activity } from 'lucide-react'
 import { formatPrice, formatDate } from '@/lib/utils'
 
 interface RecentActivityProps {
@@ -17,8 +18,12 @@ interface RecentActivityProps {
 export function RecentActivity({ bookings }: RecentActivityProps) {
     if (bookings.length === 0) {
         return (
-            <div className="h-48 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
-                <p className="text-gray-400 text-sm">No recent activity to display</p>
+            <div className="h-64 flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-[2.5rem] bg-gray-50/30">
+                <div className="p-4 rounded-full bg-white shadow-sm mb-4">
+                    <Activity size={32} className="text-gray-200" />
+                </div>
+                <p className="text-gray-400 text-xs font-black uppercase tracking-[0.2em]">Awaiting Activity Logs</p>
+                <p className="text-[10px] text-gray-300 mt-2 font-medium">New bookings will appear here in real-time.</p>
             </div>
         )
     }

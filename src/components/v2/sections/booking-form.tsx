@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils'
 import { Tooltip } from '@/components/ui/tooltip'
 import { getBrandsWithModels, getServices, getAvailableSlots } from '@/app/actions'
 import { useLanguage } from '@/lib/language-context'
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import { toast } from 'sonner'
 
 const bookingSchema = z.object({
@@ -39,7 +38,6 @@ const STEPS = [
 
 export function BookingForm() {
     const { isRTL } = useLanguage()
-    const { executeRecaptcha } = useGoogleReCaptcha()
     const [currentStep, setCurrentStep] = useState(1)
     const [direction, setDirection] = useState(0)
     const controls = useAnimation()
@@ -128,15 +126,10 @@ export function BookingForm() {
     const onSubmit = async (data: BookingFormData) => {
         setIsSubmitting(true)
         try {
-            let recaptchaToken = ''
-            if (executeRecaptcha) {
-                recaptchaToken = await executeRecaptcha('booking_submit')
-            }
-
             const response = await fetch('/api/bookings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...data, recaptchaToken })
+                body: JSON.stringify(data)
             })
 
             const result = await response.json()
@@ -271,7 +264,7 @@ export function BookingForm() {
                                                         placeholder="Enter your full name"
                                                         {...register('fullName')}
                                                         error={errors.fullName?.message}
-                                                        inputClassName="bg-gray-50/50 border-0 rounded-2xl h-16 pl-6 text-sm font-bold focus:bg-white focus:ring-2 focus:ring-[#121212] transition-all"
+                                                        inputClassName="bg-gray-50/50 border-0 rounded-2xl h-16 pl-6 text-sm font-bold focus:bg-white focus:ring-2 focus:ring-[#121212] transition-all field-depth"
                                                     />
                                                     <Input
                                                         label="Contact Number"
@@ -279,7 +272,7 @@ export function BookingForm() {
                                                         placeholder="+971 50 000 0000"
                                                         {...register('phone')}
                                                         error={errors.phone?.message}
-                                                        inputClassName="bg-gray-50/50 border-0 rounded-2xl h-16 pl-6 text-sm font-bold focus:bg-white focus:ring-2 focus:ring-[#121212] transition-all"
+                                                        inputClassName="bg-gray-50/50 border-0 rounded-2xl h-16 pl-6 text-sm font-bold focus:bg-white focus:ring-2 focus:ring-[#121212] transition-all field-depth"
                                                     />
                                                     <Input
                                                         label="Email Address"
@@ -287,18 +280,18 @@ export function BookingForm() {
                                                         placeholder="your@email.com"
                                                         {...register('email')}
                                                         error={errors.email?.message}
-                                                        inputClassName="bg-gray-50/50 border-0 rounded-2xl h-16 pl-6 text-sm font-bold focus:bg-white focus:ring-2 focus:ring-[#121212] transition-all"
+                                                        inputClassName="bg-gray-50/50 border-0 rounded-2xl h-16 pl-6 text-sm font-bold focus:bg-white focus:ring-2 focus:ring-[#121212] transition-all field-depth"
                                                     />
                                                 </div>
-                                                <div className="bg-[#121212] rounded-[2.5rem] p-10 text-white italic relative overflow-hidden shadow-2xl flex flex-col justify-center">
+                                                <div className="bg-[#121212] rounded-[2.5rem] p-10 text-white italic relative overflow-hidden shadow-2xl flex flex-col justify-center carbon-fiber">
                                                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#E62329]/10 blur-3xl opacity-50" />
                                                     <div className="flex items-center gap-4 mb-6">
                                                         <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#E62329]">
                                                             <ShieldCheck size={24} fill="currentColor" />
                                                         </div>
-                                                        <h3 className="text-xs font-black uppercase tracking-widest">Privacy First</h3>
+                                                        <h3 className="text-xs font-black uppercase tracking-widest text-white">Privacy First</h3>
                                                     </div>
-                                                    <p className="text-gray-400 font-medium leading-relaxed text-sm">
+                                                    <p className="text-white/70 font-medium leading-relaxed text-sm">
                                                         Your contact details are encrypted and used only for service updates via WhatsApp and Email. No spam, just elite service.
                                                     </p>
                                                 </div>
@@ -343,7 +336,7 @@ export function BookingForm() {
                                                                     >
                                                                         <div className="w-12 h-12 flex items-center justify-center mb-3">
                                                                             <img
-                                                                                src={b.logoUrl || (b.logoFile ? `/brands/${b.logoFile}` : '/branding/logo.png')}
+                                                                                src={b.logoUrl || (b.logoFile ? `/brands-carousel/${b.logoFile}` : '/branding/logo.png')}
                                                                                 alt={b.name}
                                                                                 className={cn(
                                                                                     "w-full h-full object-contain transition-all duration-700",
@@ -609,11 +602,11 @@ export function BookingForm() {
                 
                 {/* Visual Trust Indicators */}
                 <div className="mt-12 flex flex-wrap justify-center gap-12 opacity-30 grayscale filter">
-                    <img src="/brands/porsche-logo.png" className="h-8 w-auto object-contain" alt="Porsche" />
-                    <img src="/brands/bmw-logo.png" className="h-8 w-auto object-contain" alt="BMW" />
-                    <img src="/brands/mercedes-logo.png" className="h-8 w-auto object-contain" alt="Mercedes" />
-                    <img src="/brands/audi-logo.png" className="h-8 w-auto object-contain" alt="Audi" />
-                    <img src="/brands/landrover-logo.png" className="h-8 w-auto object-contain" alt="Range Rover" />
+                    <img src="/brands-carousel/porsche-logo.png" className="h-8 w-auto object-contain" alt="Porsche" />
+                    <img src="/brands-carousel/bmw-logo.png" className="h-8 w-auto object-contain" alt="BMW" />
+                    <img src="/brands-carousel/mercedes-logo.png" className="h-8 w-auto object-contain" alt="Mercedes" />
+                    <img src="/brands-carousel/audi-logo-150x150-1.png" className="h-8 w-auto object-contain" alt="Audi" />
+                    <img src="/brands-carousel/land-rover-logo.png" className="h-8 w-auto object-contain" alt="Range Rover" />
                 </div>
             </div>
         </section>

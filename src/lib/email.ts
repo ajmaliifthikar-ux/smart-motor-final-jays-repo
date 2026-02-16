@@ -177,7 +177,7 @@ export async function sendBookingConfirmation(email: string, bookingDetails: {
             View Booking
           </a>
 
-          <p><strong>Need to reschedule?</strong> Contact us at +971 2 XXX XXXX</p>
+          <p><strong>Need to reschedule?</strong> Contact us at +971 2 555 5443</p>
         </div>
         <div class="footer">
           <p>Smart Motor Performance</p>
@@ -266,7 +266,7 @@ export async function sendWelcomeEmail(email: string, name: string) {
             Browse Services
           </a>
 
-          <p>Need help? Our team is here 24/7 at <a href="tel:+97126551234">+971 2 655 1234</a></p>
+          <p>Need help? Our team is here 24/7 at <a href="tel:+97125555443">+971 2 555 5443</a></p>
         </div>
         <div class="footer">
           <p>Smart Motor Performance</p>
