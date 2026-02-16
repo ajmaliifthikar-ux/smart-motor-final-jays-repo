@@ -84,6 +84,7 @@ export const metadata: Metadata = {
 };
 
 import { LanguageProvider } from "@/lib/language-context";
+import { SmartAssistantWithAudio } from "@/components/ui/smart-assistant-with-audio";
 
 import { JsonLd } from "@/components/seo/JsonLd";
 import { WithContext, AutoRepair } from "schema-dts";
@@ -146,6 +147,7 @@ export default function RootLayout({
         <LanguageProvider>
           <RecaptchaProvider>
             {children}
+            <SmartAssistantWithAudio />
             <script dangerouslySetInnerHTML={{ __html: `
               document.addEventListener('click', function() {
                 if (typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext)) {
