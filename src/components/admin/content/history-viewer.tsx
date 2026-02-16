@@ -38,6 +38,8 @@ export function HistoryViewer() {
             if (res.success) {
                 toast.success("Content restored successfully")
                 fetchHistory()
+            } else if (res.error) {
+                toast.error(res.error)
             }
         } catch (err) {
             toast.error("Restoration failed")

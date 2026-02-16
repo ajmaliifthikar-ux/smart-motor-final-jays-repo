@@ -224,6 +224,9 @@ export async function getService(serviceId: string): Promise<FirebaseService | n
   }
 }
 
+// Alias for compatibility
+export const getServiceById = getService
+
 export async function getServiceBySlug(slug: string): Promise<FirebaseService | null> {
   try {
     const q = query(collection(db, 'services'), where('slug', '==', slug))
@@ -273,6 +276,83 @@ export async function updateService(serviceId: string, updates: Partial<Firebase
     })
   } catch (error) {
     console.error('Error updating service:', error)
+    throw error
+  }
+}
+
+// ─── BRAND MANAGEMENT ───
+
+export interface FirebaseBrand {
+  id: string
+  name: string
+  nameAr?: string
+  slug: string
+  description?: string
+  logoUrl?: string
+  image?: string
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+export async function getBrand(brandId: string): Promise<FirebaseBrand | null> {
+  try {
+    const docRef = doc(db, 'brands', brandId)
+    const docSnap = await getDoc(docRef)
+    return docSnap.exists() ? (docSnap.data() as FirebaseBrand) : null
+  } catch (error) {
+    console.error('Error fetching brand:', error)
+    return null
+  }
+}
+
+export async function getAllBrands(): Promise<FirebaseBrand[]> {
+  try {
+    const q = query(collection(db, 'brands'), orderBy('name', 'asc'))
+    const querySnapshot = await getDocs(q)
+    return querySnapshot.docs.map((doc) => doc.data() as FirebaseBrand)
+  } catch (error) {
+    console.error('Error fetching brands:', error)
+    return []
+  }
+}
+
+export async function createBrand(
+  brandData: Omit<FirebaseBrand, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<string> {
+  try {
+    const newDocRef = doc(collection(db, 'brands'))
+    const now = Timestamp.now()
+    const slug = brandData.slug || brandData.name.toLowerCase().replace(/\s+/g, '-')
+    await setDoc(newDocRef, {
+      ...brandData,
+      slug,
+      createdAt: now,
+      updatedAt: now,
+    })
+    return newDocRef.id
+  } catch (error) {
+    console.error('Error creating brand:', error)
+    throw error
+  }
+}
+
+export async function updateBrand(brandId: string, updates: Partial<FirebaseBrand>): Promise<void> {
+  try {
+    await updateDoc(doc(db, 'brands', brandId), {
+      ...updates,
+      updatedAt: Timestamp.now(),
+    })
+  } catch (error) {
+    console.error('Error updating brand:', error)
+    throw error
+  }
+}
+
+export async function deleteBrand(brandId: string): Promise<void> {
+  try {
+    await deleteDoc(doc(db, 'brands', brandId))
+  } catch (error) {
+    console.error('Error deleting brand:', error)
     throw error
   }
 }
@@ -469,6 +549,32 @@ export async function batchWrite(callback: (batch: WriteBatch) => Promise<void>)
     await batch.commit()
   } catch (error) {
     console.error('Error in batch write:', error)
+    throw error
+  }
+}
+
+// ─── AUDIT LOGS ───
+
+export interface FirebaseAuditLog {
+  id?: string
+  userId: string
+  action: string
+  resource: string
+  details?: any
+  createdAt: Timestamp
+}
+
+export async function createAuditLog(logData: Omit<FirebaseAuditLog, 'id' | 'createdAt'>): Promise<string> {
+  try {
+    const newDocRef = doc(collection(db, 'auditLogs'))
+    const now = Timestamp.now()
+    await setDoc(newDocRef, {
+      ...logData,
+      createdAt: now,
+    })
+    return newDocRef.id
+  } catch (error) {
+    console.error('Error creating audit log:', error)
     throw error
   }
 }
