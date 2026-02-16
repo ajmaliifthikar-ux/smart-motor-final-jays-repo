@@ -68,7 +68,10 @@ export async function getUserByEmail(email: string): Promise<FirebaseUser | null
   }
 }
 
-export async function createUser(userId: string, userData: Omit<FirebaseUser, 'id'>): Promise<void> {
+export async function createUser(
+  userId: string,
+  userData: Omit<FirebaseUser, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<void> {
   try {
     const now = Timestamp.now()
     await setDoc(doc(db, 'users', userId), {
