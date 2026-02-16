@@ -2,7 +2,7 @@ import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import Link from 'next/link'
 import { ArrowRight, ShieldCheck } from 'lucide-react'
-import { prisma } from '@/lib/prisma'
+import { getAllBrands } from '@/lib/firebase-db'
 import { BrandsHero } from '@/components/v2/sections/brands-hero'
 import { Metadata } from 'next'
 
@@ -44,18 +44,16 @@ const CATEGORIES = [
 export default async function BrandsPage() {
     let brandsData: any[] = []
     try {
-        brandsData = await prisma.brand.findMany({
-            select: {
-                id: true,
-                name: true,
-                logoUrl: true,
-                description: true,
-                specialties: true,
-                category: true,
-                slug: true
-            },
-            orderBy: { name: 'asc' }
-        })
+        const allBrands = await getAllBrands()
+        brandsData = allBrands.map(b => ({
+            id: b.id,
+            name: b.name,
+            logoUrl: b.logoUrl,
+            description: b.description,
+            specialties: undefined,
+            category: undefined,
+            slug: b.slug
+        })).sort((a, b) => a.name.localeCompare(b.name))
     } catch (e) {
         console.error("DB Error", e);
     }

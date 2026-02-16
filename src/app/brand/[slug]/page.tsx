@@ -1,6 +1,6 @@
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
-import { prisma } from '@/lib/prisma'
+import { getAllBrands } from '@/lib/firebase-db'
 import { notFound } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Shield, Wrench, CheckCircle2, ChevronRight, Star } from 'lucide-react'
@@ -9,16 +9,15 @@ import Link from 'next/link'
 
 export default async function BrandPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const brand = await prisma.brand.findUnique({
-        where: { slug: slug }
-    })
+    const allBrands = await getAllBrands()
+    const brand = allBrands.find(b => b.slug === slug)
 
     if (!brand) {
         notFound()
     }
 
-    const models = brand.models ? brand.models.split(',') : []
-    const specialties = brand.specialties ? brand.specialties.split(',') : []
+    const models = brand.description ? brand.description.split(',') : []
+    const specialties: string[] = [] // Specialties not available in Firebase brand model
 
     return (
         <main className="min-h-screen bg-[#FAFAF9]">
@@ -33,7 +32,7 @@ export default async function BrandPage({ params }: { params: Promise<{ slug: st
                     <div className="flex flex-col md:flex-row items-center gap-12">
                         <div className="w-32 h-32 md:w-48 md:h-48 bg-white/5 backdrop-blur-xl rounded-[2.5rem] border border-white/10 p-8 flex items-center justify-center shadow-2xl">
                             <img 
-                                src={`/brands-carousel/${brand.logoFile}`} 
+                                src={brand.logoUrl || '/bg-placeholder.jpg'} 
                                 alt={brand.name} 
                                 className="w-full h-full object-contain"
                             />
@@ -46,7 +45,7 @@ export default async function BrandPage({ params }: { params: Promise<{ slug: st
                                 {brand.name} <br /> <span className="silver-shine">Certified</span>
                             </h1>
                             <p className="text-gray-400 text-lg max-w-2xl font-medium leading-relaxed">
-                                {brand.heritage || brand.description}
+                                {brand.description || 'Premium automotive service'}
                             </p>
                         </div>
                     </div>

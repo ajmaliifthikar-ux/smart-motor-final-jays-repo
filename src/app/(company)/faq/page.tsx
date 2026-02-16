@@ -1,7 +1,7 @@
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import { FAQ as FAQComponent } from '@/components/sections/faq'
-import { prisma } from '@/lib/prisma'
+import { getAllPublishedContent } from '@/lib/firebase-db'
 import { HelpCircle, Shield, Clock, Wrench } from 'lucide-react'
 
 export const revalidate = 3600
@@ -9,9 +9,13 @@ export const revalidate = 3600
 export default async function FAQPage() {
     let faqs: any[] = []
     try {
-        faqs = await prisma.fAQ.findMany({
-            orderBy: { createdAt: 'asc' }
-        })
+        const content = await getAllPublishedContent('FAQ')
+        faqs = content.map(c => ({
+            id: c.id,
+            question: c.title,
+            answer: c.content,
+            createdAt: c.createdAt
+        }))
     } catch (e) {
         console.error(e)
     }

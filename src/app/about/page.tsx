@@ -2,15 +2,13 @@ import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import { CheckCircle2, Award, ArrowUpRight, Shield, Zap } from 'lucide-react'
 import { AdvancedLogoSlider } from '@/components/v2/sections/advanced-logo-slider'
-import { prisma } from '@/lib/prisma'
+import { getAllBrands } from '@/lib/firebase-db'
 
 export default async function AboutPage() {
     let brandsData: any[] = []
     try {
-        brandsData = await prisma.brand.findMany({
-            select: { id: true, name: true, logoUrl: true, slug: true },
-            take: 20
-        })
+        const allBrands = await getAllBrands()
+        brandsData = allBrands.slice(0, 20)
     } catch (e) {}
 
     const brands = brandsData.map(b => ({
