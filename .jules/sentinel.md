@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2026-02-15: Critical Admin Bypass via Hardcoded Token
+**Vulnerability:** A development-only "mock authentication" backdoor allowed anyone with a specific hardcoded token (`mock-token-secret-123`) to gain full administrator privileges.
+**Learning:** Hardcoded secrets intended for development convenience can easily leak into production if not strictly guarded by environment checks.
+**Prevention:** Wrap all debug/mock logic in `process.env.NODE_ENV === 'development'` checks and never commit hardcoded bypass tokens without these guards.
