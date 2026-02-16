@@ -22,7 +22,18 @@ export function ServicePackages({ packages }: { packages: ServicePackage[] }) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {packages.map((pkg, index) => {
-                        const isPrimary = index === 1 // Making the second package the "Dark/Premium" one layout-wise
+                        const isPrimary = index === 1
+                        // Safe feature parsing
+                        let featuresList: string[] = []
+                        if (typeof pkg.features === 'string') {
+                            try {
+                                featuresList = JSON.parse(pkg.features)
+                            } catch (e) {
+                                featuresList = (pkg.features as string).split(',')
+                            }
+                        } else if (Array.isArray(pkg.features)) {
+                            featuresList = pkg.features
+                        }
 
                         return (
                             <motion.div
@@ -64,11 +75,10 @@ export function ServicePackages({ packages }: { packages: ServicePackage[] }) {
                                 <p className="text-[#E62329] font-bold uppercase tracking-widest text-xs mb-6">{pkg.subtitle}</p>
 
                                 <ul className="space-y-4 mb-8 relative z-10 flex-grow">
-                                    {pkg.features.map((feature, i) => (
+                                    {featuresList.map((feature, i) => (
                                         <li key={i} className={cn(
                                             "flex items-center gap-3 font-medium",
                                             isPrimary ? "text-gray-300" : "text-gray-600",
-                                            // Highlight first two features of primary package
                                             isPrimary && i < 2 && "text-white text-lg font-bold"
                                         )}>
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#E62329] flex-shrink-0" />

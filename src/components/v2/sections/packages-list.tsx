@@ -7,7 +7,20 @@ import { ServicePackage } from '@/types/v2'
 export function PackagesList({ packages }: { packages: ServicePackage[] }) {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {packages.map((pkg, i) => (
+            {packages.map((pkg, i) => {
+                // Ensure features is an array of strings
+                let featuresList: string[] = []
+                if (typeof pkg.features === 'string') {
+                    try {
+                        featuresList = JSON.parse(pkg.features)
+                    } catch (e) {
+                        featuresList = (pkg.features as string).split(',')
+                    }
+                } else if (Array.isArray(pkg.features)) {
+                    featuresList = pkg.features
+                }
+
+                return (
                 <motion.div
                     key={pkg.id}
                     initial={{ opacity: 0, y: 30 }}
@@ -40,7 +53,7 @@ export function PackagesList({ packages }: { packages: ServicePackage[] }) {
                         <div className="h-px w-full bg-gradient-to-r from-transparent via-current to-transparent opacity-20 mb-10" />
 
                         <ul className="space-y-6 mb-12">
-                            {pkg.features.map((feature, f) => (
+                            {featuresList.map((feature, f) => (
                                 <li key={f} className="flex items-start gap-5">
                                     <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${pkg.id === 'current-promotion' ? 'bg-[#E62329] text-white' : 'bg-black text-white'}`}>
                                         <Check size={12} strokeWidth={4} />
@@ -64,7 +77,7 @@ export function PackagesList({ packages }: { packages: ServicePackage[] }) {
                         </div>
                     </div>
                 </motion.div>
-            ))}
+            )})}
         </div>
     )
 }
