@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { JsonLd } from "@/components/seo/JsonLd"
 import { WithContext, Service as SchemaService, BreadcrumbList, ListItem, Offer, OfferCatalog, AutoRepair, City } from "schema-dts"
 import { notFound } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
+import { getAllServices } from '@/lib/firebase-db'
 import { ServiceDetailClient } from '@/components/v2/sections/service-detail-client'
 import { Service } from '@/types'
 
@@ -12,9 +12,7 @@ type Props = {
 
 export async function generateStaticParams() {
     try {
-        const services = await prisma.service.findMany({
-            select: { slug: true }
-        })
+        const services = await getAllServices()
         return services.map((service) => ({
             id: service.slug,
         }))
@@ -28,21 +26,17 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     const params = await props.params
     const id = params.id
     try {
-        const service = await prisma.service.findUnique({
-            where: { slug: id },
-            select: { name: true, description: true, seo: true }
-        })
+        const allServices = await getAllServices()
+        const service = allServices.find(s => s.slug === id)
 
         if (!service) return {}
 
-        const seo = service.seo as { title: string, description: string } | null
-
         return {
-            title: seo?.title || `${service.name} | Smart Motor Abu Dhabi`,
-            description: seo?.description || service.description,
+            title: `${service.name} | Smart Motor Abu Dhabi`,
+            description: service.description,
             openGraph: {
-                title: seo?.title || `${service.name} | Smart Motor Abu Dhabi`,
-                description: seo?.description || service.description,
+                title: `${service.name} | Smart Motor Abu Dhabi`,
+                description: service.description,
             }
         }
     } catch (error) {
@@ -58,9 +52,8 @@ export default async function ServiceDetailPage(props: Props) {
 
     let serviceData
     try {
-        serviceData = await prisma.service.findUnique({
-            where: { slug: serviceId }
-        })
+        const allServices = await getAllServices()
+        serviceData = allServices.find(s => s.slug === serviceId)
     } catch (error) {
         console.error('Database error:', error)
         // Fallback or error page
@@ -70,31 +63,11 @@ export default async function ServiceDetailPage(props: Props) {
         return notFound()
     }
 
-    // Safely parse subServices
+    // Safely parse subServices (not available in Firebase)
     let subServicesList: any[] = []
-    if (typeof serviceData.subServices === 'string') {
-        try {
-            subServicesList = JSON.parse(serviceData.subServices)
-        } catch (e) {
-            console.warn('Failed to parse subServices:', e)
-        }
-    } else if (Array.isArray(serviceData.subServices)) {
-        subServicesList = serviceData.subServices
-    }
-
-    // Safely parse process
     let processList: any[] = []
-    if (typeof serviceData.process === 'string') {
-        try {
-            processList = JSON.parse(serviceData.process)
-        } catch (e) {
-            console.warn('Failed to parse process:', e)
-        }
-    } else if (Array.isArray(serviceData.process)) {
-        processList = serviceData.process
-    }
 
-    // Cast Prisma result to Service type
+    // Cast Firestore result to Service type
     const service: Service = {
         ...serviceData,
         id: serviceData.slug,
@@ -104,10 +77,10 @@ export default async function ServiceDetailPage(props: Props) {
         icon: serviceData.icon || 'wrench',
         process: processList,
         subServices: subServicesList,
-        seo: serviceData.seo as any,
+        seo: undefined,
         detailedDescription: serviceData.detailedDescription || undefined,
         image: serviceData.image || undefined,
-        iconImage: serviceData.iconImage || undefined
+        iconImage: undefined
     }
 
     const itemOffered = subServicesList.map((sub): Offer => ({

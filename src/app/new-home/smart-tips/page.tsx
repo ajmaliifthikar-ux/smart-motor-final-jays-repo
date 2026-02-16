@@ -1,7 +1,7 @@
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import dynamic from 'next/dynamic'
-import { prisma } from '@/lib/prisma'
+import { getAllPublishedContent } from '@/lib/firebase-db'
 import { BlogPost } from '@/types/v2'
 import { SmartTipsList } from '@/components/v2/sections/smart-tips-list'
 import { SmartTipsHero } from '@/components/v2/sections/smart-tips-hero'
@@ -19,10 +19,9 @@ export const revalidate = 3600
 export default async function SmartTipsPage() {
     let postsData: any[] = []
     try {
-        postsData = await prisma.blogPost.findMany({
-            where: { isPublished: true },
-            orderBy: { createdAt: 'desc' } // publishedAt is nullable, verify sort
-        })
+        const content = await getAllPublishedContent('BLOG')
+        postsData = content
+            .sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime())
     } catch (e) {
         console.error("DB Error", e);
     }

@@ -3,7 +3,7 @@ import { JsonLd } from "@/components/seo/JsonLd"
 import { WithContext, BlogPosting, BreadcrumbList, ListItem, Person, Organization, ImageObject, WebPage } from "schema-dts"
 import { BlogPostClient } from '@/components/v2/sections/blog-post-client'
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
+import { getAllPublishedContent } from '@/lib/firebase-db'
 import { BlogPost } from '@/types/v2'
 
 type Props = {
@@ -12,10 +12,7 @@ type Props = {
 
 export async function generateStaticParams() {
     try {
-        const posts = await prisma.blogPost.findMany({
-            where: { isPublished: true },
-            select: { slug: true }
-        })
+        const posts = await getAllPublishedContent('BLOG')
         return posts.map(p => ({ slug: p.slug }))
     } catch {
         return []
@@ -26,9 +23,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     const params = await props.params
     const slug = params.slug
 
-    const post = await prisma.blogPost.findUnique({
-        where: { slug }
-    })
+    const allContent = await getAllPublishedContent('BLOG')
+    const post = allContent.find(p => p.slug === slug)
 
     if (!post) {
         return {
@@ -36,16 +32,16 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
         }
     }
 
+    const excerpt = post.content?.substring(0, 160) || ''
+
     return {
         title: `${post.title} | Smart Motor Tips`,
-        description: post.excerpt,
+        description: excerpt,
         openGraph: {
             title: post.title,
-            description: post.excerpt,
+            description: excerpt,
             type: 'article',
-            publishedTime: post.publishedAt?.toISOString(),
             authors: [post.author || 'Smart Motor'],
-            images: post.image ? [{ url: post.image }] : undefined,
         },
     }
 }
@@ -54,9 +50,8 @@ export default async function BlogPostPage(props: Props) {
     const params = await props.params
     const slug = params.slug
 
-    const postData = await prisma.blogPost.findUnique({
-        where: { slug }
-    })
+    const allContent = await getAllPublishedContent('BLOG')
+    const postData = allContent.find(c => c.slug === slug)
 
     if (!postData) {
         return (
@@ -74,34 +69,29 @@ export default async function BlogPostPage(props: Props) {
         id: postData.id,
         slug: postData.slug,
         title: postData.title,
-        excerpt: postData.excerpt,
+        excerpt: postData.content?.substring(0, 160) || '',
         content: postData.content,
-        date: postData.publishedAt ? postData.publishedAt.toLocaleDateString('en-GB') : '',
+        date: postData.createdAt.toDate().toLocaleDateString('en-GB'),
         author: postData.author || 'Smart Motor Team',
-        category: postData.category || 'General',
-        image: postData.image || '/bg-placeholder.jpg'
+        category: 'General',
+        image: '/bg-placeholder.jpg'
     }
 
     // Find related posts (exclude current, take 2)
-    const relatedPostsData = await prisma.blogPost.findMany({
-        where: {
-            isPublished: true,
-            slug: { not: slug }
-        },
-        take: 2,
-        orderBy: { publishedAt: 'desc' }
-    })
+    const relatedPostsData = allContent
+        .filter(c => c.slug !== slug)
+        .slice(0, 2)
 
     const relatedPosts: BlogPost[] = relatedPostsData.map(p => ({
         id: p.id,
         slug: p.slug,
         title: p.title,
-        excerpt: p.excerpt,
+        excerpt: p.content?.substring(0, 160) || '',
         content: p.content,
-        date: p.publishedAt ? p.publishedAt.toLocaleDateString('en-GB') : '',
+        date: p.createdAt.toDate().toLocaleDateString('en-GB'),
         author: p.author || 'Smart Motor Team',
-        category: p.category || 'General',
-        image: p.image || '/bg-placeholder.jpg'
+        category: 'General',
+        image: '/bg-placeholder.jpg'
     }))
 
     const jsonLd: WithContext<BlogPosting> = {

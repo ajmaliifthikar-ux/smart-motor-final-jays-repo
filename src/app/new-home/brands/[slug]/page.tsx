@@ -4,7 +4,7 @@ import { WithContext, Service, BreadcrumbList, AutoRepair, City, Brand as Schema
 import { BrandDetailClient } from '@/components/v2/sections/brand-detail-client'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
+import { getAllBrands } from '@/lib/firebase-db'
 import { Brand } from '@/types/v2'
 
 type Props = {
@@ -21,8 +21,9 @@ const CATEGORIES_MAP: Record<string, string> = {
 
 export async function generateStaticParams() {
     try {
-        const brands = await prisma.brand.findMany({ select: { slug: true, id: true } })
+        const brands = await getAllBrands()
         return brands.map(b => ({ slug: b.slug || b.id }))
+
     } catch {
         return []
     }
@@ -32,15 +33,9 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     const params = await props.params
     const brandId = params.slug
 
-    // Try finding by slug first, then by name/id if needed, but slug is unique
-    const brand = await prisma.brand.findFirst({
-        where: {
-            OR: [
-                { slug: brandId },
-                { id: brandId }
-            ]
-        }
-    })
+    // Find by slug first, then by id
+    const allBrands = await getAllBrands()
+    const brand = allBrands.find(b => b.slug === brandId || b.id === brandId)
 
     if (!brand) {
         return {
@@ -54,7 +49,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
         openGraph: {
             title: `${brand.name} Service Specialists`,
             description: `Expert ${brand.name} maintenance and repair in Abu Dhabi. Factory-trained technicians and genuine parts.`,
-            images: brand.heroImage ? [{ url: brand.heroImage }] : undefined,
+            images: brand.image ? [{ url: brand.image }] : undefined,
         },
     }
 }
@@ -63,14 +58,8 @@ export default async function BrandDetailPage(props: Props) {
     const params = await props.params
     const brandId = params.slug
 
-    const brandData = await prisma.brand.findFirst({
-        where: {
-            OR: [
-                { slug: brandId },
-                { id: brandId }
-            ]
-        }
-    })
+    const allBrands = await getAllBrands()
+    const brandData = allBrands.find(b => b.slug === brandId || b.id === brandId)
 
     if (!brandData) {
         return (
@@ -89,14 +78,14 @@ export default async function BrandDetailPage(props: Props) {
         name: brandData.name,
         logo: brandData.logoUrl || '',
         description: brandData.description || '',
-        heroImage: brandData.heroImage || '',
-        specialties: brandData.specialties ? brandData.specialties.split(',') : [],
-        models: brandData.models ? brandData.models.split(',') : [],
-        services: brandData.services ? brandData.services.split(',') : [],
+        heroImage: brandData.image || '',
+        specialties: [],
+        models: [],
+        services: [],
         // commonIssues? Not in DB yet
     }
 
-    const categoryName = brandData.category ? CATEGORIES_MAP[brandData.category] : undefined
+    const categoryName = undefined
 
     const jsonLd: WithContext<Service> = {
         "@context": "https://schema.org",
