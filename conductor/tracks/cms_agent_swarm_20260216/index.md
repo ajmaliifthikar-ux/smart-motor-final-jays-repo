@@ -1,4 +1,4 @@
-# Track stabilize_core_20260216 Context
+# Track cms_agent_swarm_20260216 Context
 
 - [Specification](./spec.md)
 - [Implementation Plan](./plan.md)
