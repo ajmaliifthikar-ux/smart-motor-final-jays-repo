@@ -3,16 +3,16 @@
 ## Phase 1: CMS Core & Infrastructure
 Goal: Establish the database models and basic API routes for content management and versioning.
 
-- [ ] Task: Update `prisma/schema.prisma` to include `ContentAudit` and `ContentHistory` models.
-    - [ ] Write Tests: Verify schema integrity and relation mappings.
-    - [ ] Implement Feature: Add new models and run `npx prisma migrate dev`.
-- [ ] Task: Create Server Actions for granular content updates with audit logging.
-    - [ ] Write Tests: Verify `ContentAudit` record is created on every update.
-    - [ ] Implement Feature: Develop `updateContentWithAudit` action.
-- [ ] Task: Implement snapshot history logic for full content state restoration.
-    - [ ] Write Tests: Verify snapshot creation and "Restore to Version" functionality.
-    - [ ] Implement Feature: Develop `createContentSnapshot` and `restoreContentSnapshot` actions.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: CMS Core & Infrastructure' (Protocol in workflow.md)
+- [x] Task: Update `prisma/schema.prisma` to include `ContentAudit` and `ContentHistory` models.
+    - [x] Write Tests: Verify schema integrity and relation mappings.
+    - [x] Implement Feature: Add new models and run `npx prisma migrate dev`.
+- [x] Task: Create Server Actions for granular content updates with audit logging.
+    - [x] Write Tests: Verify `ContentAudit` record is created on every update.
+    - [x] Implement Feature: Develop `updateContentWithAudit` action.
+- [x] Task: Implement snapshot history logic for full content state restoration.
+    - [x] Write Tests: Verify snapshot creation and "Restore to Version" functionality.
+    - [x] Implement Feature: Develop `createContentSnapshot` and `restoreContentSnapshot` actions.
+- [x] Task: Conductor - User Manual Verification 'Phase 1: CMS Core & Infrastructure' (Protocol in workflow.md)
 
 ## Phase 2: Administrative CMS Interface
 Goal: Build the visual management tools for website content.
