@@ -31,34 +31,48 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     const { email, password } = parsedCredentials.data;
                     
                     try {
-                        // Verify Firebase credentials via admin SDK
-                        const userRecord = await adminAuth.getUserByEmail(email)
-                        
-                        // For Firebase, we verify the password exists in the Prisma DB 
-                        // (or can use Firebase custom claims for role)
-                        const dbUser = await prisma.user.findUnique({ where: { email } })
+                        // Truly verify against Firebase using REST API
+                        const firebaseApiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+                        const response = await fetch(
+                            `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseApiKey}`,
+                            {
+                                method: 'POST',
+                                body: JSON.stringify({
+                                    email,
+                                    password,
+                                    returnSecureToken: true,
+                                }),
+                                headers: { 'Content-Type': 'application/json' },
+                            }
+                        );
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            console.error('Firebase Auth Error:', data.error?.message);
+                            return null;
+                        }
+
+                        // Firebase Auth successful! Now sync with Prisma
+                        let dbUser = await prisma.user.findUnique({ where: { email } });
 
                         if (!dbUser) {
-                            // User exists in Firebase but not in our DB, create DB user
-                            return await prisma.user.create({
+                            // Fetch detailed user info from Admin SDK
+                            const userRecord = await adminAuth.getUserByEmail(email);
+                            
+                            dbUser = await prisma.user.create({
                                 data: {
                                     email,
                                     name: userRecord.displayName || email.split('@')[0],
                                     role: 'USER',
                                 }
-                            })
+                            });
                         }
 
-                        // For backward compatibility, check hashed password if it exists
-                        if (dbUser.password) {
-                            const passwordsMatch = await bcrypt.compare(password, dbUser.password)
-                            if (!passwordsMatch) return null
-                        }
-
-                        return dbUser
+                        return dbUser;
                     } catch (error) {
-                        // Firebase user doesn't exist
-                        return null
+                        console.error('Auth logic error:', error);
+                        return null;
                     }
                 }
                 return null
