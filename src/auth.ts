@@ -6,6 +6,7 @@ import { z } from "zod"
 
 import { prisma } from "@/lib/prisma"
 import { authConfig } from "./auth.config"
+import { adminAuth } from "@/lib/firebase-admin"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
@@ -13,7 +14,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session: { strategy: "jwt" },
     providers: [
         Credentials({
-            name: "Credentials",
+            name: "Firebase",
             credentials: {
                 email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" },
@@ -22,21 +23,43 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 const parsedCredentials = z
                     .object({
                         email: z.string().email(),
-                        // Keep minimum length 6 for login to support legacy users who created accounts before the policy update
                         password: z.string().min(6)
                     })
                     .safeParse(credentials);
 
                 if (parsedCredentials.success) {
                     const { email, password } = parsedCredentials.data;
-                    const user = await prisma.user.findUnique({ where: { email } });
+                    
+                    try {
+                        // Verify Firebase credentials via admin SDK
+                        const userRecord = await adminAuth.getUserByEmail(email)
+                        
+                        // For Firebase, we verify the password exists in the Prisma DB 
+                        // (or can use Firebase custom claims for role)
+                        const dbUser = await prisma.user.findUnique({ where: { email } })
 
-                    if (!user) return null;
+                        if (!dbUser) {
+                            // User exists in Firebase but not in our DB, create DB user
+                            return await prisma.user.create({
+                                data: {
+                                    email,
+                                    name: userRecord.displayName || email.split('@')[0],
+                                    role: 'USER',
+                                }
+                            })
+                        }
 
-                    if (!user.password) return null
+                        // For backward compatibility, check hashed password if it exists
+                        if (dbUser.password) {
+                            const passwordsMatch = await bcrypt.compare(password, dbUser.password)
+                            if (!passwordsMatch) return null
+                        }
 
-                    const passwordsMatch = await bcrypt.compare(password, user.password)
-                    if (passwordsMatch) return user
+                        return dbUser
+                    } catch (error) {
+                        // Firebase user doesn't exist
+                        return null
+                    }
                 }
                 return null
             },

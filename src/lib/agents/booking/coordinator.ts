@@ -1,50 +1,46 @@
-import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai'
-import { calendarTools } from './calendar-tools' // Updated import path
+import { GoogleGenerativeAI, GenerativeModel, SchemaType } from '@google/generative-ai'
+import { calendarTools } from '@/lib/tools/calendar-tools'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 
 export class BookingCoordinator {
-    private model: any
+    private model: GenerativeModel
 
     constructor() {
         this.model = genAI.getGenerativeModel({
-            model: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+            model: process.env.GEMINI_MODEL || 'gemini-3-flash-preview',
             systemInstruction: `
                 You are the Booking Coordinator for Smart Motor.
                 Your role is to help customers find a suitable time for their car service.
                 
                 Capabilities:
-                - Check slot availability using real-time data for a SPECIFIC SERVICE.
+                - Check slot availability using real-time data.
                 - Suggest alternative times if a slot is taken.
-                - Collect necessary details (Service Type, Date, Time) to prepare for booking.
+                - Collect necessary details (Name, Car Model, Date, Time) to prepare for booking.
                 
                 Current Date: ${new Date().toISOString().split('T')[0]}
                 
                 Protocol:
-                1. Ask for the type of service required (e.g., Oil Change, Tinting).
-                2. Ask for preferred date.
-                3. Check availability for that service on that date.
-                4. If available, confirm the slot and ask to proceed with booking.
+                1. Ask for preferred date.
+                2. Check availability.
+                3. If available, confirm the slot and ask to proceed with booking (which links to the form).
+                4. If not available, offer the nearest open slots.
             `,
             tools: [
                 {
                     functionDeclarations: [
                         {
                             name: "checkAvailability",
-                            description: "Checks available appointment slots for a specific service on a specific date.",
+                            description: "Checks available appointment slots for a specific date.",
                             parameters: {
                                 type: SchemaType.OBJECT,
                                 properties: {
-                                    serviceId: {
-                                        type: SchemaType.STRING,
-                                        description: "The ID or slug of the service (e.g., 'oil-change', 'tinting')"
-                                    },
                                     dateString: {
                                         type: SchemaType.STRING,
                                         description: "Date in YYYY-MM-DD format"
                                     }
                                 },
-                                required: ["serviceId", "dateString"]
+                                required: ["dateString"]
                             }
                         }
                     ]
@@ -70,10 +66,8 @@ export class BookingCoordinator {
                 // Handle Function Call (Tool Use)
                 const call = functionCalls[0]
                 if (call.name === 'checkAvailability') {
-                    const { serviceId, dateString } = call.args
-                    // We need to resolve serviceId to a real ID if the model guesses a slug
-                    // For now, let's assume the model is smart enough or we map common names
-                    const toolResult = await calendarTools.checkAvailability(serviceId, dateString)
+                    const { dateString } = (call.args || {}) as { dateString: string }
+                    const toolResult = await calendarTools.checkAvailability(dateString)
 
                     // Send tool result back to model
                     const nextResult = await chat.sendMessage([
