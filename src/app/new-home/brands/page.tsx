@@ -63,10 +63,7 @@ export default async function BrandsPage() {
     const categoriesWithBrands = CATEGORIES.map(cat => ({
         ...cat,
         brands: brandsData.filter(b => {
-            // Flexible matching if needed, or exact
             if (b.category === cat.id) return true
-            // Fold 'european' into 'german' if desired, or keep separate?
-            // Seed data had explicit categories.
             return false
         })
     })).filter(cat => cat.brands.length > 0)
@@ -92,7 +89,26 @@ export default async function BrandsPage() {
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {category.brands.map((brand) => (
+                                {category.brands.map((brand) => {
+                                    // SAFELY HANDLE SPECIALTIES
+                                    // In SQLite, JSON might be returned as string if not using proper adapter, or as Prisma JsonValue
+                                    // Let's assume it might be a comma-separated string OR a JSON array
+                                    let specialtiesList: string[] = []
+                                    if (typeof brand.specialties === 'string') {
+                                        if (brand.specialties.startsWith('[')) {
+                                            try {
+                                                specialtiesList = JSON.parse(brand.specialties)
+                                            } catch (e) {
+                                                specialtiesList = []
+                                            }
+                                        } else {
+                                            specialtiesList = brand.specialties.split(',')
+                                        }
+                                    } else if (Array.isArray(brand.specialties)) {
+                                        specialtiesList = brand.specialties as string[]
+                                    }
+
+                                    return (
                                     <Link href={`/new-home/brands/${brand.slug || brand.id}`} key={brand.id} className="group block h-full">
                                         <div className="bg-white rounded-[2rem] p-8 transition-all duration-500 h-full flex flex-col border border-gray-100 hover:border-[#E62329]/30 relative overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-[#E62329]/10 group-hover:-translate-y-2">
                                             {/* Hover Gradient Background (CSS driven) */}
@@ -121,7 +137,7 @@ export default async function BrandsPage() {
 
                                                 <div className="mt-auto pt-6 border-t border-gray-100 group-hover:border-white/10">
                                                     <div className="flex flex-wrap gap-2">
-                                                        {((brand.specialties as string[]) || []).slice(0, 3).map((spec, s) => (
+                                                        {specialtiesList.slice(0, 3).map((spec, s) => (
                                                             <span key={s} className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 bg-gray-100/80 text-gray-600 group-hover:bg-white/10 group-hover:text-white/80 rounded-lg group-hover:backdrop-blur-sm transition-colors">
                                                                 {spec}
                                                             </span>
@@ -131,7 +147,7 @@ export default async function BrandsPage() {
                                             </div>
                                         </div>
                                     </Link>
-                                ))}
+                                )})}
                             </div>
                         </div>
                     </section>
