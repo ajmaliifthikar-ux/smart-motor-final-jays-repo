@@ -8,7 +8,7 @@ export interface Review {
     source: 'Google' | 'Manual'
 }
 
-// Mock Data for now - API requires verified GMB account and OAUTH
+// Mock Data fallback
 const MOCK_REVIEWS: Review[] = [
     {
         id: '1',
@@ -50,12 +50,37 @@ const MOCK_REVIEWS: Review[] = [
 
 export const googleBusiness = {
     getReviews: async (): Promise<Review[]> => {
-        // In a real implementation:
-        // 1. Fetch from Google My Business API
-        // 2. Cache updates in Redis/DB
+        try {
+            const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || process.env.GOOGLE_API_KEY
+            const placeId = process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID || 'ChIJN1t_tDeuEmsRU' // Placeholder Place ID
 
-        // Simulating network delay
-        await new Promise(resolve => setTimeout(resolve, 500))
-        return MOCK_REVIEWS
+            if (!apiKey || !placeId || placeId === 'PLACEHOLDER') {
+                return MOCK_REVIEWS
+            }
+
+            // Using Google Places Details API (server-side usually, but for demo we show the logic)
+            const response = await fetch(
+                `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews,rating&key=${apiKey}`
+            )
+            
+            const data = await response.json()
+            
+            if (data.result?.reviews) {
+                return data.result.reviews.map((r: any, i: number) => ({
+                    id: `google-${i}`,
+                    author: r.author_name,
+                    avatar: r.profile_photo_url,
+                    rating: r.rating,
+                    text: r.text,
+                    date: r.relative_time_description,
+                    source: 'Google'
+                }))
+            }
+
+            return MOCK_REVIEWS
+        } catch (error) {
+            console.error('Failed to fetch real Google reviews:', error)
+            return MOCK_REVIEWS
+        }
     }
 }

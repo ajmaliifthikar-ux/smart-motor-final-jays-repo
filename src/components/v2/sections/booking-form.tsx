@@ -93,8 +93,9 @@ export function BookingForm() {
 
     const filteredModels = useMemo(() => {
         const brand = brands.find(b => b.id === selectedBrand)
-        if (!brand) return []
-        return brand.models.filter((m: string) => m.toLowerCase().includes(modelSearch.toLowerCase()))
+        if (!brand || !brand.models) return []
+        const modelList = typeof brand.models === 'string' ? brand.models.split(',').map((m: string) => m.trim()) : brand.models
+        return modelList.filter((m: string) => m.toLowerCase().includes(modelSearch.toLowerCase()))
     }, [selectedBrand, modelSearch, brands])
 
     const nextStep = async () => {

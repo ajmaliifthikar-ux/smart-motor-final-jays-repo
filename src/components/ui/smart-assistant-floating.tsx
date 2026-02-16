@@ -201,140 +201,158 @@ export function SmartAssistantFloating() {
     <>
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-4 z-40 w-96 max-w-[calc(100vw-2rem)] h-[32rem] bg-white rounded-3xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden"
-          >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-[#121212] to-[#1a1a1a] px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-[#E62329] rounded-full animate-pulse">
-                  <Bot className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-white font-black text-sm uppercase tracking-wider">
-                    Smart Assistant
-                  </h3>
-                  <p className="text-xs text-gray-400">
-                    {liveMode ? '🔴 Live Mode' : '⚪ Standard'}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1 hover:bg-white/10 rounded-full transition-colors"
-              >
-                <X className="w-5 h-5 text-white" />
-              </button>
-            </div>
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
+            />
 
-            {/* Messages */}
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#FAFAF9]">
-              {messages.map((msg) => (
-                <motion.div
-                  key={msg.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={cn('flex gap-2', msg.role === 'user' ? 'justify-end' : 'justify-start')}
-                >
-                  {msg.role === 'assistant' && (
-                    <div className="w-6 h-6 rounded-full bg-[#E62329] flex items-center justify-center flex-shrink-0 mt-1">
-                      <Bot className="w-3 h-3 text-white" />
+            {/* Drawer */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 z-50 w-full md:w-[450px] h-full bg-white shadow-[-20px_0_50px_rgba(0,0,0,0.1)] flex flex-col overflow-hidden"
+            >
+              {/* Header */}
+              <div className="bg-[#121212] px-8 py-8 flex items-center justify-between border-b border-white/5 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#E62329]/10 blur-3xl rounded-full" />
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="w-12 h-12 bg-[#E62329] rounded-2xl flex items-center justify-center shadow-lg shadow-[#E62329]/20">
+                    <Bot className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-black text-lg uppercase tracking-tighter">
+                      Smart Assistant
+                    </h3>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                        {liveMode ? 'Gemini Live Active' : 'Online & Ready'}
+                      </p>
                     </div>
-                  )}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-3 hover:bg-white/10 rounded-full transition-colors text-white relative z-10"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
 
-                  <div
+              {/* Messages Area */}
+              <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 space-y-6 bg-[#FAFAF9] subtle-scrollbar">
+                {messages.map((msg) => (
+                  <motion.div
+                    key={msg.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={cn('flex flex-col', msg.role === 'user' ? 'items-end' : 'items-start')}
+                  >
+                    <div
+                      className={cn(
+                        'max-w-[85%] px-6 py-4 rounded-[2rem] text-sm font-medium leading-relaxed shadow-sm',
+                        msg.role === 'user'
+                          ? 'bg-[#121212] text-white rounded-tr-none'
+                          : 'bg-white text-[#121212] border border-gray-100 rounded-tl-none'
+                      )}
+                    >
+                      <p className="break-words whitespace-pre-wrap">{msg.content}</p>
+                      {msg.isStreaming && (
+                        <div className="flex gap-1.5 mt-3">
+                          <span className="w-1.5 h-1.5 bg-[#E62329] rounded-full animate-bounce"></span>
+                          <span className="w-1.5 h-1.5 bg-[#E62329] rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                          <span className="w-1.5 h-1.5 bg-[#E62329] rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest mt-2 px-2">
+                      {msg.role === 'user' ? 'Customer' : 'Smart Motor AI'} • {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-numeric', minute: '2-numeric' })}
+                    </span>
+                  </motion.div>
+                ))}
+
+                {isLoading && !liveMode && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-start">
+                    <div className="bg-white text-[#121212] px-6 py-4 rounded-[2rem] rounded-tl-none border border-gray-100 text-sm font-medium shadow-sm flex items-center gap-3">
+                      <Loader2 className="w-4 h-4 text-[#E62329] animate-spin" />
+                      Processing Engine...
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Control Panel & Input */}
+              <div className="bg-white border-t border-gray-100 p-8 space-y-6 shadow-[0_-10px_40px_rgba(0,0,0,0.02)]">
+                {/* Mode Switcher */}
+                <div className="flex p-1.5 bg-gray-50 rounded-2xl border border-gray-100 gap-1.5">
+                  <button
+                    onClick={() => setLiveMode(true)}
                     className={cn(
-                      'max-w-xs px-3 py-2 rounded-2xl text-sm',
-                      msg.role === 'user'
-                        ? 'bg-[#121212] text-white'
-                        : 'bg-white text-[#121212] border border-gray-200'
+                      'flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2',
+                      liveMode
+                        ? 'bg-[#E62329] text-white shadow-lg shadow-[#E62329]/20'
+                        : 'text-gray-400 hover:text-[#121212]'
                     )}
                   >
-                    <p className="break-words">{msg.content}</p>
-                    {msg.isStreaming && (
-                      <div className="flex gap-1 mt-1">
-                        <span className="w-1.5 h-1.5 bg-[#E62329] rounded-full animate-bounce"></span>
-                        <span className="w-1.5 h-1.5 bg-[#E62329] rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                        <span className="w-1.5 h-1.5 bg-[#E62329] rounded-full animate-bounce [animation-delay:0.4s]"></span>
-                      </div>
+                    <Zap className={cn("w-3 h-3", liveMode ? "fill-white" : "")} />
+                    Live Mode
+                  </button>
+                  <button
+                    onClick={() => setLiveMode(false)}
+                    className={cn(
+                      'flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2',
+                      !liveMode
+                        ? 'bg-[#121212] text-white shadow-lg shadow-black/20'
+                        : 'text-gray-400 hover:text-[#121212]'
                     )}
-                  </div>
-                </motion.div>
-              ))}
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    Standard
+                  </button>
+                </div>
 
-              {isLoading && !liveMode && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-2">
-                  <div className="w-6 h-6 rounded-full bg-[#E62329] flex items-center justify-center">
-                    <Loader2 className="w-3 h-3 text-white animate-spin" />
+                <div className="flex gap-3 items-end">
+                  <div className="flex-1 relative">
+                    <Input
+                      ref={inputRef}
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault()
+                          handleSend()
+                        }
+                      }}
+                      placeholder="Type your message..."
+                      className="text-sm bg-gray-50 border-0 rounded-[1.5rem] py-6 px-6 focus:ring-2 focus:ring-[#121212] transition-all pr-12 min-h-[60px]"
+                      disabled={isLoading}
+                    />
                   </div>
-                  <div className="bg-white text-[#121212] px-3 py-2 rounded-2xl border border-gray-200 text-sm">
-                    Thinking...
-                  </div>
-                </motion.div>
-              )}
-            </div>
-
-            {/* Input */}
-            <div className="bg-white border-t border-gray-200 p-3 space-y-2">
-              <div className="flex gap-1">
-                <button
-                  onClick={() => setLiveMode(true)}
-                  className={cn(
-                    'flex-1 py-1.5 px-2 rounded-full text-xs font-black uppercase tracking-widest transition-all',
-                    liveMode
-                      ? 'bg-[#E62329] text-white'
-                      : 'bg-gray-100 text-[#121212] hover:bg-gray-200'
-                  )}
-                >
-                  <Zap className="inline w-3 h-3 mr-1" />
-                  Live
-                </button>
-                <button
-                  onClick={() => setLiveMode(false)}
-                  className={cn(
-                    'flex-1 py-1.5 px-2 rounded-full text-xs font-black uppercase tracking-widest transition-all',
-                    !liveMode
-                      ? 'bg-[#121212] text-white'
-                      : 'bg-gray-100 text-[#121212] hover:bg-gray-200'
-                  )}
-                >
-                  <Sparkles className="inline w-3 h-3 mr-1" />
-                  Normal
-                </button>
+                  <Button
+                    onClick={handleSend}
+                    disabled={isLoading || !input.trim()}
+                    className="rounded-[1.2rem] bg-[#121212] hover:bg-[#E62329] w-14 h-14 p-0 shadow-xl transition-all active:scale-95 flex-shrink-0"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <Send className="w-5 h-5" />
+                    )}
+                  </Button>
+                </div>
+                <p className="text-[9px] text-center text-gray-400 font-bold uppercase tracking-widest">
+                  Powered by Gemini 1.5 Pro • Memory Config Active
+                </p>
               </div>
-
-              <div className="flex gap-2">
-                <Input
-                  ref={inputRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault()
-                      handleSend()
-                    }
-                  }}
-                  placeholder="Ask anything..."
-                  className="text-sm bg-gray-50"
-                  disabled={isLoading}
-                />
-                <Button
-                  onClick={handleSend}
-                  disabled={isLoading || !input.trim()}
-                  className="rounded-full bg-[#E62329] hover:bg-[#121212] w-9 h-9 p-0"
-                >
-                  {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Send className="w-4 h-4" />
-                  )}
-                </Button>
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 

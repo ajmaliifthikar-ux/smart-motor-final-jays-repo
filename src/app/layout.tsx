@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { RecaptchaProvider } from "@/components/providers/RecaptchaProvider";
-import { SmartAssistantFloating } from "@/components/ui/smart-assistant-floating";
 import "./globals.css";
 
 export const dynamic = 'force-dynamic'
@@ -147,7 +146,6 @@ export default function RootLayout({
         <LanguageProvider>
           <RecaptchaProvider>
             {children}
-            <SmartAssistantFloating />
           </RecaptchaProvider>
         </LanguageProvider>
       </body>

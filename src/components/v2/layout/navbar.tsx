@@ -111,29 +111,29 @@ export function Navbar() {
           </div>
 
           {/* Desktop Right Actions - Call Button ONLY (no socials) */}
-          <div className="hidden lg:flex items-center gap-4">
-            <Tooltip content="Call us directly for immediate assistance" position="bottom">
-              <a
-                href="tel:+97126666789"
-                className={cn(
-                  'group flex items-center gap-3 pl-1 pr-6 py-1.5 rounded-full transition-all duration-300 border',
-                  isScrolled
-                    ? 'bg-[#121212] text-white border-transparent hover:bg-[#E62329]'
-                    : 'bg-white/80 backdrop-blur-md text-[#121212] border-white/20 hover:bg-[#121212] hover:text-white'
-                )}
-              >
-                <div className={cn(
-                  "w-9 h-9 rounded-full flex items-center justify-center transition-colors shadow-md",
-                  isScrolled ? "bg-white/10 text-white" : "bg-[#E62329] text-white"
-                )}>
-                  <PhoneIcon size={16} className="fill-current" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[8px] opacity-60 font-medium uppercase tracking-wider leading-none mb-0.5">Toll Free</span>
-                  <span className="text-xs font-black tracking-widest leading-none">800 SMART (76278)</span>
-                </div>
-              </a>
-            </Tooltip>
+          <div className="hidden lg:flex items-center gap-6">
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#121212]/40">Toll Free</span>
+              <Tooltip content="Call us directly for immediate assistance" position="bottom">
+                <a
+                  href="tel:80076278"
+                  className={cn(
+                    'group flex items-center gap-3 pl-1 pr-6 py-1.5 rounded-full transition-all duration-300 border shadow-sm',
+                    isScrolled
+                      ? 'bg-[#121212] text-white border-transparent hover:bg-[#E62329]'
+                      : 'bg-white/80 backdrop-blur-md text-[#121212] border-white/20 hover:bg-[#121212] hover:text-white'
+                  )}
+                >
+                  <div className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center transition-colors shadow-md",
+                    isScrolled ? "bg-white/10 text-white" : "bg-[#E62329] text-white"
+                  )}>
+                    <PhoneIcon size={14} className="fill-current" />
+                  </div>
+                  <span className="text-xs font-black tracking-widest leading-none">80076278</span>
+                </a>
+              </Tooltip>
+            </div>
 
             <Button
               onClick={(e: React.MouseEvent) => {
