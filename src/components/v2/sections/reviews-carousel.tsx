@@ -64,60 +64,77 @@ export function ReviewsCarousel() {
 
                 <ReviewModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
-                {/* Carousel - Stacked Look Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {reviews.map((review, index) => (
-                        <motion.div
-                            key={review.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            viewport={{ once: true }}
-                            className="relative h-[380px] group"
+                {/* Infinite Carousel - Single Row */}
+                <div className="relative mt-8">
+                    <div className="flex overflow-hidden group">
+                        <motion.div 
+                            className="flex gap-8 py-4"
+                            animate={{
+                                x: [0, -100 * (reviews.length)],
+                            }}
+                            transition={{
+                                x: {
+                                    repeat: Infinity,
+                                    repeatType: "loop",
+                                    duration: 30,
+                                    ease: "linear",
+                                },
+                            }}
+                            style={{ width: "fit-content" }}
                         >
-                            <div className="w-full h-full relative overflow-hidden rounded-[3rem] shadow-precision">
-                                <div className="absolute inset-0 silver-shine rounded-[3rem] z-0" />
-                                <div className="relative z-10 p-10 h-full flex flex-col justify-between carbon-fiber rounded-[2.2rem] border border-white/5 shadow-2xl transition-transform group-hover:scale-[0.99] duration-500">
-                                    <div>
-                                        <div className="flex gap-1 mb-8">
-                                            {[...Array(review.rating)].map((_, i) => (
-                                                <Star key={i} size={14} className="fill-[#E62329] text-[#E62329]" />
-                                            ))}
-                                        </div>
-                                        <p className="text-lg font-medium text-white/90 leading-relaxed tracking-tight line-clamp-5">
-                                            &quot;{review.text}&quot;
-                                        </p>
-                                    </div>
+                            {[...reviews, ...reviews, ...reviews].map((review, index) => (
+                                <div
+                                    key={`${review.id}-${index}`}
+                                    className="relative w-[350px] md:w-[400px] h-[380px] shrink-0"
+                                >
+                                    <div className="w-full h-full relative overflow-hidden rounded-[3rem] shadow-precision">
+                                        <div className="absolute inset-0 silver-shine rounded-[3rem] z-0" />
+                                        <div className="relative z-10 p-10 h-full flex flex-col justify-between carbon-fiber rounded-[2.2rem] border border-white/5 shadow-2xl transition-transform hover:scale-[0.99] duration-500">
+                                            <div>
+                                                <div className="flex gap-1 mb-8">
+                                                    {[...Array(review.rating)].map((_, i) => (
+                                                        <Star key={i} size={14} className="fill-[#E62329] text-[#E62329]" />
+                                                    ))}
+                                                </div>
+                                                <p className="text-lg font-medium text-white/90 leading-relaxed tracking-tight line-clamp-5">
+                                                    &quot;{review.text}&quot;
+                                                </p>
+                                            </div>
 
-                                    <div className="flex items-center gap-6 pt-10 border-t border-white/10">
-                                        <div className="w-16 h-16 bg-white/5 rounded-3xl flex items-center justify-center text-white p-1 overflow-hidden">
-                                            <img 
-                                                src={review.avatar} 
-                                                alt={review.author} 
-                                                className="w-full h-full object-cover rounded-2xl opacity-80 group-hover:opacity-100 transition-opacity"
-                                            />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <h4 className="text-lg font-black text-white uppercase tracking-tighter truncate">
-                                                {review.author}
-                                            </h4>
-                                            <div className="flex items-center justify-between mt-1">
-                                                <span className="text-[10px] font-black text-[#E62329] uppercase tracking-widest bg-[#E62329]/5 px-3 py-1 rounded-full border border-[#E62329]/10">
-                                                    Verified Client
-                                                </span>
-                                                <div className="flex items-center gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
-                                                    <img src="/google-logo.svg" alt="Google" className="w-3 h-3 grayscale invert" />
-                                                    <span className="text-[8px] text-white font-bold uppercase">{review.date}</span>
+                                            <div className="flex items-center gap-6 pt-10 border-t border-white/10">
+                                                <div className="w-16 h-16 bg-white/5 rounded-3xl flex items-center justify-center text-white p-1 overflow-hidden">
+                                                    <img 
+                                                        src={review.avatar} 
+                                                        alt={review.author} 
+                                                        className="w-full h-full object-cover rounded-2xl opacity-80"
+                                                    />
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <h4 className="text-lg font-black text-white uppercase tracking-tighter truncate">
+                                                        {review.author}
+                                                    </h4>
+                                                    <div className="flex items-center justify-between mt-1">
+                                                        <span className="text-[10px] font-black text-[#E62329] uppercase tracking-widest bg-[#E62329]/5 px-3 py-1 rounded-full border border-[#E62329]/10">
+                                                            Verified Client
+                                                        </span>
+                                                        <div className="flex items-center gap-1.5 opacity-40">
+                                                            <img src="/google-logo.svg" alt="Google" className="w-3 h-3 grayscale invert" />
+                                                            <span className="text-[8px] text-white font-bold uppercase">{review.date}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            ))}
                         </motion.div>
-                    ))}
+                    </div>
+                    
+                    {/* Gradient Fades for depth */}
+                    <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#FAFAF9] to-transparent z-20 pointer-events-none" />
+                    <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#FAFAF9] to-transparent z-20 pointer-events-none" />
                 </div>
-
             </div>
         </section>
     )

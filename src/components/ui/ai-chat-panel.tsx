@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, X, Bot, User, Loader2, Sparkles, Zap, MessageCircle } from 'lucide-react'
+import { Send, X, Bot, User, Loader2, Sparkles, Zap, Mic, Headphones, Volume2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -14,7 +14,6 @@ interface Message {
   content: string
   timestamp: number
   isStreaming?: boolean
-  tokenCount?: number
 }
 
 interface AIChatPanelProps {
@@ -27,19 +26,22 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
     {
       id: 'welcome',
       role: 'assistant',
-      content: '🤖 Hello! I\'m your Smart Motor AI Assistant. How can I help you with your vehicle today? You can ask about our services, booking status, or technical advice.',
+      content: '🤖 Hello! I\'m your Smart Motor AI Assistant. How can I help you with your vehicle today?',
       timestamp: Date.now(),
     },
   ])
 
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [liveMode, setLiveMode] = useState(true)
+  const [isVoiceMode, setIsVoiceMode] = useState(false)
   const [conversationId, setConversationId] = useState<string | null>(null)
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null)
-
+  
   const scrollRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
+  const analyserRef = useRef<AnalyserNode | null>(null)
+  const animationFrameRef = useRef<number | null>(null)
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -55,6 +57,58 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
     }
   }, [isOpen])
 
+  // Cleanup audio
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current)
+      if (audioContextRef.current) audioContextRef.current.close()
+    }
+  }, [])
+
+  const startVoiceMode = async () => {
+    setIsVoiceMode(true)
+    
+    // Greet with voice
+    const greeting = "Hello! I am ready to talk. How can I assist you with your car today?"
+    const utterance = new SpeechSynthesisUtterance(greeting)
+    utterance.rate = 1.0
+    utterance.pitch = 1.0
+    window.speechSynthesis.speak(utterance)
+
+    // Simulate audio visualization
+    setupVisualizer()
+  }
+
+  const stopVoiceMode = () => {
+    setIsVoiceMode(false)
+    window.speechSynthesis.cancel()
+    if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current)
+  }
+
+  const setupVisualizer = async () => {
+    try {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+      }
+      
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const source = audioContextRef.current.createMediaStreamSource(stream)
+      analyserRef.current = audioContextRef.current.createAnalyser()
+      analyserRef.current.fftSize = 32
+      source.connect(analyserRef.current)
+      
+      const draw = () => {
+        if (!isVoiceMode) return
+        animationFrameRef.current = requestAnimationFrame(draw)
+      }
+      draw()
+    } catch (err) {
+      console.error('Microphone access denied', err)
+      toast.error('Microphone access needed for conversational mode')
+      setIsVoiceMode(false)
+    }
+  }
+
   const handleStreamingResponse = async (userMsg: Message) => {
     const convId = conversationId || `conv_${Date.now()}`
     setConversationId(convId)
@@ -68,7 +122,6 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
       content: '',
       timestamp: Date.now(),
       isStreaming: true,
-      tokenCount: 0,
     }
 
     setMessages((prev) => [...prev, assistantMsg])
@@ -83,20 +136,18 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
         }),
       })
 
-      if (!response.ok || !response.body) {
-        throw new Error('Failed to start stream')
-      }
+      if (!response.ok || !response.body) throw new Error('Failed to start stream')
 
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
       let buffer = ''
+      let fullText = ''
 
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
 
         buffer += decoder.decode(value, { stream: true })
-
         const lines = buffer.split('\n')
         buffer = lines[lines.length - 1]
 
@@ -105,32 +156,21 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
           if (line.startsWith('data: ')) {
             try {
               const chunk = JSON.parse(line.slice(6))
-
               if (chunk.type === 'token') {
+                fullText += chunk.content
                 setMessages((prev) =>
                   prev.map((msg) =>
-                    msg.id === streamingId
-                      ? {
-                          ...msg,
-                          content: msg.content + chunk.content,
-                          tokenCount: chunk.tokenCount,
-                        }
-                      : msg
+                    msg.id === streamingId ? { ...msg, content: fullText } : msg
                   )
                 )
-              } else if (chunk.type === 'metadata' || chunk.type === 'done') {
-                setMessages((prev) =>
-                  prev.map((msg) =>
-                    msg.id === streamingId
-                      ? { ...msg, isStreaming: false }
-                      : msg
-                  )
-                )
+              } else if (chunk.type === 'done') {
                 setStreamingMessageId(null)
+                if (isVoiceMode) {
+                  const utterance = new SpeechSynthesisUtterance(fullText)
+                  window.speechSynthesis.speak(utterance)
+                }
               }
-            } catch (e) {
-              console.error('Parse error:', e)
-            }
+            } catch (e) {}
           }
         }
       }
@@ -138,45 +178,12 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
       console.error('Stream error:', error)
       setMessages((prev) =>
         prev.map((msg) =>
-          msg.id === streamingId
-            ? { ...msg, isStreaming: false, content: 'Connection lost. Please try again.' }
-            : msg
+          msg.id === streamingId ? { ...msg, isStreaming: false, content: 'Connection lost.' } : msg
         )
       )
     } finally {
       setIsLoading(false)
       setStreamingMessageId(null)
-    }
-  }
-
-  const handleRegularResponse = async (userMsg: Message) => {
-    const convId = conversationId || `conv_${Date.now()}`
-    setConversationId(convId)
-
-    try {
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: userMsg.content,
-          conversationId: convId,
-        }),
-      })
-
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.error || 'Failed')
-
-      setMessages((prev) => [...prev, {
-        id: Date.now().toString(),
-        role: 'assistant',
-        content: data.response,
-        timestamp: Date.now(),
-      }])
-    } catch (error) {
-      console.error(error)
-      toast.error('AI response error')
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -193,198 +200,130 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
     setMessages((prev) => [...prev, userMsg])
     setInput('')
     setIsLoading(true)
-
-    if (liveMode) {
-      await handleStreamingResponse(userMsg)
-    } else {
-      await handleRegularResponse(userMsg)
-    }
+    await handleStreamingResponse(userMsg)
   }
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[105]"
-          />
-
-          {/* Drawer */}
-          <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 z-[110] w-full md:w-[500px] h-full bg-white shadow-[-20px_0_50px_rgba(0,0,0,0.1)] flex flex-col overflow-hidden"
-          >
-            {/* Header */}
-            <div className="bg-[#121212] px-8 py-10 flex items-center justify-between border-b border-white/5 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-[#E62329]/10 blur-[80px] rounded-full pointer-events-none" />
-              <div className="flex items-center gap-4 relative z-10">
-                <div className="w-14 h-14 bg-[#E62329] rounded-[1.2rem] flex items-center justify-center shadow-lg shadow-[#E62329]/20 transform rotate-3">
-                  <Bot className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-white font-black text-xl uppercase tracking-tighter">
-                    Smart Assistant
-                  </h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="w-2 h-2 bg-[#25D366] rounded-full animate-pulse" />
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-                      {liveMode ? 'Bi-Directional Live Mode' : 'Standard Intelligence'}
-                    </p>
-                  </div>
-                </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.95 }}
+          className="fixed bottom-24 right-8 z-[110] w-[400px] h-[600px] bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 flex flex-col overflow-hidden"
+        >
+          {/* Header */}
+          <div className="bg-[#121212] px-8 py-6 flex items-center justify-between border-b border-white/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#E62329]/10 blur-3xl rounded-full" />
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="w-10 h-10 bg-[#E62329] rounded-2xl flex items-center justify-center transform rotate-3">
+                <Bot className="w-5 h-5 text-white" />
               </div>
-              <button
-                onClick={onClose}
-                className="p-3 hover:bg-white/10 rounded-full transition-colors text-white relative z-10"
+              <h3 className="text-white font-black text-lg uppercase tracking-tighter">Smart AI</h3>
+            </div>
+            <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors text-white relative z-10">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Messages */}
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9] subtle-scrollbar">
+            {messages.map((msg) => (
+              <motion.div
+                key={msg.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={cn('flex flex-col', msg.role === 'user' ? 'items-end' : 'items-start')}
               >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Messages Area */}
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 space-y-8 bg-[#FAFAF9] subtle-scrollbar">
-              {messages.map((msg) => (
-                <motion.div
-                  key={msg.id}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={cn('flex flex-col', msg.role === 'user' ? 'items-end' : 'items-start')}
-                >
-                  <div
-                    className={cn(
-                      'max-w-[85%] px-7 py-5 rounded-[2.2rem] text-[15px] font-medium leading-relaxed shadow-sm',
-                      msg.role === 'user'
-                        ? 'bg-[#121212] text-white rounded-tr-none'
-                        : 'bg-white text-[#121212] border border-gray-100 rounded-tl-none'
-                    )}
-                  >
-                    <p className="break-words whitespace-pre-wrap">{msg.content}</p>
-                    {msg.isStreaming && (
-                      <div className="flex gap-1.5 mt-4">
-                        <span className="w-2 h-2 bg-[#E62329] rounded-full animate-bounce"></span>
-                        <span className="w-2 h-2 bg-[#E62329] rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                        <span className="w-2 h-2 bg-[#E62329] rounded-full animate-bounce [animation-delay:0.4s]"></span>
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-3 px-2 flex items-center gap-2">
-                    {msg.role === 'user' ? (
-                      <><User size={10} /> Customer</>
-                    ) : (
-                      <><Bot size={10} /> Smart Motor AI</>
-                    )}
-                    • {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </motion.div>
-              ))}
-
-              {isLoading && !liveMode && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-start">
-                  <div className="bg-white text-[#121212] px-7 py-5 rounded-[2.2rem] rounded-tl-none border border-gray-100 text-sm font-medium shadow-sm flex items-center gap-4">
-                    <Loader2 className="w-5 h-5 text-[#E62329] animate-spin" />
-                    Analyzing your request...
-                  </div>
-                </motion.div>
-              )}
-            </div>
-
-            {/* Control Panel & Input */}
-            <div className="bg-white border-t border-gray-100 p-8 space-y-6 shadow-[0_-15px_50px_rgba(0,0,0,0.03)]">
-              {/* Mode Switcher */}
-              <div className="flex p-1.5 bg-gray-50 rounded-[1.5rem] border border-gray-100 gap-1.5">
-                <button
-                  onClick={() => setLiveMode(true)}
+                <div
                   className={cn(
-                    'flex-1 py-4 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3',
-                    liveMode
-                      ? 'bg-[#E62329] text-white shadow-lg shadow-[#E62329]/20 scale-[1.02]'
-                      : 'text-gray-400 hover:text-[#121212]'
+                    'max-w-[85%] px-5 py-3.5 rounded-[1.8rem] text-sm font-medium leading-relaxed shadow-sm',
+                    msg.role === 'user' ? 'bg-[#121212] text-white rounded-tr-none' : 'bg-white text-[#121212] border border-gray-100 rounded-tl-none'
                   )}
                 >
-                  <Zap className={cn("w-4 h-4", liveMode ? "fill-white" : "")} />
-                  Live Conversational Mode
-                </button>
-                <button
-                  onClick={() => setLiveMode(false)}
-                  className={cn(
-                    'flex-1 py-4 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3',
-                    !liveMode
-                      ? 'bg-[#121212] text-white shadow-lg shadow-black/20 scale-[1.02]'
-                      : 'text-gray-400 hover:text-[#121212]'
+                  <p className="break-words whitespace-pre-wrap">{msg.content}</p>
+                  {msg.isStreaming && (
+                    <div className="flex gap-1 mt-2">
+                      <span className="w-1.5 h-1.5 bg-[#E62329] rounded-full animate-bounce"></span>
+                      <span className="w-1.5 h-1.5 bg-[#E62329] rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                      <span className="w-1.5 h-1.5 bg-[#E62329] rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                    </div>
                   )}
-                >
-                  <Sparkles className="w-4 h-4" />
-                  Standard Search
-                </button>
-              </div>
-
-              <div className="flex gap-4 items-end">
-                <div className="flex-1 relative">
-                  <textarea
-                    ref={inputRef as any}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault()
-                        handleSend()
-                      }
-                    }}
-                    placeholder="Describe your vehicle's issue..."
-                    className="w-full text-sm font-bold bg-gray-50 border-0 rounded-[1.8rem] py-5 px-8 focus:ring-2 focus:ring-[#121212] transition-all resize-none min-h-[70px] max-h-[150px] subtle-scrollbar"
-                    disabled={isLoading}
-                  />
                 </div>
-                <Button
-                  onClick={handleSend}
-                  disabled={isLoading || !input.trim()}
-                  className="rounded-[1.4rem] bg-[#121212] hover:bg-[#E62329] w-16 h-16 p-0 shadow-xl transition-all active:scale-95 flex-shrink-0"
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Audio Visualizer Overlay (Only in Voice Mode) */}
+          <AnimatePresence>
+            {isVoiceMode && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                className="absolute inset-x-0 bottom-[100px] h-[150px] bg-white/80 backdrop-blur-md flex flex-col items-center justify-center z-20 px-8"
+              >
+                <div className="flex items-center gap-1.5 mb-4">
+                  {[...Array(12)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      animate={{ height: [10, Math.random() * 40 + 20, 10] }}
+                      transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.05 }}
+                      className={cn("w-1.5 rounded-full", i % 2 === 0 ? "bg-[#E62329]" : "bg-[#121212]")}
+                    />
+                  ))}
+                </div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-[#121212]">Listening & Speaking...</p>
+                <button 
+                  onClick={stopVoiceMode}
+                  className="mt-4 px-4 py-1.5 bg-gray-100 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-red-50 hover:text-[#E62329] transition-colors"
                 >
-                  {isLoading ? (
-                    <Loader2 className="w-6 h-6 animate-spin" />
-                  ) : (
-                    <Send className="w-6 h-6" />
-                  )}
-                </Button>
+                  Exit Voice
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Input */}
+          <div className="bg-white border-t border-gray-100 p-6 space-y-4">
+            <div className="flex gap-3 items-end">
+              <button
+                onClick={isVoiceMode ? stopVoiceMode : startVoiceMode}
+                className={cn(
+                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-md flex-shrink-0",
+                  isVoiceMode ? "bg-[#E62329] text-white animate-pulse" : "bg-gray-100 text-gray-500 hover:bg-[#121212] hover:text-white"
+                )}
+              >
+                {isVoiceMode ? <Volume2 size={20} /> : <Headphones size={20} />}
+              </button>
+              
+              <div className="flex-1 relative">
+                <textarea
+                  ref={inputRef as any}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault()
+                      handleSend()
+                    }
+                  }}
+                  placeholder="Ask anything..."
+                  className="w-full text-sm font-bold bg-gray-50 border-0 rounded-[1.5rem] py-3 px-5 focus:ring-2 focus:ring-[#121212] transition-all resize-none min-h-[48px] max-h-[120px] subtle-scrollbar"
+                  disabled={isLoading || isVoiceMode}
+                />
               </div>
-              <div className="flex items-center justify-center gap-4 text-[9px] text-gray-400 font-bold uppercase tracking-widest">
-                <span className="flex items-center gap-1"><ShieldCheck size={10} className="text-[#25D366]" /> 256-bit Encrypted</span>
-                <span className="w-1 h-1 bg-gray-300 rounded-full" />
-                <span>Gemini 1.5 Pro Enabled</span>
-                <span className="w-1 h-1 bg-gray-300 rounded-full" />
-                <span>Personal Memory Active</span>
-              </div>
+              <Button
+                onClick={handleSend}
+                disabled={isLoading || !input.trim() || isVoiceMode}
+                className="rounded-2xl bg-[#121212] hover:bg-[#E62329] w-12 h-12 p-0 shadow-lg flex-shrink-0"
+              >
+                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+              </Button>
             </div>
-          </motion.div>
-        </>
+          </div>
+        </motion.div>
       )}
     </AnimatePresence>
-  )
-}
-
-function ShieldCheck({ size, className }: { size?: number, className?: string }) {
-  return (
-    <svg 
-      width={size} 
-      height={size} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="3" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      className={className}
-    >
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      <path d="m9 12 2 2 4-4" />
-    </svg>
   )
 }
