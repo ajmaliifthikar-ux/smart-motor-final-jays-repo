@@ -1,14 +1,30 @@
 'use client'
 
-import { useActionState } from 'react'
+import { Suspense } from 'react'
+
+export const dynamic = 'force-dynamic'
+
+import { useActionState, useEffect } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { authenticate } from '@/app/actions/auth'
 import { KeyRound, Mail, ArrowRight } from 'lucide-react'
 
-export default function LoginPage() {
+function LoginContent() {
     const [errorMessage, dispatch, isPending] = useActionState(
         authenticate,
         undefined
     )
+    const searchParams = useSearchParams()
+    const router = useRouter()
+    const callbackUrl = searchParams.get('callbackUrl') || '/admin'
+
+    // Handle successful login (no error message)
+    useEffect(() => {
+        if (!isPending && !errorMessage) {
+            // Redirect to callback URL or admin dashboard
+            router.push(callbackUrl)
+        }
+    }, [isPending, errorMessage, router, callbackUrl])
 
     return (
         <div className="flex min-h-screen flex-col items-center justify-center py-12 sm:px-6 lg:px-8 bg-[#FAFAF9]">
@@ -106,5 +122,13 @@ export default function LoginPage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <LoginContent />
+        </Suspense>
     )
 }

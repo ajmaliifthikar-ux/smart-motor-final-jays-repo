@@ -1,56 +1,29 @@
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
-import NextAuth from "next-auth"
-import { authConfig } from "./auth.config"
+import { auth } from '@/auth'
+import { NextRequest, NextResponse } from 'next/server'
 
-const { auth } = NextAuth(authConfig)
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl
 
-export default auth((req: NextRequest & { auth: any }) => {
-    const { nextUrl } = req
-    const isLoggedIn = !!req.auth
-    const role = req.auth?.user?.role
+  // Admin routes protection
+  if (pathname.startsWith('/admin')) {
+    const session = await auth()
 
-    // 1. Security Headers
-    const response = NextResponse.next()
-    response.headers.set("X-Frame-Options", "DENY")
-    response.headers.set("X-Content-Type-Options", "nosniff")
-    response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
-    response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
-
-    // 2. Auth Logic
-    const isApiAuthRoute = nextUrl.pathname.startsWith("/api/auth")
-    const isPublicRoute = [
-        "/",
-        "/auth",
-        "/services",
-        "/api/bookings",
-        "/api/recaptcha",
-        "/privacy",
-        "/terms"
-    ].includes(nextUrl.pathname) ||
-        nextUrl.pathname.startsWith("/services/") ||
-        nextUrl.pathname.startsWith("/new-home")
-    const isAdminRoute = nextUrl.pathname.startsWith("/admin")
-
-    if (isApiAuthRoute) return response
-
-    if (isAdminRoute) {
-        if (!isLoggedIn) {
-            return NextResponse.redirect(new URL("/auth", nextUrl))
-        }
-        if (role !== "ADMIN") {
-            return NextResponse.redirect(new URL("/", nextUrl))
-        }
-        return response
+    if (!session?.user) {
+      // Redirect to login with return URL
+      const loginUrl = new URL('/auth', req.url)
+      loginUrl.searchParams.set('callbackUrl', pathname)
+      return NextResponse.redirect(loginUrl)
     }
 
-    if (!isLoggedIn && !isPublicRoute) {
-        return NextResponse.redirect(new URL("/auth", nextUrl))
+    // Check if user is admin
+    if (session.user.role !== 'ADMIN') {
+      return NextResponse.redirect(new URL('/', req.url))
     }
+  }
 
-    return response
-})
+  return NextResponse.next()
+}
 
 export const config = {
-    matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ['/admin/:path*'],
 }

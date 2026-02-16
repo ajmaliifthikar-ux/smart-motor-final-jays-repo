@@ -84,8 +84,8 @@ export function Navbar() {
             />
           </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center justify-center flex-1 gap-2 bg-gray-100/50 backdrop-blur-md p-1.5 rounded-full border border-white/20 mx-8 max-w-fit shadow-inner">
+          {/* Desktop Nav - Single Row */}
+          <div className="hidden lg:flex items-center justify-center gap-1 bg-gray-100/50 backdrop-blur-md p-1.5 rounded-full border border-white/20 mx-6 shadow-inner whitespace-nowrap">
             {navLinks.map((link) => {
               const isActive = activeSection === link.id
               return (
@@ -94,7 +94,7 @@ export function Navbar() {
                   href={link.href}
                   onClick={(e) => scrollToSection(e, link.href)}
                   className={cn(
-                    'relative px-5 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all duration-300 rounded-full z-10',
+                    'relative px-4 py-2 text-[9px] font-black uppercase tracking-widest transition-all duration-300 rounded-full z-10 flex-nowrap',
                     isActive ? 'text-white' : 'text-gray-500 hover:text-[#121212]'
                   )}
                 >
@@ -111,7 +111,7 @@ export function Navbar() {
             })}
           </div>
 
-          {/* Desktop Right Actions - Call Button */}
+          {/* Desktop Right Actions - Call Button ONLY (no socials) */}
           <div className="hidden lg:flex items-center gap-4">
             <Tooltip content="Call us directly for immediate assistance" position="bottom">
               <a
@@ -135,11 +135,6 @@ export function Navbar() {
                 </div>
               </a>
             </Tooltip>
-            {/* Socials */}
-            <div className="hidden xl:flex gap-2 pl-4 border-l border-gray-200/20">
-              <a href="https://instagram.com/smartmotor_autorepair" target="_blank" className="p-2 hover:text-[#E62329] transition-colors"><InstagramIcon size={16} /></a>
-              <a href="https://wa.me/97126666789" target="_blank" className="p-2 hover:text-[#25D366] transition-colors"><WhatsAppIcon size={16} /></a>
-            </div>
 
             <Button
               onClick={(e: React.MouseEvent) => {
