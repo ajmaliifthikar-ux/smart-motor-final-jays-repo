@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNativeAudio } from '@/hooks/use-native-audio'
-import { Mic, MicOff, Volume2, Send, RotateCcw } from 'lucide-react'
+import { Mic, MicOff, Volume2, Send, RotateCcw, AlertCircle } from 'lucide-react'
 
 export default function NativeAudioDemo() {
   const [textInput, setTextInput] = useState('')
   const [isListening, setIsListening] = useState(false)
   const [showTranscript, setShowTranscript] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   const {
     isStreaming,
@@ -22,6 +23,13 @@ export default function NativeAudioDemo() {
     playAudioResponse,
     reset,
   } = useNativeAudio('demo-session', 'Zephyr')
+
+  // Avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
 
   const handleStartListening = async () => {
     setIsListening(true)
@@ -46,10 +54,10 @@ export default function NativeAudioDemo() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">
-            🎤 Native Audio Demo
+            🎤 Gemini Native Audio
           </h1>
           <p className="text-slate-400">
-            Gemini 2.5 Flash Native Audio - Bidirectional Streaming
+            Bidirectional Audio Streaming with Real-Time Transcription
           </p>
           <p className="text-sm text-slate-500 mt-2">
             Model: gemini-2.5-flash-native-audio-preview-12-2025
@@ -58,15 +66,17 @@ export default function NativeAudioDemo() {
 
         {/* Status Cards */}
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className={`p-4 rounded-lg border ${
-            isConnected
-              ? 'bg-green-900/20 border-green-500'
-              : 'bg-slate-800 border-slate-700'
-          }`}>
+          <div
+            className={`p-4 rounded-lg border transition ${
+              isConnected
+                ? 'bg-green-900/20 border-green-500'
+                : 'bg-slate-800 border-slate-700'
+            }`}
+          >
             <div className="flex items-center gap-2 mb-1">
               <div
-                className={`w-2 h-2 rounded-full ${
-                  isConnected ? 'bg-green-500' : 'bg-slate-500'
+                className={`w-3 h-3 rounded-full ${
+                  isConnected ? 'bg-green-500 animate-pulse' : 'bg-slate-500'
                 }`}
               />
               <span className="text-sm font-medium text-slate-300">
@@ -74,35 +84,39 @@ export default function NativeAudioDemo() {
               </span>
             </div>
             <p className="text-lg font-semibold text-white">
-              {isConnected ? '🟢 Connected' : '⚪ Idle'}
+              {isConnected ? '🟢 Connected' : '⚪ Initializing...'}
             </p>
           </div>
 
-          <div className={`p-4 rounded-lg border ${
-            isStreaming
-              ? 'bg-blue-900/20 border-blue-500'
-              : 'bg-slate-800 border-slate-700'
-          }`}>
+          <div
+            className={`p-4 rounded-lg border transition ${
+              isStreaming
+                ? 'bg-blue-900/20 border-blue-500'
+                : 'bg-slate-800 border-slate-700'
+            }`}
+          >
             <div className="flex items-center gap-2 mb-1">
               <div
-                className={`w-2 h-2 rounded-full ${
-                  isStreaming ? 'bg-blue-500' : 'bg-slate-500'
+                className={`w-3 h-3 rounded-full ${
+                  isStreaming ? 'bg-blue-500 animate-pulse' : 'bg-slate-500'
                 }`}
               />
               <span className="text-sm font-medium text-slate-300">Status</span>
             </div>
             <p className="text-lg font-semibold text-white">
-              {isStreaming ? '⏳ Streaming...' : '✓ Ready'}
+              {isStreaming ? '⏳ Processing...' : '✓ Ready'}
             </p>
           </div>
         </div>
 
         {/* Error Display */}
         {error && (
-          <div className="mb-8 p-4 bg-red-900/20 border border-red-500 rounded-lg">
-            <p className="text-red-300 text-sm">
-              <span className="font-semibold">Error:</span> {error}
-            </p>
+          <div className="mb-8 p-4 bg-red-900/20 border border-red-500 rounded-lg flex gap-3">
+            <AlertCircle className="text-red-400 flex-shrink-0 mt-0.5" size={20} />
+            <div>
+              <p className="text-red-300 font-semibold text-sm">Error</p>
+              <p className="text-red-300 text-sm">{error}</p>
+            </div>
           </div>
         )}
 
@@ -112,14 +126,14 @@ export default function NativeAudioDemo() {
             🎙️ Voice Input
           </h2>
 
-          <div className="flex gap-4 mb-4">
+          <div className="flex gap-4 mb-4 flex-wrap">
             <button
               onClick={handleStartListening}
-              disabled={isListening || isStreaming}
-              className={`flex-1 py-3 px-4 rounded-lg font-semibold flex items-center justify-center gap-2 transition ${
+              disabled={isListening || isStreaming || !isConnected}
+              className={`flex-1 min-w-[200px] py-3 px-4 rounded-lg font-semibold flex items-center justify-center gap-2 transition ${
                 isListening
                   ? 'bg-red-600 text-white hover:bg-red-700'
-                  : 'bg-blue-600 text-white hover:bg-blue-700 disabled:bg-slate-700 disabled:text-slate-400'
+                  : 'bg-blue-600 text-white hover:bg-blue-700 disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed'
               }`}
             >
               <Mic size={20} />
@@ -141,7 +155,7 @@ export default function NativeAudioDemo() {
             <button
               onClick={playAudioResponse}
               disabled={isStreaming}
-              className="w-full py-3 px-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:bg-slate-700 disabled:text-slate-400 flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition"
             >
               <Volume2 size={20} />
               Play Response ({audioChunks.length} chunks)
@@ -160,14 +174,14 @@ export default function NativeAudioDemo() {
               onChange={(e) => setTextInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSendText()}
               placeholder="Ask something about Smart Motor..."
-              disabled={isStreaming}
-              className="flex-1 px-4 py-3 bg-slate-700 text-white rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-600 disabled:text-slate-400"
+              disabled={isStreaming || !isConnected}
+              className="flex-1 px-4 py-3 bg-slate-700 text-white rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-600 disabled:text-slate-400 disabled:cursor-not-allowed transition"
             />
 
             <button
               onClick={handleSendText}
-              disabled={isStreaming || !textInput.trim()}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:bg-slate-700 disabled:text-slate-400 flex items-center gap-2"
+              disabled={isStreaming || !textInput.trim() || !isConnected}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed flex items-center gap-2 transition"
             >
               <Send size={20} />
             </button>
@@ -179,7 +193,7 @@ export default function NativeAudioDemo() {
           <div className="bg-slate-800 rounded-lg border border-slate-700 p-6 mb-6">
             <button
               onClick={() => setShowTranscript(!showTranscript)}
-              className="flex items-center justify-between w-full mb-4 cursor-pointer"
+              className="flex items-center justify-between w-full mb-4 cursor-pointer hover:opacity-80 transition"
             >
               <h2 className="text-lg font-semibold text-white">
                 📋 AI Response
@@ -190,8 +204,8 @@ export default function NativeAudioDemo() {
             </button>
 
             {showTranscript && (
-              <div className="max-h-64 overflow-y-auto">
-                <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">
+              <div className="max-h-64 overflow-y-auto bg-slate-700/50 p-4 rounded">
+                <p className="text-slate-300 leading-relaxed whitespace-pre-wrap text-sm">
                   {transcript}
                 </p>
               </div>
@@ -202,11 +216,11 @@ export default function NativeAudioDemo() {
         {/* Streaming Indicator */}
         {isStreaming && (
           <div className="bg-blue-900/20 border border-blue-500 rounded-lg p-4 mb-6">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <div className="flex gap-1">
                 <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-100" />
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-200" />
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
               </div>
               <p className="text-blue-300 font-medium">
                 Streaming response from Gemini...
@@ -218,18 +232,19 @@ export default function NativeAudioDemo() {
         {/* Reset Button */}
         <button
           onClick={reset}
-          className="w-full py-3 px-4 bg-slate-700 text-white rounded-lg font-semibold hover:bg-slate-600 flex items-center justify-center gap-2"
+          className="w-full py-3 px-4 bg-slate-700 text-white rounded-lg font-semibold hover:bg-slate-600 flex items-center justify-center gap-2 transition"
         >
           <RotateCcw size={20} />
-          Reset Demo
+          Reset
         </button>
 
         {/* Info Footer */}
         <div className="mt-8 p-4 bg-slate-800 rounded-lg border border-slate-700">
           <p className="text-sm text-slate-400">
-            <span className="font-semibold text-slate-300">💡 Tip:</span> This demo uses
-            the native audio model which supports bidirectional audio streaming. You can
-            speak naturally and receive audio responses with text transcription.
+            <span className="font-semibold text-slate-300">💡 How it works:</span> This demo uses
+            the Gemini 2.5 Flash Native Audio model which supports bidirectional
+            audio streaming. You can speak naturally and receive audio responses
+            with real-time text transcription.
           </p>
         </div>
       </div>

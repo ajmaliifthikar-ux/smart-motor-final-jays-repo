@@ -1,228 +1,138 @@
 /**
- * Hook for interacting with Gemini Native Audio bidirectional streaming
- * Handles audio capture, streaming, and response playback
+ * useNativeAudio Hook - CLIENT SIDE ONLY
+ * Use 'use client' directive in component
  */
 
 'use client'
 
-import { useCallback, useState, useRef } from 'react'
-
-export interface AudioStreamEvent {
-  type: 'audio' | 'text' | 'metadata' | 'error' | 'done' | 'turn_complete'
-  content?: string
-  audioData?: string
-  mimeType?: string
-  tokenCount?: number
-  finishReason?: string
-  error?: string
-}
-
-export interface UseNativeAudioReturn {
-  isStreaming: boolean
-  isConnected: boolean
-  error: string | null
-  transcript: string
-  audioChunks: string[]
-  sendAudio: (audioBase64: string, mimeType?: string) => Promise<void>
-  sendText: (text: string) => Promise<void>
-  startListening: () => Promise<void>
-  stopListening: () => void
-  playAudioResponse: () => Promise<void>
-  reset: () => void
-}
+import { useCallback, useState, useRef, useEffect } from 'react'
+import {
+  initializeNativeAudioSession,
+  playAudio,
+  type AudioStreamChunk,
+  type NativeAudioConfig,
+} from '@/lib/gemini-native-audio'
 
 export function useNativeAudio(
-  conversationId?: string,
+  conversationId: string = `conv_${Date.now()}`,
   voiceName: string = 'Zephyr'
-): UseNativeAudioReturn {
+) {
   const [isStreaming, setIsStreaming] = useState(false)
   const [isConnected, setIsConnected] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [transcript, setTranscript] = useState('')
   const [audioChunks, setAudioChunks] = useState<string[]>([])
 
+  const sessionRef = useRef<any>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
-  const abortControllerRef = useRef<AbortController | null>(null)
 
-  /**
-   * Send audio data to the native audio API
-   */
-  const sendAudio = useCallback(
-    async (audioBase64: string, mimeType: string = 'audio/pcm') => {
-      setIsStreaming(true)
-      setError(null)
-      setTranscript('')
-      setAudioChunks([])
-      abortControllerRef.current = new AbortController()
-
+  // Initialize session on mount
+  useEffect(() => {
+    const initSession = async () => {
       try {
-        const response = await fetch('/api/ai/native-audio', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            audioBase64,
-            mimeType,
-            conversationId: conversationId || `conv_${Date.now()}`,
-            voiceName,
-          }),
-          signal: abortControllerRef.current.signal,
-        })
+        // Get API key from fetch to server endpoint (key is never exposed to client)
+        const response = await fetch('/api/ai/get-key')
+        const { key } = await response.json()
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+        const config: NativeAudioConfig = {
+          userId: `user_${Date.now()}`,
+          conversationId,
+          voiceName,
+          apiKey: key,
         }
 
-        const reader = response.body?.getReader()
-        if (!reader) throw new Error('No response body')
-
-        const decoder = new TextDecoder()
-        let buffer = ''
-
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
-
-          buffer += decoder.decode(value, { stream: true })
-
-          // Process SSE events
-          const lines = buffer.split('\n')
-          buffer = lines.pop() || ''
-
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const event: AudioStreamEvent = JSON.parse(line.slice(6))
-
-                switch (event.type) {
-                  case 'text':
-                    setTranscript((prev) => prev + (event.content || ''))
-                    break
-                  case 'audio':
-                    setAudioChunks((prev) => [...prev, event.audioData || ''])
-                    break
-                  case 'error':
-                    setError(event.error || 'Unknown error')
-                    break
-                  case 'turn_complete':
-                  case 'done':
-                    setIsConnected(true)
-                    break
-                }
-              } catch (e) {
-                console.error('Failed to parse SSE event:', e)
-              }
-            }
-          }
-        }
+        const session = await initializeNativeAudioSession(
+          config,
+          key,
+          handleChunk
+        )
+        sessionRef.current = session
+        setIsConnected(session.isConnected())
       } catch (err) {
-        if (err instanceof Error && err.name !== 'AbortError') {
-          setError(err.message)
-          console.error('Native audio error:', err)
-        }
-      } finally {
-        setIsStreaming(false)
+        console.error('Session init error:', err)
+        setError(err instanceof Error ? err.message : 'Failed to init session')
       }
-    },
-    [conversationId, voiceName]
-  )
+    }
 
-  /**
-   * Send text input instead of audio
-   */
-  const sendText = useCallback(
-    async (text: string) => {
-      setIsStreaming(true)
-      setError(null)
-      setTranscript('')
-      setAudioChunks([])
-      abortControllerRef.current = new AbortController()
+    initSession()
 
-      try {
-        const response = await fetch('/api/ai/native-audio', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            textInput: text,
-            conversationId: conversationId || `conv_${Date.now()}`,
-            voiceName,
-          }),
-          signal: abortControllerRef.current.signal,
-        })
+    return () => {
+      sessionRef.current?.close()
+    }
+  }, [conversationId, voiceName])
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+  const handleChunk = useCallback((chunk: AudioStreamChunk) => {
+    switch (chunk.type) {
+      case 'text':
+        setTranscript((prev) => prev + (chunk.content || ''))
+        break
+      case 'audio':
+        if (chunk.audioData) {
+          setAudioChunks((prev) => [...prev, chunk.audioData!])
         }
-
-        const reader = response.body?.getReader()
-        if (!reader) throw new Error('No response body')
-
-        const decoder = new TextDecoder()
-        let buffer = ''
-
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
-
-          buffer += decoder.decode(value, { stream: true })
-
-          // Process SSE events
-          const lines = buffer.split('\n')
-          buffer = lines.pop() || ''
-
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const event: AudioStreamEvent = JSON.parse(line.slice(6))
-
-                switch (event.type) {
-                  case 'text':
-                    setTranscript((prev) => prev + (event.content || ''))
-                    break
-                  case 'audio':
-                    setAudioChunks((prev) => [...prev, event.audioData || ''])
-                    break
-                  case 'error':
-                    setError(event.error || 'Unknown error')
-                    break
-                  case 'turn_complete':
-                  case 'done':
-                    setIsConnected(true)
-                    break
-                }
-              } catch (e) {
-                console.error('Failed to parse SSE event:', e)
-              }
-            }
-          }
-        }
-      } catch (err) {
-        if (err instanceof Error && err.name !== 'AbortError') {
-          setError(err.message)
-          console.error('Native audio error:', err)
-        }
-      } finally {
+        break
+      case 'error':
+        setError(chunk.error || 'Unknown error')
+        break
+      case 'turn_complete':
+      case 'done':
         setIsStreaming(false)
-      }
-    },
-    [conversationId, voiceName]
-  )
+        break
+      case 'metadata':
+        if (chunk.content === 'connected') {
+          setIsConnected(true)
+        }
+        break
+    }
+  }, [])
 
-  /**
-   * Start capturing audio from microphone
-   */
+  const sendAudio = useCallback(async (audioBase64: string, mimeType: string = 'audio/pcm') => {
+    if (!sessionRef.current) {
+      setError('Session not initialized')
+      return
+    }
+
+    setIsStreaming(true)
+    setError(null)
+    setTranscript('')
+    setAudioChunks([])
+
+    try {
+      sessionRef.current.sendAudio(audioBase64, mimeType)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Send failed')
+      setIsStreaming(false)
+    }
+  }, [])
+
+  const sendText = useCallback(async (text: string) => {
+    if (!sessionRef.current) {
+      setError('Session not initialized')
+      return
+    }
+
+    setIsStreaming(true)
+    setError(null)
+    setTranscript('')
+    setAudioChunks([])
+
+    try {
+      sessionRef.current.sendText(text)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Send failed')
+      setIsStreaming(false)
+    }
+  }, [])
+
   const startListening = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
 
-      // Initialize audio context if needed
       if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+        audioContextRef.current = new (window.AudioContext ||
+          (window as any).webkitAudioContext)()
       }
 
       audioChunksRef.current = []
@@ -236,7 +146,9 @@ export function useNativeAudio(
       }
 
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: 'audio/webm;codecs=opus',
+        })
         const reader = new FileReader()
 
         reader.onloadend = async () => {
@@ -252,23 +164,17 @@ export function useNativeAudio(
       mediaRecorder.start()
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Failed to access microphone'
+        err instanceof Error ? err.message : 'Microphone access denied'
       )
     }
   }, [sendAudio])
 
-  /**
-   * Stop capturing audio
-   */
   const stopListening = useCallback(() => {
     if (mediaRecorderRef.current?.state === 'recording') {
       mediaRecorderRef.current.stop()
     }
   }, [])
 
-  /**
-   * Play the audio response
-   */
   const playAudioResponse = useCallback(async () => {
     if (audioChunks.length === 0) {
       setError('No audio response available')
@@ -276,34 +182,18 @@ export function useNativeAudio(
     }
 
     try {
-      // Combine audio chunks and create a playable blob
-      const audioData = audioChunks
-        .map((chunk) => Buffer.from(chunk, 'base64'))
-        .reduce((acc, buf) => Buffer.concat([acc, buf]), Buffer.alloc(0))
-
-      const audioBlob = new Blob([audioData], { type: 'audio/wav' })
-      const audioUrl = URL.createObjectURL(audioBlob)
-
-      const audio = new Audio(audioUrl)
-      await audio.play()
-
-      // Cleanup
-      setTimeout(() => URL.revokeObjectURL(audioUrl), 5000)
+      // For now, play first chunk (ideally combine all chunks)
+      await playAudio(audioChunks[0])
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to play audio')
+      setError(err instanceof Error ? err.message : 'Playback failed')
     }
   }, [audioChunks])
 
-  /**
-   * Reset state
-   */
   const reset = useCallback(() => {
     setIsStreaming(false)
-    setIsConnected(false)
     setError(null)
     setTranscript('')
     setAudioChunks([])
-    abortControllerRef.current?.abort()
   }, [])
 
   return {
