@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import { getAllUsers } from '@/lib/firebase-db'
 import { UserTable } from '@/components/admin/users/user-table'
 import { CreateUserModal } from '@/components/admin/users/create-user-modal'
 import { SearchInput } from '@/components/ui/search-input'
@@ -12,16 +12,24 @@ export default async function UsersPage({
 
     let users: any[] = []
     try {
-        users = await prisma.user.findMany({
-            where: {
-                deletedAt: null,
-                OR: query ? [
-                    { name: { contains: query } }, // Removed mode: 'insensitive' for SQLite compatibility
-                    { email: { contains: query } }
-                ] : undefined
-            },
-            orderBy: { createdAt: 'desc' },
-        })
+        const allUsers = await getAllUsers()
+        
+        // Filter out deleted users
+        let filteredUsers = allUsers.filter(u => !u.deletedAt)
+        
+        // Search if query provided
+        if (query) {
+            const lowerQuery = query.toLowerCase()
+            filteredUsers = filteredUsers.filter(u => 
+                (u.name?.toLowerCase().includes(lowerQuery)) ||
+                (u.email?.toLowerCase().includes(lowerQuery))
+            )
+        }
+        
+        // Sort by createdAt descending
+        users = filteredUsers.sort((a, b) => 
+            b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime()
+        )
     } catch (error) {
         console.error('Failed to fetch users:', error)
     }

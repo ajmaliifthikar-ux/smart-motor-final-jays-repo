@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import { getAllUsers, getAllBookings } from '@/lib/firebase-db'
 import { RecentActivity } from '@/components/admin/recent-activity'
 import { formatPrice } from '@/lib/utils'
 import { getHeatmapData, getTrafficTrends } from '@/lib/analytics'
@@ -14,30 +14,29 @@ export default async function AdminDashboard() {
     let trafficTrends: any[] = []
 
     try {
-        const [uc, abc, rr, rb, hmd, tt] = await Promise.all([
-            prisma.user.count({ where: { role: 'CUSTOMER' } }),
-            prisma.booking.count({
-                where: { status: { in: ['PENDING', 'CONFIRMED', 'LOCKED'] } }
-            }),
-            prisma.booking.findMany({
-                where: { status: 'COMPLETED' },
-                include: { service: { select: { basePrice: true } } }
-            }),
-            prisma.booking.findMany({
-                take: 5,
-                orderBy: { createdAt: 'desc' },
-                include: {
-                    user: { select: { name: true, email: true } },
-                    service: { select: { name: true, basePrice: true } }
-                }
-            }),
+        const [allUsers, allBookings, hmd, tt] = await Promise.all([
+            getAllUsers(),
+            getAllBookings(),
             getHeatmapData(),
             getTrafficTrends()
         ])
-        userCount = uc
-        activeBookingsCount = abc
-        revenueRaw = rr
-        recentBookings = rb
+        
+        // Count customers only
+        userCount = allUsers.filter(u => u.role === 'CUSTOMER').length
+        
+        // Count active bookings
+        activeBookingsCount = allBookings.filter(b => 
+            ['PENDING', 'CONFIRMED', 'LOCKED'].includes(b.status)
+        ).length
+        
+        // Calculate revenue from completed bookings
+        revenueRaw = allBookings.filter(b => b.status === 'COMPLETED')
+        
+        // Get recent 5 bookings
+        recentBookings = allBookings
+            .sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime())
+            .slice(0, 5)
+        
         heatmapData = hmd
         trafficTrends = tt
     } catch (error) {
@@ -45,7 +44,7 @@ export default async function AdminDashboard() {
     }
 
     // Calculate generic revenue
-    const totalRevenue = revenueRaw.reduce((acc, curr) => acc + (curr.service.basePrice || 0), 0)
+    const totalRevenue = revenueRaw.reduce((acc, curr) => acc + (curr.totalPrice || 0), 0)
 
     return (
         <div className="space-y-8">

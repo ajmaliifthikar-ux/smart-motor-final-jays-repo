@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma"
+import { getAllBrands, getAllPublishedContent } from "@/lib/firebase-db"
 import { Tabs } from "@/components/ui/tabs"
 import { GlobalSettings } from "@/components/admin/content/global-settings"
 import { BrandManager } from "@/components/admin/content/brand-manager"
@@ -13,25 +13,25 @@ export default async function ContentPage() {
     let brands: any[] = []
 
     try {
-        const [cb, b] = await Promise.all([
-            prisma.contentBlock.findMany(),
-            prisma.brand.findMany({ orderBy: { name: 'asc' } })
+        const [allContent, allBrands] = await Promise.all([
+            getAllPublishedContent(),
+            getAllBrands()
         ])
-        contentBlocks = cb
-        brands = b
+        contentBlocks = allContent
+        brands = allBrands
     } catch (error) {
         console.error('Failed to fetch content data:', error)
     }
 
     // 2. Transform Content Blocks for localized editing
     const config = contentBlocks.reduce((acc, block) => {
-        acc[block.key] = { value: block.value, valueAr: block.valueAr }
+        acc[block.slug] = { value: block.content, valueAr: block.contentAr }
         return acc
     }, {} as Record<string, { value: string, valueAr: string | null }>)
 
-    // 2.1 Group Blocks by Page (parentKey)
+    // 2.1 Group Blocks by Page (use type as page grouping)
     const pageBlocks = contentBlocks.reduce((acc, block) => {
-        const page = block.parentKey || 'home'
+        const page = block.type || 'general'
         if (!acc[page]) acc[page] = []
         acc[page].push(block)
         return acc

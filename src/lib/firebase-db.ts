@@ -85,6 +85,17 @@ export async function createUser(
   }
 }
 
+export async function getAllUsers(): Promise<FirebaseUser[]> {
+  try {
+    const q = query(collection(db, 'users'))
+    const querySnapshot = await getDocs(q)
+    return querySnapshot.docs.map((doc) => doc.data() as FirebaseUser)
+  } catch (error) {
+    console.error('Error fetching all users:', error)
+    return []
+  }
+}
+
 export async function updateUser(userId: string, updates: Partial<FirebaseUser>): Promise<void> {
   try {
     await updateDoc(doc(db, 'users', userId), {
@@ -159,6 +170,17 @@ export async function getBookingsByDate(date: Date): Promise<FirebaseBooking[]> 
     return querySnapshot.docs.map((doc) => doc.data() as FirebaseBooking)
   } catch (error) {
     console.error('Error fetching bookings by date:', error)
+    return []
+  }
+}
+
+export async function getAllBookings(): Promise<FirebaseBooking[]> {
+  try {
+    const q = query(collection(db, 'bookings'))
+    const querySnapshot = await getDocs(q)
+    return querySnapshot.docs.map((doc) => doc.data() as FirebaseBooking)
+  } catch (error) {
+    console.error('Error fetching all bookings:', error)
     return []
   }
 }

@@ -1,7 +1,7 @@
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import { Services } from '@/components/v2/sections/services'
-import { prisma } from '@/lib/prisma'
+import { getAllServices } from '@/lib/firebase-db'
 import { Service } from '@/types'
 
 export const revalidate = 3600
@@ -9,10 +9,7 @@ export const revalidate = 3600
 export default async function ServicesPage() {
     let servicesData: any[] = []
     try {
-        servicesData = await prisma.service.findMany({
-            where: { isEnabled: true },
-            orderBy: { createdAt: 'asc' }
-        })
+        servicesData = await getAllServices()
     } catch (e) {
         console.error("DB Error", e);
     }
@@ -23,12 +20,12 @@ export default async function ServicesPage() {
         descriptionAr: s.descriptionAr || '',
         category: (s.category as any) || 'mechanical',
         icon: s.icon || 'wrench',
-        process: s.process as any,
-        subServices: s.subServices as any,
-        seo: s.seo as any,
+        process: undefined,
+        subServices: undefined,
+        seo: undefined,
         detailedDescription: s.detailedDescription || undefined,
         image: s.image || undefined,
-        iconImage: s.iconImage || undefined
+        iconImage: undefined
     }))
 
     return (
