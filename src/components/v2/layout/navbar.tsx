@@ -94,8 +94,9 @@ export function Navbar() {
                   onClick={(e) => scrollToSection(e, link.href)}
                   className={cn(
                     'relative px-4 py-2 text-[9px] font-black uppercase tracking-widest transition-all duration-300 rounded-full z-10 flex-nowrap',
-                    isActive ? 'text-white' : 'text-gray-500 hover:text-[#121212]'
+                    !isActive && 'text-gray-500 hover:text-[#121212]'
                   )}
+                  style={isActive ? { color: '#FFFFFF' } : undefined}
                 >
                   {isActive && (
                     <motion.div
