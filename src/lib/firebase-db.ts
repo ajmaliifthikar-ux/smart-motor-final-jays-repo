@@ -20,17 +20,45 @@ import { initializeApp, getApps } from 'firebase/app'
 
 // Initialize Firestore
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: (process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '').trim(),
+  authDomain: (process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || '').trim(),
+  projectId: (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '').trim(),
+  storageBucket: (process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || '').trim(),
+  messagingSenderId: (process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '').trim(),
+  appId: (process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '').trim(),
 }
 
-// Avoid re-initialization
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
-export const db = getFirestore(app)
+// Avoid re-initialization - handle duplicate app gracefully
+let dbInstance: ReturnType<typeof getFirestore> | null = null
+
+function initializeDb() {
+  if (dbInstance) return dbInstance
+
+  try {
+    const apps = getApps()
+    const app = apps.length > 0 ? apps[0] : initializeApp(firebaseConfig)
+    dbInstance = getFirestore(app)
+    return dbInstance
+  } catch (error: any) {
+    // If it's a duplicate app error, get the existing app and its database
+    if (error?.code === 'app/duplicate-app' || error?.code === 'app/invalid-credential') {
+      const apps = getApps()
+      if (apps.length > 0) {
+        dbInstance = getFirestore(apps[0])
+        return dbInstance
+      }
+    }
+    throw error
+  }
+}
+
+// Lazy export - will initialize on first use
+export const db = new Proxy({} as any, {
+  get: (target, prop) => {
+    const database = initializeDb()
+    return (database as any)[prop]
+  },
+}) as ReturnType<typeof getFirestore>
 
 // ─── USER MANAGEMENT ───
 
