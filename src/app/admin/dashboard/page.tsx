@@ -3,6 +3,7 @@ import { RecentActivity } from '@/components/admin/recent-activity'
 import { formatPrice } from '@/lib/utils'
 import { getHeatmapData, getTrafficTrends } from '@/lib/analytics'
 import { UAEHeatmap } from '@/components/admin/analytics/uae-heatmap'
+import { GoogleBusinessWidget } from '@/components/admin/analytics/google-business-widget'
 
 export default async function AdminDashboard() {
     // 1. Fetch Stats in parallel
@@ -79,28 +80,35 @@ export default async function AdminDashboard() {
             </div>
 
             {/* Content Area */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="rounded-3xl border border-gray-200 bg-white/50 backdrop-blur-xl p-8 shadow-sm">
-                    <h2 className="text-lg font-semibold text-[#121212] mb-4">Traffic Projection</h2>
-                    <div className="h-64 flex items-end gap-3 px-4 pb-8">
-                        {trafficTrends.map((trend, i) => (
-                            <div key={trend.date} className="flex-1 flex flex-col items-center gap-2 group">
-                                <div
-                                    className="w-full bg-[#121212] rounded-t-lg transition-all duration-500 group-hover:bg-[#E62329]"
-                                    style={{ height: `${(trend.count / Math.max(...trafficTrends.map(t => t.count), 1)) * 100}%` }}
-                                />
-                                <span className="text-[8px] font-black text-gray-400 uppercase tracking-tighter">{trend.date.split('-')[2]}</span>
-                            </div>
-                        ))}
-                        {trafficTrends.length === 0 && (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400 font-medium italic text-sm">
-                                Initializing Tracking Data...
-                            </div>
-                        )}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Traffic chart + heatmap — take 2 cols */}
+                <div className="lg:col-span-2 space-y-8">
+                    <div className="rounded-3xl border border-gray-200 bg-white/50 backdrop-blur-xl p-8 shadow-sm">
+                        <h2 className="text-lg font-semibold text-[#121212] mb-4">Traffic Projection</h2>
+                        <div className="h-64 flex items-end gap-3 px-4 pb-8">
+                            {trafficTrends.map((trend) => (
+                                <div key={trend.date} className="flex-1 flex flex-col items-center gap-2 group">
+                                    <div
+                                        className="w-full bg-[#121212] rounded-t-lg transition-all duration-500 group-hover:bg-[#E62329]"
+                                        style={{ height: `${(trend.count / Math.max(...trafficTrends.map((t: { count: number }) => t.count), 1)) * 100}%` }}
+                                    />
+                                    <span className="text-[8px] font-black text-gray-400 uppercase tracking-tighter">{trend.date.split('-')[2]}</span>
+                                </div>
+                            ))}
+                            {trafficTrends.length === 0 && (
+                                <div className="w-full h-full flex items-center justify-center text-gray-400 font-medium italic text-sm">
+                                    Initializing Tracking Data...
+                                </div>
+                            )}
+                        </div>
                     </div>
+                    <UAEHeatmap data={heatmapData} />
                 </div>
 
-                <UAEHeatmap data={heatmapData} />
+                {/* Google Business Widget — right column */}
+                <div className="lg:col-span-1">
+                    <GoogleBusinessWidget />
+                </div>
             </div>
 
             <div className="rounded-3xl border border-gray-200 bg-white/50 backdrop-blur-xl p-8 shadow-sm">

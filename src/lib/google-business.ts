@@ -6,81 +6,131 @@ export interface Review {
     text: string
     date: string
     source: 'Google' | 'Manual'
+    profileUrl?: string
 }
 
-// Mock Data fallback
+export interface BusinessStats {
+    rating: number
+    totalReviews: number
+    isOpen: boolean
+    name: string
+    address: string
+    phone: string
+    photoUrls: string[]
+    placeId: string
+}
+
+// Fallback mock reviews (only used if API is completely unreachable)
 const MOCK_REVIEWS: Review[] = [
     {
-        id: '1',
-        author: 'Ahmed Al Mansoori',
-        avatar: 'https://ui-avatars.com/api/?name=Ahmed+Al+Mansoori&background=E62329&color=fff',
+        id: 'mock-1',
+        author: 'Mohammad Al',
+        avatar: 'https://ui-avatars.com/api/?name=Mohammad+Al&background=E62329&color=fff',
         rating: 5,
-        text: 'Exceptional service for my BMW X5. The team is professional and the pricing is very transparent compared to the agency.',
-        date: '2 weeks ago',
+        text: 'I recently visited Smart Motor Auto Services for a service package and to apply PPF on my Jeep, and the experience was exceptional. The team was highly professional and attentive.',
+        date: '2 months ago',
         source: 'Google'
     },
     {
-        id: '2',
-        author: 'Jessica Miller',
-        avatar: 'https://ui-avatars.com/api/?name=Jessica+Miller&background=121212&color=fff',
+        id: 'mock-2',
+        author: 'Daisy Rapania',
+        avatar: 'https://ui-avatars.com/api/?name=Daisy+Rapania&background=121212&color=fff',
         rating: 5,
-        text: 'Found them on Google and glad I did. Fixed the AC issue in my Audi A6 within a day. Highly recommended!',
-        date: '1 month ago',
-        source: 'Google'
-    },
-    {
-        id: '3',
-        author: 'Mohammed Saeed',
-        avatar: 'https://ui-avatars.com/api/?name=Mohammed+Saeed&background=E62329&color=fff',
-        rating: 4,
-        text: 'Great mechanical work, but the waiting area could use better coffee. Overall very satisfied with the repair.',
+        text: 'I really appreciate the way they handle customers, specially the lady at the reception ms. Sahar. I like the way they communicate and keep you updated about the progress of your car.',
         date: '3 weeks ago',
         source: 'Google'
     },
     {
-        id: '4',
-        author: 'Sarah Jenkins',
-        avatar: 'https://ui-avatars.com/api/?name=Sarah+Jenkins&background=121212&color=fff',
+        id: 'mock-3',
+        author: 'Emad AL-Manthari',
+        avatar: 'https://ui-avatars.com/api/?name=Emad+AL-Manthari&background=E62329&color=fff',
         rating: 5,
-        text: 'Trustworthy mechanics. They explained everything clearly and send video updates of the work being done.',
-        date: '2 days ago',
+        text: 'Smart Motor Auto Repair provided an outstanding experience! The team was incredibly helpful, kind, and professional. They clearly explained every step of the repair process.',
+        date: 'a year ago',
         source: 'Google'
-    }
+    },
+    {
+        id: 'mock-4',
+        author: 'Naser Alsarawan',
+        avatar: 'https://ui-avatars.com/api/?name=Naser+Alsarawan&background=121212&color=fff',
+        rating: 5,
+        text: 'A center worth a visit, wonderful reception and distinguished, fast service. They have everything related to the car, from repairs to cleaning.',
+        date: 'a year ago',
+        source: 'Google'
+    },
 ]
 
+const MOCK_STATS: BusinessStats = {
+    rating: 4.6,
+    totalReviews: 121,
+    isOpen: true,
+    name: 'Smart Motor Auto Repair',
+    address: 'As Salami 1 St - Musaffah - M09 - Abu Dhabi',
+    phone: '800 5445',
+    photoUrls: [],
+    placeId: 'ChIJpb7_vuBBXj4RpYogfw-RTLg',
+}
+
 export const googleBusiness = {
+    /**
+     * Fetch real reviews from our server-side Google Places API route.
+     * Falls back to mock data if the API is unavailable.
+     */
     getReviews: async (): Promise<Review[]> => {
         try {
-            const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || process.env.GOOGLE_API_KEY
-            const placeId = process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID || 'ChIJN1t_tDeuEmsRU' // Placeholder Place ID
+            const baseUrl = typeof window !== 'undefined'
+                ? ''
+                : (process.env.NEXT_PUBLIC_APP_URL || 'https://smartmotorlatest.vercel.app')
 
-            if (!apiKey || !placeId || placeId === 'PLACEHOLDER') {
+            const res = await fetch(`${baseUrl}/api/google/reviews`, {
+                next: { revalidate: 3600 },
+            })
+
+            if (!res.ok) {
+                console.warn('Google reviews API returned', res.status, '— using fallback')
                 return MOCK_REVIEWS
             }
 
-            // Using Google Places Details API (server-side usually, but for demo we show the logic)
-            const response = await fetch(
-                `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews,rating&key=${apiKey}`
-            )
-            
-            const data = await response.json()
-            
-            if (data.result?.reviews) {
-                return data.result.reviews.map((r: any, i: number) => ({
-                    id: `google-${i}`,
-                    author: r.author_name,
-                    avatar: r.profile_photo_url,
-                    rating: r.rating,
-                    text: r.text,
-                    date: r.relative_time_description,
-                    source: 'Google'
-                }))
-            }
+            const data = await res.json()
+            if (data.error || !data.reviews) return MOCK_REVIEWS
 
-            return MOCK_REVIEWS
+            return data.reviews as Review[]
         } catch (error) {
-            console.error('Failed to fetch real Google reviews:', error)
+            console.error('Failed to fetch Google reviews:', error)
             return MOCK_REVIEWS
         }
-    }
+    },
+
+    /**
+     * Fetch full business stats (rating, review count, open status, photos).
+     * Used by dashboard widgets.
+     */
+    getBusinessStats: async (): Promise<BusinessStats> => {
+        try {
+            const baseUrl = typeof window !== 'undefined'
+                ? ''
+                : (process.env.NEXT_PUBLIC_APP_URL || 'https://smartmotorlatest.vercel.app')
+
+            const res = await fetch(`${baseUrl}/api/google/reviews`, {
+                next: { revalidate: 3600 },
+            })
+
+            if (!res.ok) return MOCK_STATS
+            const data = await res.json()
+            if (data.error) return MOCK_STATS
+
+            return {
+                rating: data.rating ?? MOCK_STATS.rating,
+                totalReviews: data.totalReviews ?? MOCK_STATS.totalReviews,
+                isOpen: data.openNow ?? MOCK_STATS.isOpen,
+                name: data.name ?? MOCK_STATS.name,
+                address: data.address ?? MOCK_STATS.address,
+                phone: data.phone ?? MOCK_STATS.phone,
+                photoUrls: data.photoUrls ?? [],
+                placeId: data.placeId ?? MOCK_STATS.placeId,
+            }
+        } catch {
+            return MOCK_STATS
+        }
+    },
 }
