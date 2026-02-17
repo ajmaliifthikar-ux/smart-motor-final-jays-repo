@@ -638,3 +638,148 @@ export function convertTimestampToDate(timestamp: Timestamp): Date {
 export function convertDateToTimestamp(date: Date): Timestamp {
   return Timestamp.fromDate(date)
 }
+
+// ─── ANALYTICS QUERY FUNCTIONS ───
+
+export async function getAllQRCodes() {
+  try {
+    const db = getFirestore()
+    const snapshot = await getDocs(collection(db, 'qr_codes'))
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+  } catch (error) {
+    console.error('Error fetching QR codes:', error)
+    return []
+  }
+}
+
+export async function getAllShortURLs() {
+  try {
+    const db = getFirestore()
+    const snapshot = await getDocs(collection(db, 'short_urls'))
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+  } catch (error) {
+    console.error('Error fetching short URLs:', error)
+    return []
+  }
+}
+
+export async function getQRAnalyticsSummary() {
+  try {
+    const qrCodes = await getAllQRCodes()
+    const totalScans = qrCodes.reduce((sum: number, qr: any) => sum + (qr.scans || 0), 0)
+    
+    return {
+      totalQRCodes: qrCodes.length,
+      totalScans,
+      topQRCodes: qrCodes
+        .sort((a: any, b: any) => (b.scans || 0) - (a.scans || 0))
+        .slice(0, 10)
+        .map((qr: any) => ({
+          id: qr.id,
+          code: qr.shortCode || 'N/A',
+          scans: qr.scans || 0,
+          created: qr.createdAt,
+        })),
+    }
+  } catch (error) {
+    console.error('Error getting QR analytics summary:', error)
+    return {
+      totalQRCodes: 0,
+      totalScans: 0,
+      topQRCodes: [],
+    }
+  }
+}
+
+export async function getURLAnalyticsSummary() {
+  try {
+    const urls = await getAllShortURLs()
+    const totalClicks = urls.reduce((sum: number, url: any) => sum + (url.clicks || 0), 0)
+    
+    return {
+      totalURLs: urls.length,
+      totalClicks,
+      topURLs: urls
+        .sort((a: any, b: any) => (b.clicks || 0) - (a.clicks || 0))
+        .slice(0, 10)
+        .map((url: any) => ({
+          id: url.id,
+          shortCode: url.shortCode,
+          originalUrl: url.originalUrl,
+          clicks: url.clicks || 0,
+          created: url.createdAt,
+        })),
+    }
+  } catch (error) {
+    console.error('Error getting URL analytics summary:', error)
+    return {
+      totalURLs: 0,
+      totalClicks: 0,
+      topURLs: [],
+    }
+  }
+}
+
+export async function getAnalyticsByDateRange(startDate: Date, endDate: Date) {
+  try {
+    const qrs = await getAllQRCodes()
+    const urls = await getAllShortURLs()
+    
+    // Filter by date range
+    const qrAnalytics = qrs
+      .filter((qr: any) => {
+        const createdDate = qr.createdAt?.toDate?.() || new Date()
+        return createdDate >= startDate && createdDate <= endDate
+      })
+      .map((qr: any) => ({
+        id: qr.id,
+        code: qr.shortCode || 'N/A',
+        scans: qr.scans || 0,
+        browsers: qr.analytics?.browsers || {},
+        devices: qr.analytics?.devices || {},
+        locations: qr.analytics?.locations || {},
+        created: qr.createdAt,
+      }))
+
+    const urlAnalytics = urls
+      .filter((url: any) => {
+        const createdDate = url.createdAt?.toDate?.() || new Date()
+        return createdDate >= startDate && createdDate <= endDate
+      })
+      .map((url: any) => ({
+        id: url.id,
+        shortCode: url.shortCode,
+        originalUrl: url.originalUrl,
+        clicks: url.clicks || 0,
+        browsers: url.analytics?.browsers || {},
+        devices: url.analytics?.devices || {},
+        locations: url.analytics?.locations || {},
+        created: url.createdAt,
+      }))
+
+    return {
+      qrAnalytics,
+      urlAnalytics,
+      summary: {
+        totalQRScans: qrAnalytics.reduce((sum, qr) => sum + qr.scans, 0),
+        totalURLClicks: urlAnalytics.reduce((sum, url) => sum + url.clicks, 0),
+      },
+    }
+  } catch (error) {
+    console.error('Error getting analytics by date range:', error)
+    return {
+      qrAnalytics: [],
+      urlAnalytics: [],
+      summary: {
+        totalQRScans: 0,
+        totalURLClicks: 0,
+      },
+    }
+  }
+}
