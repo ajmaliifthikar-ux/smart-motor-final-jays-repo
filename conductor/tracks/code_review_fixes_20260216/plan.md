@@ -3,9 +3,9 @@
 ## Phase 1: Next.js 15 Compatibility
 Goal: Ensure dynamic routes correctly handle asynchronous parameters as required by Next.js 15+.
 
-- [ ] Task: Update `src/app/brand/[slug]/page.tsx` to await `params`.
-    - [ ] Write Tests: Verify that the `BrandPage` component handles the async `params` Promise correctly.
-    - [ ] Implement Feature: Refactor the component to destructure `slug` from the awaited `params`.
+- [x] Task: Update `src/app/brand/[slug]/page.tsx` to await `params`. (52c2b27)
+    - [x] Write Tests: Verify that the `BrandPage` component handles the async `params` Promise correctly.
+    - [x] Implement Feature: Refactor the component to destructure `slug` from the awaited `params`.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Next.js 15 Compatibility' (Protocol in workflow.md)
 
 ## Phase 2: Immutable Content Restoration
