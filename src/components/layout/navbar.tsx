@@ -109,20 +109,21 @@ export function Navbar() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden mt-3 pb-4 border-t border-[#ECECEA] bg-white/95 backdrop-blur-xl rounded-2xl shadow-lg mt-2 p-4">
+          <div className="lg:hidden fixed inset-0 top-20 z-40 bg-black/95 backdrop-blur-xl overflow-y-auto">
+            <div className="mt-3 pb-4 border-t border-[#ECECEA] p-4 max-w-5xl mx-auto">
             <div className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="font-semibold py-3 px-4 text-[#121212] hover:bg-[#F4F3F1] rounded-xl transition-colors"
+                  className="font-semibold py-3 px-4 text-white hover:bg-white/10 rounded-xl transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {t(link.labelKey)}
                 </Link>
               ))}
-              <hr className="border-[#ECECEA] my-2" />
-              <a href="tel:+97126666789" className="flex items-center gap-2 font-semibold py-3 px-4 text-[#121212]">
+              <hr className="border-white/20 my-2" />
+              <a href="tel:+97126666789" className="flex items-center gap-2 font-semibold py-3 px-4 text-white">
                 <PhoneIcon size={16} /> +971 2 666 6789
               </a>
               <button
@@ -133,13 +134,14 @@ export function Navbar() {
               </button>
               <button
                 onClick={handleLangSwitch}
-                className="mt-2 flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-gray-200 text-gray-500 hover:border-black hover:text-black text-[10px] font-black uppercase tracking-widest"
+                className="mt-2 flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-white/30 text-white hover:border-white text-[10px] font-black uppercase tracking-widest"
               >
                 <GlobeIcon size={12} />
                 <span key={langKey} className="lang-animate">
                   {language === 'en' ? 'Arabic' : 'English'}
                 </span>
               </button>
+            </div>
             </div>
           </div>
         )}

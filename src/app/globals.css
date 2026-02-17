@@ -26,6 +26,15 @@
     --text-primary: #FAFAF9;
     --text-secondary: #999999; /* Lighter shade for dark mode readability */
   }
+
+  /* CRITICAL: Force light text colors ONLY on dark backgrounds */
+  /* Light backgrounds should always have dark text */
+  [class*="bg-white"],
+  [class*="bg-gray-50"],
+  [class*="bg-\[#F"],
+  body {
+    color: var(--color-text-primary) !important;
+  }
 }
 
 /* Enhanced Carbon Fiber Texture */
@@ -288,6 +297,69 @@ h6 {
   background: var(--silver);
 }
 
+/* ─── Visibility Fixes for Light Mode ─── */
+/* Force dark text on light backgrounds regardless of system preference */
+body,
+body > * {
+  color: var(--color-text-primary);
+}
+
+/* Service cards and card-like elements */
+.card-depth,
+[class*="rounded-\[2"],
+[class*="rounded-\[3"],
+[class*="p-10"],
+[class*="p-8"],
+[class*="p-6"] {
+  color: var(--color-text-primary);
+}
+
+/* Input fields and form elements */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+textarea,
+select {
+  color: var(--color-text-primary) !important;
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="tel"]::placeholder,
+textarea::placeholder {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Ensure text in white backgrounds is readable */
+[class*="bg-white"] {
+  color: var(--color-text-primary);
+}
+
+[class*="bg-\[#FFF"] {
+  color: var(--color-text-primary);
+}
+
+[class*="bg-gray-50"],
+[class*="bg-gray-100"] {
+  color: var(--color-text-primary);
+}
+
+/* Text descriptions and paragraphs */
+p,
+span,
+a,
+li,
+label {
+  color: inherit;
+}
+
+/* Service description text - MUST be dark on light */
+.text-gray-500,
+.text-gray-600 {
+  color: var(--color-text-secondary) !important;
+}
+
 /* ─── Utility Classes ─── */
 .animate-fadeUp {
   animation: fadeUp 0.5s cubic-bezier(.22, 1, .36, 1) both;
@@ -387,4 +459,41 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .lang-animate {
   animation: langSlideIn 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ─── reCAPTCHA Badge Positioning ─── */
+/* Hide the badge to avoid blocking chat input */
+/* NOTE: Ensure you display reCAPTCHA notice manually in footer */
+.grecaptcha-badge {
+  visibility: hidden !important;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+}
+
+/* Show it only on important pages (optional) */
+.page-with-captcha .grecaptcha-badge {
+  visibility: visible !important;
+}
+
+/* ─── Footer Logo Styling ─── */
+/* Ensure logo is visible on dark backgrounds */
+.footer-logo img,
+.footer-logo svg {
+  filter: brightness(0) invert(1);
+}
+
+/* If logo is already white, remove the filter */
+.footer-logo img.logo-white,
+.footer-logo svg.logo-white {
+  filter: none;
+}
+
+/* ─── Sticky Header Fix ─── */
+header,
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
 }

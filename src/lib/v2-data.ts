@@ -680,6 +680,251 @@ export const brandCategories: BrandCategory[] = [
                 services: ['High-performance tuning', 'Supercharger maintenance', 'Suspension upgrades', 'Brake service']
             }
         ]
+    },
+    {
+        id: 'luxury-supercars',
+        name: 'Luxury & Supercar Brands',
+        slug: 'luxury-supercar-brands',
+        description: 'Premium luxury, performance, and hypercar specialists. Expert service for exotic and high-performance vehicles.',
+        brands: [
+            // Italian Supercars
+            {
+                id: 'ferrari',
+                name: 'Ferrari',
+                logo: '/brands/ferrari-logo.png',
+                heroImage: '/images/brands/ferrari-hero.jpg',
+                description: 'Expert Ferrari service for all models from iconic classics to modern hypercars.',
+                specialties: ['Twin-Turbo Performance', 'Hybrid Systems', 'F1 DCT Transmission', 'Carbon Fiber'],
+                models: ['F8 Tributo', '812 Superfast', 'SF90 Stradale', '296 GTB', '296 GTS', 'F430', '458 Italia', 'LaFerrari', 'Enzo', 'F50', '849 Testarossa', '296 Speciale', 'Amalfi'],
+                services: ['High-performance engine service', 'Carbon ceramic brake service', 'Complex hybrid diagnostics', 'F1 transmission service', 'Carbon fiber repair']
+            },
+            {
+                id: 'lamborghini',
+                name: 'Lamborghini',
+                logo: '/brands/lamborghini-logo.png',
+                heroImage: '/images/brands/lamborghini-hero.jpg',
+                description: 'Specialized Lamborghini service for all performance-oriented supercars.',
+                specialties: ['V12 & V10 Engines', 'AWD Systems', 'Advanced Aerodynamics', 'Hybrid Technology'],
+                models: ['Aventador', 'Aventador SVJ', 'Huracán', 'Huracán EVO', 'Sián FKP 37', 'Revuelto', 'Temerario', 'Gallardo', 'Murciélago', 'Diablo'],
+                services: ['Exotic engine maintenance', 'AWD system diagnostics', 'Aerodynamics component service', 'Advanced suspension tuning', 'Performance optimization']
+            },
+            {
+                id: 'pagani',
+                name: 'Pagani',
+                logo: '/brands/pagani-logo.svg',
+                heroImage: '/images/brands/pagani-hero.jpg',
+                description: 'Boutique hypercar specialist - Pagani exclusive service and maintenance.',
+                specialties: ['Twin-Turbo V12', 'Carbon Fiber Construction', 'Precision Engineering', 'Bespoke Customization'],
+                models: ['Zonda', 'Zonda F', 'Zonda C12', 'Huayra', 'Huayra R', 'Huayra R Evo', 'Imola', 'Utopia'],
+                services: ['Hypercar engine service', 'Carbon fiber restoration', 'Custom aerodynamics', 'Precision mechanical work', 'Bespoke interior restoration']
+            },
+            // German Performance Brands
+            {
+                id: 'porsche-sports',
+                name: 'Porsche Sports',
+                logo: '/brands/porsche-logo.png',
+                heroImage: '/images/brands/porsche-hero.jpg',
+                description: 'High-performance Porsche models - GT, RS, and exclusive variants.',
+                specialties: ['PDK Transmission', 'Hybrid Performance', 'Active Aerodynamics', 'Track Dynamics'],
+                models: ['911 GT3', '911 GT3 RS', '911 GT2', '911 GT2 RS', '911 Turbo S', 'Carrera GT', '918 Spyder', '911 Turbo S Hybrid', '911 GT2 RS Hybrid', 'Mission X'],
+                services: ['Track-optimized servicing', 'PDK performance tuning', 'Ceramic brake service', 'Lightweight suspension work', 'GT aerodynamics adjustments']
+            },
+            {
+                id: 'mercedes-amg',
+                name: 'Mercedes-AMG',
+                logo: '/brands/mercedes-logo.png',
+                heroImage: '/images/brands/mercedes-amg-hero.jpg',
+                description: 'Mercedes-AMG performance and hypercar division - ultimate German engineering.',
+                specialties: ['Twin-Turbo V8/V12', 'Hybrid Systems', 'Advanced Suspension', 'Aerodynamic Engineering'],
+                models: ['AMG GT', 'AMG GT Black Series', 'AMG GT R', 'E63 AMG', 'G63 AMG', 'SLR McLaren', 'CLK GTR', 'One (Hypercar)'],
+                services: ['AMG high-performance service', 'Hybrid system diagnostics', 'Carbon brake service', 'Aerodynamic tuning', 'Advanced powertrain optimization']
+            },
+            {
+                id: 'bmw-m',
+                name: 'BMW M',
+                logo: '/brands/bmw-logo.png',
+                heroImage: '/images/brands/bmw-m-hero.jpg',
+                description: 'BMW M performance division - precision engineering and performance.',
+                specialties: ['Twin-Turbo In-line Six', 'M Suspension', 'Carbon Ceramics', 'Electronically Controlled Differentials'],
+                models: ['M3', 'M4', 'M5', 'M8', 'M440i', 'M440d', 'X5 M', 'X6 M', 'M440i Competition'],
+                services: ['M performance diagnostics', 'Carbon ceramic brake service', 'M suspension tuning', 'Engine performance mapping', 'Advanced electronic service']
+            },
+            // British Luxury & Performance
+            {
+                id: 'aston-martin',
+                name: 'Aston Martin',
+                logo: '/brands/aston-martin-logo.png',
+                heroImage: '/images/brands/aston-martin-hero.jpg',
+                description: 'British luxury performance and hypercar specialist.',
+                specialties: ['Twin-Turbo V12', 'Advanced Aerodynamics', 'Lightweight Construction', 'Hybrid Technology'],
+                models: ['DB9', 'DBS', 'DBS Superleggera', 'Vantage', 'Vantage S', 'Vanquish', 'Vanquish S', 'One-77', 'Valkyrie', 'Valhalla'],
+                services: ['Exotic engine service', 'Carbon fiber restoration', 'Advanced suspension tuning', 'Aerodynamic optimization', 'Hypercar diagnostics']
+            },
+            {
+                id: 'mclaren',
+                name: 'McLaren',
+                logo: '/brands/mclaren-logo.png',
+                heroImage: '/images/brands/mclaren-hero.jpg',
+                description: 'McLaren supercar and hypercar division - Formula 1 precision in road cars.',
+                specialties: ['Twin-Turbo V8', 'Carbon Monocoque Chassis', 'Advanced Aerodynamics', 'Hybrid Systems'],
+                models: ['570S', '570S Spider', '600LT', '650S', '675LT', '720S', '765LT', '765LT Spider', 'P1', 'F1', '12C', 'Speedtail', 'Elva', 'W1'],
+                services: ['McLaren-specific diagnostics', 'Carbon chassis inspection', 'Aerodynamic service', 'Twin-turbo performance tuning', 'Advanced electronic optimization']
+            },
+            {
+                id: 'bugatti',
+                name: 'Bugatti',
+                logo: '/brands/bugatti-logo.png',
+                heroImage: '/images/brands/bugatti-hero.jpg',
+                description: 'Bugatti hypercar specialist - ultimate engineering and performance.',
+                specialties: ['Quad-Turbo W16', 'Extreme Aerodynamics', 'Lightweight Materials', 'Advanced Hybrid Systems'],
+                models: ['Veyron', 'Veyron Super Sport', 'Veyron 16.4', 'Chiron', 'Chiron Super Sport', 'Bolide'],
+                services: ['W16 engine expertise', 'Quad-turbo system service', 'Advanced cooling systems', 'Extreme performance tuning', 'Hypercar-level diagnostics']
+            },
+            {
+                id: 'bentley',
+                name: 'Bentley',
+                logo: '/brands/bentley-logo.png',
+                heroImage: '/images/brands/bentley-hero.jpg',
+                description: 'Ultra-luxury performance vehicles - British craftsmanship and performance.',
+                specialties: ['Twin-Turbo W12', 'Air Suspension', 'Handcrafted Interior', 'Advanced Dynamics'],
+                models: ['Continental GT', 'Continental GT Speed', 'Bentayga', 'Bentayga Speed', 'Flying Spur', 'Mulsanne', 'Supersports'],
+                services: ['Luxury performance service', 'Air suspension specialist', 'Handcrafted interior care', 'W12 engine expertise', 'Luxury electronics service']
+            },
+            {
+                id: 'rolls-royce',
+                name: 'Rolls-Royce',
+                logo: '/brands/rolls-royce-logo.png',
+                heroImage: '/images/brands/rolls-royce-hero.jpg',
+                description: 'Ultra-luxury automotive specialist - the pinnacle of British craftsmanship.',
+                specialties: ['Twin-Turbo V12', 'Air Suspension', 'Bespoke Interior Design', 'Advanced Comfort Systems'],
+                models: ['Phantom', 'Phantom VIII', 'Ghost', 'Wraith', 'Dawn', 'Cullinan', 'Phantom Drophead'],
+                services: ['Luxury vehicle maintenance', 'Handcrafted interior service', 'Air suspension expertise', 'Advanced climate control', 'Bespoke customization support']
+            },
+            {
+                id: 'lotus',
+                name: 'Lotus',
+                logo: '/brands/lotus-logo.png',
+                heroImage: '/images/brands/lotus-hero.jpg',
+                description: 'Lightweight performance specialist - engineering excellence.',
+                specialties: ['Lightweight Construction', 'High-Performance Engines', 'Advanced Aerodynamics', 'Electric Technology'],
+                models: ['Evija', 'Emira', 'Exige', 'Elise', 'Evora', 'Type 00'],
+                services: ['Lightweight engineering service', 'Electric powertrain diagnostics', 'Aerodynamic optimization', 'Performance tuning', 'Advanced chassis diagnostics']
+            },
+            {
+                id: 'jaguar-sports',
+                name: 'Jaguar Sports',
+                logo: '/brands/jaguar-logo.png',
+                heroImage: '/images/brands/jaguar-sports-hero.jpg',
+                description: 'Jaguar sports and performance division.',
+                specialties: ['Supercharged Engines', 'Lightweight Design', 'Advanced Electronics', 'Aerodynamic Engineering'],
+                models: ['F-Type', 'F-Pace SVR', 'Type 00'],
+                services: ['Performance engine service', 'Supercharger maintenance', 'Lightweight component work', 'Advanced electronics', 'Performance optimization']
+            },
+            // Swedish Performance
+            {
+                id: 'koenigsegg',
+                name: 'Koenigsegg',
+                logo: '/brands/koenigsegg-logo.svg',
+                heroImage: '/images/brands/koenigsegg-hero.jpg',
+                description: 'Swedish hypercar manufacturer - engineering at the extreme limit.',
+                specialties: ['Twin-Turbo V8', 'Advanced Aerodynamics', 'Carbon Fiber', 'Hybrid Systems'],
+                models: ['CCXR', 'CCXR GT', 'Agera', 'Agera R', 'Agera RS', 'Gemera', 'Jesko', 'Jesko Attack', 'Jesko Absolut', 'Regera', 'Sadair\'s Spear'],
+                services: ['Hypercar engine expertise', 'Carbon fiber restoration', 'Advanced aerodynamics service', 'Extreme performance tuning', 'Precision engineering work']
+            },
+            {
+                id: 'rimac',
+                name: 'Rimac',
+                logo: '/brands/rimac-logo.svg',
+                heroImage: '/images/brands/rimac-hero.jpg',
+                description: 'Electric hypercar specialist - Croatian engineering innovation.',
+                specialties: ['Electric Powertrains', 'Advanced Battery Systems', 'Lightweight Construction', 'High-Tech Electronics'],
+                models: ['C_Two', 'Nevera', 'C_Evoluta'],
+                services: ['Electric hypercar diagnostics', 'High-voltage system service', 'Battery management expertise', 'Advanced electronic optimization', 'EV hypercar maintenance']
+            },
+            // American Performance
+            {
+                id: 'chevrolet-corvette',
+                name: 'Chevrolet Corvette',
+                logo: '/brands/chevrolet-logo.png',
+                heroImage: '/images/brands/corvette-hero.jpg',
+                description: 'American performance legend - Corvette sports car specialist.',
+                specialties: ['V8 Performance', 'Mid-Engine Design', 'Advanced Suspension', 'Carbon Fiber'],
+                models: ['Corvette C7', 'Corvette C8', 'Corvette ZR1', 'Corvette Z06', 'Corvette Stingray', 'Corvette Zora'],
+                services: ['Performance V8 service', 'Mid-engine expertise', 'Carbon fiber components', 'Advanced suspension tuning', 'Performance engine mapping']
+            },
+            {
+                id: 'ford-performance',
+                name: 'Ford Performance',
+                logo: '/brands/ford-logo.png',
+                heroImage: '/images/brands/ford-performance-hero.jpg',
+                description: 'Ford performance and GT division.',
+                specialties: ['Twin-Turbo EcoBoost', 'Advanced Aerodynamics', 'Aluminum Construction', 'Track-Ready Engineering'],
+                models: ['Mustang GT', 'Mustang Mach 1', 'Mustang GTD', 'GT', 'GT Mk II'],
+                services: ['Performance engine tuning', 'EcoBoost optimization', 'Advanced suspension work', 'Aerodynamic service', 'Track preparation']
+            },
+            {
+                id: 'dodge-performance',
+                name: 'Dodge Performance',
+                logo: '/brands/dodge-logo.png',
+                heroImage: '/images/brands/dodge-performance-hero.jpg',
+                description: 'Dodge performance muscle cars - American power.',
+                specialties: ['Supercharged V8', 'HEMI Engine', 'Extreme Performance', 'Lightweight Variants'],
+                models: ['Challenger SRT', 'Charger SRT', 'Viper', 'Viper ACR'],
+                services: ['Supercharger maintenance', 'V8 performance tuning', 'HEMI engine expertise', 'Performance suspension', 'Track preparation']
+            },
+            // Japanese Performance & Luxury
+            {
+                id: 'acura-nsx',
+                name: 'Acura NSX',
+                logo: '/brands/acura-nsx-logo.svg',
+                heroImage: '/images/brands/acura-nsx-hero.jpg',
+                description: 'Acura NSX - hybrid supercar engineering.',
+                specialties: ['Hybrid V6', 'Three-Motor System', 'Mid-Engine Design', 'Advanced Aerodynamics'],
+                models: ['NSX', 'NSX Type S'],
+                services: ['Hybrid system diagnostics', 'Mid-engine expertise', 'Advanced electronic service', 'Performance optimization', 'Complex hybrid tuning']
+            },
+            {
+                id: 'nissan-gt-r',
+                name: 'Nissan GT-R',
+                logo: '/brands/nissan-logo.png',
+                heroImage: '/images/brands/nissan-gt-r-hero.jpg',
+                description: 'Nissan GT-R - Japanese hypercar performance.',
+                specialties: ['Twin-Turbo V6', 'Advanced AWD', 'Multi-Link Suspension', 'Dual Clutch Transmission'],
+                models: ['GT-R', 'GT-R NISMO', 'GT-R Premium'],
+                services: ['Twin-turbo engine service', 'AWD system optimization', 'Advanced suspension tuning', 'DCT service', 'Performance electronic mapping']
+            },
+            {
+                id: 'honda-nsx',
+                name: 'Honda NSX',
+                logo: '/brands/honda-logo.png',
+                heroImage: '/images/brands/honda-nsx-hero.jpg',
+                description: 'Honda NSX first generation - supercar legend.',
+                specialties: ['Mid-Engine V6', 'Titanium Internals', 'Advanced Aerodynamics', 'Legendary Performance'],
+                models: ['NSX (1990-2005)'],
+                services: ['Classic NSX restoration', 'V6 engine expertise', 'Historic performance tuning', 'Titanium component service', 'Collector car maintenance']
+            },
+            {
+                id: 'lexus-lfa',
+                name: 'Lexus LFA',
+                logo: '/brands/lexus-logo.png',
+                heroImage: '/images/brands/lexus-lfa-hero.jpg',
+                description: 'Lexus LFA - Japanese luxury hypercar.',
+                specialties: ['High-Revving V10', 'Carbon Fiber', 'Advanced Aerodynamics', 'Precision Engineering'],
+                models: ['LFA', 'LFA Nürburgring Edition', 'LFA (New Generation)'],
+                services: ['V10 engine expertise', 'Carbon fiber restoration', 'Advanced electronics', 'Precision mechanical work', 'Collector car specialization']
+            },
+            // Chinese Luxury Brands
+            {
+                id: 'zeekr',
+                name: 'Zeekr',
+                logo: '/brands/zeekr-logo.svg',
+                heroImage: '/images/brands/zeekr-hero.jpg',
+                description: 'Zeekr performance electric vehicles.',
+                specialties: ['Electric Performance', 'Advanced Battery', 'Lightweight Design', 'Smart Technology'],
+                models: ['001', '001 FR', '009', 'X'],
+                services: ['Electric drivetrain service', 'Battery management', 'Advanced electronics', 'Performance optimization', 'EV-specific maintenance']
+            }
+        ]
     }
 ]
 

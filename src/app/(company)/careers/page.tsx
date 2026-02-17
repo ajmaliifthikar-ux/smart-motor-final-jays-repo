@@ -127,7 +127,7 @@ export default function CareersPage() {
                     <p className="text-white/60 text-lg font-medium mb-12 max-w-2xl mx-auto">
                         Send us your portfolio or CV anyway. We're always interested in meeting high-performers and engineering pioneers.
                     </p>
-                    <a href="mailto:careers@smartmotor.ae" className="bg-[#E62329] text-white rounded-full px-12 py-6 text-xs font-black tracking-widest uppercase hover:bg-white hover:text-[#121212] transition-all shadow-xl hover:scale-105">
+                    <a href="mailto:careers@smartmotor.ae" className="inline-block bg-[#E62329] text-white rounded-full px-12 py-6 text-xs font-black tracking-widest uppercase hover:bg-white hover:text-[#121212] transition-all shadow-xl hover:scale-105">
                         Send Open Application
                     </a>
                 </div>

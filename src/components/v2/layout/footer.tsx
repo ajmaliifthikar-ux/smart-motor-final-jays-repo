@@ -160,9 +160,16 @@ export function Footer() {
                             <Tooltip content="Apple Pay accepted" position="top"><span><ApplePayIcon /></span></Tooltip>
                         </div>
                     </div>
-                    <div className="flex gap-12 text-[10px] font-black uppercase tracking-widest text-gray-600">
-                        <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-                        <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+                    <div className="flex flex-col gap-4">
+                        <div className="flex gap-12 text-[10px] font-black uppercase tracking-widest text-gray-600">
+                            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+                        </div>
+                        <p className="text-[8px] text-gray-700 leading-relaxed">
+                            This site is protected by reCAPTCHA and the Google
+                            <a href="https://policies.google.com/privacy" className="hover:text-white transition-colors"> Privacy Policy</a> and
+                            <a href="https://policies.google.com/terms" className="hover:text-white transition-colors"> Terms of Service</a> apply.
+                        </p>
                     </div>
                 </div>
             </div>

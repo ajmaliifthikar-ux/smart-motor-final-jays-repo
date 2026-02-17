@@ -117,7 +117,7 @@ export function FAQ({ initialFaqs }: { initialFaqs?: FAQType[] }) {
               <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-[#FFD700] group-hover:text-black transition-all">
                 <PhoneIcon size={18} />
               </div>
-              <span>Connect at +971 2 555 5443</span>
+              <span className="whitespace-nowrap">Connect at +971 2 555 5443</span>
             </a>
           </Tooltip>
         </motion.div>
