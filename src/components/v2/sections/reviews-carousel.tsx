@@ -185,9 +185,11 @@ export function ReviewsCarousel() {
                                                                 <span className="text-[7px] font-black text-[#E62329] uppercase tracking-widest">
                                                                     Verified Owner
                                                                 </span>
-                                                                <div className="flex items-center gap-1.5 opacity-60">
-                                                                    <img src="/google-logo.svg" alt="Google" className="w-5 h-5 invert" />
-                                                                    <span className="text-[7px] text-white font-bold">{review.date}</span>
+                                                                <div className="flex items-center gap-1.5">
+                                                                    <div className="flex items-center gap-1 bg-white rounded-full px-2 py-0.5 shadow-sm">
+                                                                        <img src="/google-logo.svg" alt="Google" className="w-4 h-4" />
+                                                                        <span className="text-[7px] text-gray-500 font-bold">{review.date}</span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>

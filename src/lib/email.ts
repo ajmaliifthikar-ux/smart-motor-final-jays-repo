@@ -288,54 +288,137 @@ export async function sendWelcomeEmail(email: string, name: string) {
 }
 
 /**
- * Send newsletter welcome email
+ * Send newsletter welcome email — branded Smart Motor design
  */
 export async function sendNewsletterWelcomeEmail(email: string) {
-    const html = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #121212; color: white; padding: 30px; text-align: center; }
-        .content { background: #f9f9f9; padding: 30px; }
-        .button { background: #E62329; color: white; padding: 14px 28px; text-decoration: none;
-                  border-radius: 4px; display: inline-block; margin: 20px 0; }
-        .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h1>Welcome to our Newsletter!</h1>
-        </div>
-        <div class="content">
-          <h2>Hi there,</h2>
-          <p>Thank you for joining the Smart Motor Performance newsletter!</p>
-          <p>You're now part of our elite club. You'll receive exclusive offers, maintenance tips, and early access to campaigns directly in your inbox.</p>
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://smartmotorlatest.vercel.app'
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to the Smart Motor Elite Club</title>
+</head>
+<body style="margin:0;padding:0;background-color:#0a0a0a;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
 
-          <a href="${process.env.NEXT_PUBLIC_APP_URL}/services" class="button">
-            Explore Services
-          </a>
+          <!-- Header Banner -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#121212 0%,#1a1a1a 100%);border-radius:20px 20px 0 0;padding:48px 48px 40px;text-align:center;border-bottom:2px solid #E62329;">
+              <div style="display:inline-block;background:#E62329;color:white;font-size:9px;font-weight:900;letter-spacing:0.4em;text-transform:uppercase;padding:6px 16px;border-radius:100px;margin-bottom:20px;">
+                Smart Motor Performance
+              </div>
+              <h1 style="margin:0;color:white;font-size:40px;font-weight:900;letter-spacing:-0.03em;text-transform:uppercase;font-style:italic;line-height:1;">
+                Welcome to the<br/>
+                <span style="color:#E62329;">Elite Club</span>
+              </h1>
+              <p style="margin:16px 0 0;color:rgba(255,255,255,0.5);font-size:13px;font-weight:500;">You are now part of something exceptional.</p>
+            </td>
+          </tr>
 
-          <p>If you have any questions, feel free to reply to this email.</p>
-        </div>
-        <div class="footer">
-          <p>Smart Motor Performance</p>
-          <p>Musaffah M9, Abu Dhabi | Nadd Al Hamar, Dubai</p>
-          <p>© 2026 Smart Motor. All rights reserved.</p>
-          <p><a href="${process.env.NEXT_PUBLIC_APP_URL}/unsubscribe?email=${encodeURIComponent(email)}">Unsubscribe</a></p>
-        </div>
-      </div>
-    </body>
-    </html>
-  `
+          <!-- Body -->
+          <tr>
+            <td style="background:#FAFAF9;padding:48px;">
+
+              <!-- Greeting -->
+              <p style="margin:0 0 8px;font-size:11px;font-weight:900;color:#E62329;text-transform:uppercase;letter-spacing:0.3em;">Confirmed ✓</p>
+              <h2 style="margin:0 0 16px;font-size:26px;font-weight:900;color:#121212;letter-spacing:-0.02em;text-transform:uppercase;font-style:italic;">
+                You're In.
+              </h2>
+              <p style="margin:0 0 32px;font-size:15px;color:#555555;line-height:1.7;">
+                Thank you for subscribing to the <strong style="color:#121212;">Smart Motor Performance</strong> newsletter.
+                From this moment on, your inbox becomes a hub for exclusive automotive intelligence — crafted for those who demand the best.
+              </p>
+
+              <!-- What to expect -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+                <tr>
+                  <td style="background:#121212;border-radius:16px;padding:32px;">
+                    <p style="margin:0 0 20px;font-size:10px;font-weight:900;color:#E62329;text-transform:uppercase;letter-spacing:0.4em;">What's Coming Your Way</p>
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                          <span style="color:#E62329;font-size:16px;margin-right:12px;">🔧</span>
+                          <span style="color:white;font-size:13px;font-weight:700;">Exclusive Service Offers & Seasonal Packages</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                          <span style="color:#E62329;font-size:16px;margin-right:12px;">💡</span>
+                          <span style="color:white;font-size:13px;font-weight:700;">Pro Maintenance Tips for Luxury Vehicles</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                          <span style="color:#E62329;font-size:16px;margin-right:12px;">🏎️</span>
+                          <span style="color:white;font-size:13px;font-weight:700;">Early Access to New Services & Campaigns</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 0;">
+                          <span style="color:#E62329;font-size:16px;margin-right:12px;">📍</span>
+                          <span style="color:white;font-size:13px;font-weight:700;">Workshop News & Abu Dhabi Automotive Events</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- CTA Button -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+                <tr>
+                  <td align="center">
+                    <a href="${appUrl}/new-home" style="display:inline-block;background:#E62329;color:white;text-decoration:none;font-size:11px;font-weight:900;letter-spacing:0.25em;text-transform:uppercase;padding:18px 40px;border-radius:100px;box-shadow:0 8px 24px rgba(230,35,41,0.35);">
+                      Explore Services →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Divider -->
+              <hr style="border:none;border-top:1px solid #ECECEA;margin:32px 0;" />
+
+              <!-- Contact info -->
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="text-align:center;">
+                    <p style="margin:0 0 6px;font-size:12px;color:#888888;">Questions? Contact us anytime.</p>
+                    <a href="tel:80076278" style="font-size:18px;font-weight:900;color:#121212;text-decoration:none;letter-spacing:0.05em;">800 76278</a>
+                    <p style="margin:8px 0 0;font-size:11px;color:#AAAAAA;">Toll Free • 7 Days a Week</p>
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background:#121212;border-radius:0 0 20px 20px;padding:32px 48px;text-align:center;">
+              <p style="margin:0 0 8px;font-size:10px;font-weight:900;color:white;text-transform:uppercase;letter-spacing:0.3em;">Smart Motor Performance</p>
+              <p style="margin:0 0 4px;font-size:11px;color:rgba(255,255,255,0.4);">Musaffah M9, Abu Dhabi &nbsp;|&nbsp; Nadd Al Hamar, Dubai</p>
+              <p style="margin:16px 0 0;font-size:10px;color:rgba(255,255,255,0.25);">
+                © 2026 Smart Motor. All rights reserved. &nbsp;•&nbsp;
+                <a href="${appUrl}/unsubscribe?email=${encodeURIComponent(email)}" style="color:rgba(255,255,255,0.3);text-decoration:underline;">Unsubscribe</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
 
     return sendEmail({
         to: email,
-        subject: 'Welcome to the Smart Motor Elite Club! 🏎️',
+        subject: '🏎️ Welcome to the Smart Motor Elite Club',
         html,
-        text: `Thank you for joining the Smart Motor Performance newsletter! Visit ${process.env.NEXT_PUBLIC_APP_URL}/services to explore our services.`,
+        text: `Welcome to the Smart Motor Elite Club! You'll now receive exclusive offers, maintenance tips, and early access to campaigns. Visit ${appUrl}/new-home to explore our services. Questions? Call us toll free: 800 76278. To unsubscribe: ${appUrl}/unsubscribe?email=${encodeURIComponent(email)}`,
     })
 }

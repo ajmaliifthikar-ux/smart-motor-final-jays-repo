@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import { MenuIcon, XIcon, PhoneIcon } from 'lucide-react'
 import { cn, publicPath } from '@/lib/utils'
 import { motion } from 'framer-motion'
@@ -21,6 +22,10 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
+  const pathname = usePathname()
+  const router = useRouter()
+  // True when we're on the home page and anchor scrolling works
+  const isHomePage = pathname === '/new-home' || pathname === '/'
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40)
@@ -50,16 +55,25 @@ export function Navbar() {
   }, [])
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    // If it's a direct link (not an anchor), let the browser handle it
+    // If it's a direct page link (not an anchor), let the browser handle it
     if (!href.startsWith('#')) return
 
     e.preventDefault()
     const targetId = href.replace('#', '')
-    const element = document.getElementById(targetId)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
-      setIsMobileMenuOpen(false)
+    setIsMobileMenuOpen(false)
+
+    // If we're already on the home page, scroll directly
+    if (isHomePage) {
+      const element = document.getElementById(targetId)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+      return
     }
+
+    // On other pages (e.g. /new-home/smart-tips), navigate to home with hash
+    // After navigation the browser will auto-scroll to the anchor
+    router.push(`/new-home#${targetId}`)
   }
 
   return (
