@@ -7,11 +7,36 @@ export async function getBrandsWithModels() {
     return await traceIntegration(
         { service: 'Firebase', operation: 'fetch_brands' },
         async () => {
-            const brands = await getAllBrands()
-            return brands.map(b => ({
-                ...b,
-                models: []
-            }))
+            try {
+                const brands = await getAllBrands()
+                // If Firebase has brands, use them
+                if (brands && brands.length > 0) {
+                    return brands.map(b => ({
+                        ...b,
+                        models: []
+                    }))
+                }
+            } catch (err) {
+                console.warn("Firebase brands fetch failed, using local data:", err)
+            }
+
+            // Fallback to local v2-data brands
+            const { brandCategories } = await import('@/lib/v2-data')
+            const allBrands: any[] = []
+
+            brandCategories.forEach(category => {
+                category.brands.forEach((brand: any) => {
+                    allBrands.push({
+                        id: brand.id,
+                        name: brand.name,
+                        logo: brand.logo,
+                        description: brand.description,
+                        models: brand.models || []
+                    })
+                })
+            })
+
+            return allBrands
         }
     )
 }
@@ -20,7 +45,36 @@ export async function getServices() {
     return await traceIntegration(
         { service: 'Firebase', operation: 'fetch_services' },
         async () => {
-            return await getAllServices()
+            try {
+                const services = await getAllServices()
+                if (services && services.length > 0) {
+                    return services
+                }
+            } catch (err) {
+                console.warn("Firebase services fetch failed, using local data:", err)
+            }
+
+            // Fallback to local v2-data services
+            const { brandCategories } = await import('@/lib/v2-data')
+            const allServices: any[] = []
+
+            brandCategories.forEach(category => {
+                category.brands.forEach((brand: any) => {
+                    if (brand.services) {
+                        brand.services.forEach((service: string) => {
+                            if (!allServices.find(s => s.name === service)) {
+                                allServices.push({
+                                    id: service.toLowerCase().replace(/\s+/g, '-'),
+                                    name: service,
+                                    category: category.id
+                                })
+                            }
+                        })
+                    }
+                })
+            })
+
+            return allServices
         }
     )
 }

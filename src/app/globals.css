@@ -497,3 +497,263 @@ nav {
   top: 0;
   z-index: 40;
 }
+
+/* ═══════════════════════════════════════════════════════════ */
+/* AUTO CONTRAST-BASED TEXT COLOR SYSTEM */
+/* Automatically switches text between white and black for readability */
+/* ═══════════════════════════════════════════════════════════ */
+
+/* DARK BACKGROUNDS - Use white text for maximum contrast */
+/* Cards and containers with dark/black backgrounds */
+[class*="bg-black"],
+[class*="bg-slate-900"],
+[class*="bg-gray-900"],
+[class*="bg-\[#000"],
+[class*="bg-\[#1"],
+[class*="bg-\[#2"],
+[class*="bg-\[#3"],
+[class*="bg-zinc-900"],
+[class*="dark:bg-"],
+.dark-card,
+.carbon-fiber,
+[style*="background: #0"],
+[style*="background: #1"],
+[style*="background: #2"],
+[style*="background: #3"],
+[style*="background-color: #0"],
+[style*="background-color: #1"],
+[style*="background-color: #2"],
+[style*="background-color: #3"] {
+  color: white !important;
+  caret-color: white;
+}
+
+/* Ensure nested text elements inherit white color on dark backgrounds */
+[class*="bg-black"] p,
+[class*="bg-black"] span,
+[class*="bg-black"] h1,
+[class*="bg-black"] h2,
+[class*="bg-black"] h3,
+[class*="bg-black"] h4,
+[class*="bg-black"] h5,
+[class*="bg-black"] h6,
+[class*="bg-slate-900"] p,
+[class*="bg-slate-900"] span,
+[class*="bg-gray-900"] p,
+[class*="bg-gray-900"] span,
+.carbon-fiber p,
+.carbon-fiber span,
+.carbon-fiber h1,
+.carbon-fiber h2,
+.carbon-fiber h3,
+.carbon-fiber h4,
+.carbon-fiber h5,
+.carbon-fiber h6 {
+  color: white !important;
+}
+
+/* LIGHT BACKGROUNDS - Use black text for maximum contrast */
+/* Cards and containers with light/white backgrounds */
+[class*="bg-white"],
+[class*="bg-gray-50"],
+[class*="bg-slate-50"],
+[class*="bg-\[#FFF"],
+[class*="bg-\[#F"],
+[class*="bg-yellow-50"],
+[class*="bg-amber-50"],
+[class*="light-card"],
+[style*="background: #FFF"],
+[style*="background: #F"],
+[style*="background-color: #FFF"],
+[style*="background-color: #F"] {
+  color: black !important;
+  caret-color: black;
+}
+
+/* Ensure nested text elements inherit black color on light backgrounds */
+[class*="bg-white"] p,
+[class*="bg-white"] span,
+[class*="bg-white"] h1,
+[class*="bg-white"] h2,
+[class*="bg-white"] h3,
+[class*="bg-white"] h4,
+[class*="bg-white"] h5,
+[class*="bg-white"] h6,
+[class*="bg-gray-50"] p,
+[class*="bg-gray-50"] span,
+[class*="bg-slate-50"] p,
+[class*="bg-slate-50"] span,
+[class*="light-card"] p,
+[class*="light-card"] span {
+  color: black !important;
+}
+
+/* GRADIENT BACKGROUNDS - Use white text (safer default for most gradients) */
+[class*="bg-gradient"],
+[style*="gradient"] {
+  color: white !important;
+}
+
+/* RED/WARM BACKGROUNDS - Use white or dark text based on shade */
+[class*="bg-red"],
+[class*="bg-orange"],
+[class*="bg-pink"],
+[class*="bg-rose"],
+[class*="bg-\[#E6"],
+[class*="bg-\[#D6"],
+[style*="background: #E6"],
+[style*="background: #D6"],
+[style*="background: #FF"],
+[style*="background-color: #E6"],
+[style*="background-color: #D6"],
+[style*="background-color: #FF"] {
+  color: white !important;
+}
+
+/* BRAND COLOR OVERRIDES - Ensure visibility for brand hero sections */
+.ferrari-hero,
+.lamborghini-hero,
+.porsche-hero,
+.mercedes-hero,
+.bmw-hero,
+.aston-martin-hero,
+.mclaren-hero,
+.bugatti-hero,
+.bentley-hero,
+.rolls-royce-hero,
+.lotus-hero,
+.jaguar-hero,
+.koenigsegg-hero,
+.rimac-hero,
+.chevrolet-hero,
+.ford-hero,
+.dodge-hero,
+.acura-hero,
+.nissan-hero,
+.honda-hero,
+.lexus-hero,
+.zeekr-hero {
+  color: white !important;
+}
+
+.ferrari-hero p,
+.lamborghini-hero p,
+.porsche-hero p,
+.mercedes-hero p,
+.bmw-hero p,
+.aston-martin-hero p,
+.mclaren-hero p,
+.bugatti-hero p,
+.bentley-hero p,
+.rolls-royce-hero p,
+.lotus-hero p,
+.jaguar-hero p,
+.koenigsegg-hero p,
+.rimac-hero p,
+.chevrolet-hero p,
+.ford-hero p,
+.dodge-hero p,
+.acura-hero p,
+.nissan-hero p,
+.honda-hero p,
+.lexus-hero p,
+.zeekr-hero p,
+.ferrari-hero h1,
+.lamborghini-hero h1,
+.porsche-hero h1,
+.mercedes-hero h1,
+.bmw-hero h1,
+.aston-martin-hero h1,
+.mclaren-hero h1,
+.bugatti-hero h1,
+.bentley-hero h1,
+.rolls-royce-hero h1,
+.lotus-hero h1,
+.jaguar-hero h1,
+.koenigsegg-hero h1,
+.rimac-hero h1,
+.chevrolet-hero h1,
+.ford-hero h1,
+.dodge-hero h1,
+.acura-hero h1,
+.nissan-hero h1,
+.honda-hero h1,
+.lexus-hero h1,
+.zeekr-hero h1 {
+  color: white !important;
+}
+
+/* Form elements with dark backgrounds */
+input[type="text"][class*="bg-slate"],
+input[type="email"][class*="bg-slate"],
+textarea[class*="bg-slate"],
+select[class*="bg-slate"] {
+  color: white !important;
+}
+
+/* Form elements with light backgrounds */
+input[type="text"][class*="bg-white"],
+input[type="email"][class*="bg-white"],
+textarea[class*="bg-white"],
+select[class*="bg-white"] {
+  color: black !important;
+}
+
+/* Buttons text color override for dark backgrounds */
+button[class*="bg-black"],
+button[class*="bg-slate-900"],
+button[class*="bg-gray-900"] {
+  color: white !important;
+}
+
+/* Buttons text color override for light backgrounds */
+button[class*="bg-white"],
+button[class*="bg-gray-50"] {
+  color: black !important;
+}
+
+/* Labels and small text */
+label[class*="bg-slate"],
+label[class*="bg-black"],
+label[class*="bg-gray-900"],
+small[class*="bg-slate"],
+small[class*="bg-black"] {
+  color: white !important;
+}
+
+label[class*="bg-white"],
+label[class*="bg-gray-50"],
+small[class*="bg-white"],
+small[class*="bg-gray-50"] {
+  color: black !important;
+}
+
+/* Placeholder text - ensure it's visible */
+::placeholder {
+  opacity: 0.7 !important;
+}
+
+[class*="bg-black"]::placeholder,
+[class*="bg-slate-900"]::placeholder,
+[class*="bg-gray-900"]::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+[class*="bg-white"]::placeholder,
+[class*="bg-gray-50"]::placeholder {
+  color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Links and interactive elements */
+a[class*="bg-black"],
+a[class*="bg-slate-900"],
+a[class*="bg-gray-900"] {
+  color: white !important;
+}
+
+a[class*="bg-white"],
+a[class*="bg-gray-50"] {
+  color: black !important;
+}
+
+/* ─── END OF AUTO CONTRAST SYSTEM ─── */
