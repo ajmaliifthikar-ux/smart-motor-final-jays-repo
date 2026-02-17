@@ -25,20 +25,6 @@ export const adminDb = admin.firestore()
 export async function verifySession(token: string | undefined) {
     if (!token) return null;
 
-    // --- MOCK AUTHENTICATION BYPASS ---
-    // Allow access if the special mock token is present.
-    // This enables safe testing of the Admin UI without Firebase restrictions.
-    if (token === 'mock-token-secret-123') {
-        console.warn('⚠️ MOCK AUTH: Granting Admin Access via Mock Token');
-        return {
-            uid: 'mock-admin-user',
-            email: 'mock@smartmotor.ae',
-            email_verified: true,
-            role: 'ADMIN',
-            name: 'Mock Admin'
-        };
-    }
-
     try {
         const decodedToken = await adminAuth.verifyIdToken(token);
         
