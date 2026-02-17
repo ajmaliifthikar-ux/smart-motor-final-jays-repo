@@ -48,7 +48,7 @@ export function PackagesList({ packages }: { packages: ServicePackage[] }) {
 
                     <div className="relative z-10">
                         <div className={`text-xs font-black uppercase tracking-[0.2em] mb-4 ${pkg.id === 'current-promotion' ? 'text-[#E62329]' : 'text-gray-400'}`}>{pkg.subtitle}</div>
-                        <h2 className="text-5xl md:text-6xl font-black uppercase tracking-tighter mb-8 leading-[0.9]">{pkg.title}</h2>
+                        <h2 className={`text-5xl md:text-6xl font-black uppercase tracking-tighter mb-8 leading-[0.9] ${pkg.id === 'current-promotion' ? 'text-white' : 'text-[#121212]'}`}>{pkg.title}</h2>
 
                         <div className="h-px w-full bg-gradient-to-r from-transparent via-current to-transparent opacity-20 mb-10" />
 
@@ -58,15 +58,15 @@ export function PackagesList({ packages }: { packages: ServicePackage[] }) {
                                     <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${pkg.id === 'current-promotion' ? 'bg-[#E62329] text-white' : 'bg-black text-white'}`}>
                                         <Check size={12} strokeWidth={4} />
                                     </div>
-                                    <span className={`text-xl font-bold tracking-tight ${pkg.id === 'current-promotion' ? 'text-gray-100' : 'text-gray-800'}`}>{feature}</span>
+                                    <span className={`text-xl font-bold tracking-tight ${pkg.id === 'current-promotion' ? 'text-white' : 'text-gray-800'}`}>{feature}</span>
                                 </li>
                             ))}
                         </ul>
 
                         <div className="flex flex-col sm:flex-row items-center gap-6 justify-between pt-8 border-t border-dashed border-gray-500/20">
                             <div>
-                                <div className="text-[10px] font-black uppercase tracking-widest opacity-50 mb-1">Recommended For</div>
-                                <div className="font-bold text-lg">{pkg.bestFor}</div>
+                                <div className={`text-[10px] font-black uppercase tracking-widest opacity-60 mb-1 ${pkg.id === 'current-promotion' ? 'text-white' : 'text-gray-600'}`}>Recommended For</div>
+                                <div className={`font-bold text-lg ${pkg.id === 'current-promotion' ? 'text-white' : 'text-[#121212]'}`}>{pkg.bestFor}</div>
                             </div>
                             <button onClick={() => document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' })} className={`px-10 py-5 rounded-full font-black uppercase tracking-widest text-xs transition-all shadow-xl hover:scale-105 active:scale-95 ${pkg.id === 'current-promotion'
                                 ? 'bg-white text-black hover:bg-[#E62329] hover:text-white'

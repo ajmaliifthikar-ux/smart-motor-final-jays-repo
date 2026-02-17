@@ -59,7 +59,7 @@ export function AdminSidebar() {
         <h1 className="text-xl font-black uppercase tracking-widest text-[#E62329] italic">
           Smart <span className="text-white">Admin</span>
         </h1>
-        <p className="text-[8px] font-bold text-gray-500 uppercase mt-1 tracking-[0.2em]">High Performance Ops</p>
+        <p className="text-[8px] font-bold text-white/40 uppercase mt-1 tracking-[0.2em]">High Performance Ops</p>
       </div>
 
       {/* Navigation */}

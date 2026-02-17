@@ -36,8 +36,8 @@ export function AboutSnippet() {
                         { val: "7-Day", label: "Service Guarantee" }
                     ].map((stat, i) => (
                         <div key={i} className="bg-gray-50 rounded-2xl p-8 flex flex-col items-center justify-center text-center hover:bg-[#121212] hover:text-white transition-colors group cursor-default">
-                            <span className="text-3xl font-black mb-2">{stat.val}</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-gray-500">{stat.label}</span>
+                            <span className="text-3xl font-black mb-2 text-[#121212] group-hover:text-white transition-colors">{stat.val}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-white/60 transition-colors">{stat.label}</span>
                         </div>
                     ))}
                 </div>

@@ -11,21 +11,21 @@ interface ToolPlaceholderProps {
 const statusConfig = {
   'coming-soon': {
     label: 'Coming Soon',
-    bgColor: 'bg-blue-500/20',
-    textColor: 'text-blue-400',
-    borderColor: 'border-blue-500/30'
+    bgColor: 'bg-blue-100',
+    textColor: 'text-blue-700',
+    borderColor: 'border-blue-300'
   },
   'beta': {
     label: 'Beta',
-    bgColor: 'bg-yellow-500/20',
-    textColor: 'text-yellow-400',
-    borderColor: 'border-yellow-500/30'
+    bgColor: 'bg-yellow-100',
+    textColor: 'text-yellow-800',
+    borderColor: 'border-yellow-400'
   },
   'disabled': {
     label: 'Disabled',
-    bgColor: 'bg-gray-500/20',
-    textColor: 'text-gray-400',
-    borderColor: 'border-gray-500/30'
+    bgColor: 'bg-gray-100',
+    textColor: 'text-gray-700',
+    borderColor: 'border-gray-300'
   }
 }
 

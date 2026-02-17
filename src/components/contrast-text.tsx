@@ -1,94 +1,113 @@
 'use client'
 
-import React, { ReactNode } from 'react'
-import { isLightColor, getContrastTextColor } from '@/lib/utils'
-
 /**
- * Automatically adjusts text color based on background color for maximum contrast
- * This component ensures readability on any background color
+ * LAYER 4 – Dynamic Contrast System (WCAG 2.1 AA)
+ * ─────────────────────────────────────────────────
+ * Use these components / hook when the background colour comes from a prop,
+ * an API response, or a CMS.  They automatically compute the correct text
+ * colour at runtime so future content stays readable without manual CSS edits.
+ *
+ * Usage examples:
+ *   <ContrastText bgColor={card.color}>{card.title}</ContrastText>
+ *   <ContrastContainer bgColor={brand.heroColor} className="p-8">…</ContrastContainer>
+ *   <ContrastButton bgColor={pkg.buttonColor} onClick={…}>Book Now</ContrastButton>
+ *   const { textHex, textClass } = useContrastColor(section.bgColor)
  */
+
+import React, { type ReactNode, type CSSProperties } from 'react'
+import { getContrastTextColor, getContrastClasses } from '@/lib/utils'
+
+// ─── useContrastColor hook ────────────────────────────────────────────────────
+/**
+ * Returns both a hex colour (#FFFFFF / #000000) and a Tailwind class
+ * (text-white / text-gray-900) for the text that best contrasts `bgColor`.
+ */
+export function useContrastColor(bgColor?: string) {
+  const hex = getContrastTextColor(bgColor ?? '')
+  const textClass = getContrastClasses(bgColor)
+  return { textHex: hex, textClass }
+}
+
+// ─── ContrastText ─────────────────────────────────────────────────────────────
 interface ContrastTextProps {
-  children: ReactNode
   bgColor?: string
+  children: ReactNode
   className?: string
   as?: 'div' | 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 }
 
+/**
+ * Renders children with the auto-computed contrast text colour applied as an
+ * inline style (so it always wins over inherited CSS).
+ * Does NOT change the background.
+ */
 export function ContrastText({
-  children,
   bgColor,
+  children,
   className = '',
-  as: Component = 'div'
+  as: Tag = 'span',
 }: ContrastTextProps) {
-  const textColor = bgColor ? getContrastTextColor(bgColor) : 'white'
-  const textColorClass = textColor === 'white' ? 'text-white' : 'text-black'
-
+  const style: CSSProperties = { color: getContrastTextColor(bgColor ?? '') }
   return (
-    <Component className={`${textColorClass} ${className}`}>
+    <Tag className={className} style={style}>
       {children}
-    </Component>
+    </Tag>
   )
 }
 
-/**
- * Container with automatic contrast-aware text color
- */
+// ─── ContrastContainer ────────────────────────────────────────────────────────
 interface ContrastContainerProps {
-  children: ReactNode
   bgColor?: string
+  children: ReactNode
   className?: string
-}
-
-export function ContrastContainer({
-  children,
-  bgColor,
-  className = ''
-}: ContrastContainerProps) {
-  const textColor = bgColor ? getContrastTextColor(bgColor) : 'white'
-  const textColorClass = textColor === 'white' ? 'text-white' : 'text-black'
-
-  return (
-    <div className={`${textColorClass} ${className}`}>
-      {children}
-    </div>
-  )
+  as?: 'div' | 'section' | 'article' | 'header' | 'footer' | 'main'
 }
 
 /**
- * Button with automatic contrast text color
+ * Sets BOTH the background colour and a contrasting text colour.
+ * Children that don't override `color` will inherit the correct value.
  */
-interface ContrastButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export function ContrastContainer({
+  bgColor,
+  children,
+  className = '',
+  as: Tag = 'div',
+}: ContrastContainerProps) {
+  const style: CSSProperties = bgColor
+    ? { backgroundColor: bgColor, color: getContrastTextColor(bgColor) }
+    : {}
+  return (
+    <Tag className={className} style={style}>
+      {children}
+    </Tag>
+  )
+}
+
+// ─── ContrastButton ───────────────────────────────────────────────────────────
+interface ContrastButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   bgColor?: string
   children: ReactNode
 }
 
+/**
+ * A <button> whose text colour is automatically computed from its background.
+ */
 export function ContrastButton({
   bgColor,
   children,
   className = '',
-  ...props
+  style: externalStyle,
+  ...rest
 }: ContrastButtonProps) {
-  const textColor = bgColor ? getContrastTextColor(bgColor) : 'white'
-  const textColorClass = textColor === 'white' ? 'text-white' : 'text-black'
-
+  const style: CSSProperties = {
+    ...externalStyle,
+    ...(bgColor
+      ? { backgroundColor: bgColor, color: getContrastTextColor(bgColor) }
+      : {}),
+  }
   return (
-    <button
-      className={`${textColorClass} ${className}`}
-      style={{
-        ...(props.style || {}),
-        backgroundColor: bgColor
-      }}
-      {...props}
-    >
+    <button className={className} style={style} {...rest}>
       {children}
     </button>
   )
-}
-
-/**
- * Hook to get contrast text color based on background
- */
-export function useContrastColor(bgColor?: string) {
-  return bgColor ? getContrastTextColor(bgColor) : 'white'
 }
