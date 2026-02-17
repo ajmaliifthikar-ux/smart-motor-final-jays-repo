@@ -75,6 +75,7 @@ export function EmergencyFAB() {
                         <Tooltip content={fab.label} position="left">
                             <button
                                 onClick={fab.onClick}
+                                aria-label={fab.id === 'ai' && isChatOpen ? 'Close AI Assistant' : fab.label}
                                 className={cn(
                                     "w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 relative overflow-hidden",
                                     fab.color,
