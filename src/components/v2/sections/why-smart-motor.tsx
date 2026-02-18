@@ -4,13 +4,13 @@ import { motion } from 'framer-motion'
 import { CheckCircle2 } from 'lucide-react'
 
 const features = [
-    { title: "Factory-Quality Standards", desc: "We maintain manufacturer specifications for all repairs." },
-    { title: "State-of-the-Art Equipment", desc: "Advanced diagnostic tools and modern repair equipment." },
-    { title: "Certified Technicians", desc: "Trained specialists with years of hands-on experience." },
-    { title: "Transparent Pricing", desc: "No hidden charges - detailed estimates before work begins." },
-    { title: "Comprehensive Services", desc: "From mechanical repairs to body shop to detailing." },
-    { title: "Competitive Packages", desc: "Cost-effective service packages and promotional offers." },
-    { title: "Convenient Location", desc: "Central Musaffah location with easy access from Abu Dhabi." }
+    { title: "Factory-Quality Standards", desc: "OEM-grade repairs that maintain manufacturer specifications — so your warranty stays intact." },
+    { title: "State-of-the-Art Equipment", desc: "Advanced diagnostic tools from Autel, Snap-on & Bosch for precise car repair in Abu Dhabi." },
+    { title: "Factory-Certified Technicians", desc: "50+ brand-trained specialists for BMW, Mercedes, Toyota, Nissan & all major car brands." },
+    { title: "Transparent AED Pricing", desc: "No hidden charges — get a full AED estimate before any work starts on your vehicle." },
+    { title: "Complete Automotive Services", desc: "Engine repair, AC service, electrical, PPF, ceramic coating, window tinting & detailing — all under one roof." },
+    { title: "Competitive Service Packages", desc: "Affordable car service packages in Abu Dhabi with Tabby 0% installment payment options." },
+    { title: "Musaffah, Abu Dhabi Location", desc: "Easily accessible at M9, Musaffah Industrial Area — serving all of Abu Dhabi, Khalifa City & Al Reem Island." }
 ]
 
 const images = [

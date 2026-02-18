@@ -72,6 +72,14 @@ export const metadata: Metadata = {
     ],
   },
   manifest: "/favicons/site.webmanifest",
+  alternates: {
+    canonical: 'https://smartmotor.ae',
+    languages: {
+      'en': 'https://smartmotor.ae',
+      'ar': 'https://smartmotor.ae/ar',
+      'x-default': 'https://smartmotor.ae',
+    },
+  },
   robots: {
     index: true,
     follow: true,

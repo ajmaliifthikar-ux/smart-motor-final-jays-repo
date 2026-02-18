@@ -15,6 +15,11 @@ export const metadata: Metadata = {
     },
     alternates: {
         canonical: 'https://smartmotor.ae/about',
+        languages: {
+            'en': 'https://smartmotor.ae/about',
+            'ar': 'https://smartmotor.ae/ar/about',
+            'x-default': 'https://smartmotor.ae/about',
+        },
     },
 }
 

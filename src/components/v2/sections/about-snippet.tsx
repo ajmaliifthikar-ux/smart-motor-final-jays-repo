@@ -16,11 +16,11 @@ export function AboutSnippet() {
                     </h2>
 
                     <p className="text-gray-500 font-medium leading-relaxed mb-6">
-                        Smart Motor Auto Repair is a professional automotive service center dedicated to delivering top-notch solutions for all your vehicle needs. Located in the heart of Musaffah (M9), we specialize in luxury, sports, and European vehicles with expertise across German, Japanese, and Chinese brands.
+                        Smart Motor Auto Repair is Abu Dhabi&apos;s trusted car service center — located at M9, Musaffah Industrial Area. Since 2009, our factory-certified technicians have specialized in luxury, sports, and European car repair, with proven expertise across German, Japanese, American, and Chinese brands.
                     </p>
 
                     <p className="text-gray-500 font-medium leading-relaxed mb-8">
-                        Whether you need routine maintenance, complex repairs, body shop services, or premium detailing, we are your one-stop solution for complete automotive care.
+                        From routine oil changes and engine diagnostics to PPF installation, ceramic coating, body shop, and full car detailing — we are your one-stop automotive care destination in Abu Dhabi. 6-month labour warranty on all repairs.
                     </p>
 
                     <button className="group flex items-center gap-2 text-sm font-black uppercase tracking-widest text-[#121212] hover:text-[#E62329] transition-colors">

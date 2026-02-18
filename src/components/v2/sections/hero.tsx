@@ -59,7 +59,7 @@ export function Hero() {
                     </h1>
 
                     <p className={`text-gray-600 text-base md:text-lg lg:text-xl max-w-3xl leading-relaxed mb-8 font-medium px-2 ${isRTL ? 'font-arabic' : ''}`}>
-                        Your trusted automotive partner in Abu Dhabi. Expert Repair, Diagnostics & Maintenance for Luxury, Sports & European Cars.
+                        Abu Dhabi&apos;s premier car service & repair center in Musaffah. Engine repair, AC service, PPF, ceramic coating & full detailing — for every brand, every budget.
                     </p>
 
                     {/* CTA Buttons */}

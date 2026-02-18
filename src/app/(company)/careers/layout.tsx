@@ -10,6 +10,11 @@ export const metadata: Metadata = {
     },
     alternates: {
         canonical: 'https://smartmotor.ae/careers',
+        languages: {
+            'en': 'https://smartmotor.ae/careers',
+            'ar': 'https://smartmotor.ae/ar/careers',
+            'x-default': 'https://smartmotor.ae/careers',
+        },
     },
 }
 

@@ -19,9 +19,14 @@ import { FAQ } from '@/components/sections/faq'
 
 export const metadata: Metadata = {
     title: 'Car Service & Repair Abu Dhabi | Smart Motor Auto Repair – Est. 2009',
-    description: 'Smart Motor — Abu Dhabi\'s trusted car service center in Musaffah. Engine, AC, PPF, ceramic coating, detailing. All brands. 4.9★ Google rated. Mon–Sat 8AM–7PM. Call +971 2 555 5443.',
+    description: 'Smart Motor — Abu Dhabi\'s trusted car service & repair center in Musaffah. BMW, Mercedes, Toyota, Nissan & all brands. Engine repair, AC, PPF, ceramic coating, window tinting & detailing. 4.9★ Google rated. Mon–Sat 8AM–7PM. Call +971 2 555 5443.',
     alternates: {
         canonical: 'https://smartmotor.ae',
+        languages: {
+            'en': 'https://smartmotor.ae',
+            'ar': 'https://smartmotor.ae/ar',
+            'x-default': 'https://smartmotor.ae',
+        },
     },
 }
 

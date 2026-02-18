@@ -23,6 +23,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         },
         alternates: {
             canonical: `https://smartmotor.ae/brand/${slug}`,
+            languages: {
+                'en': `https://smartmotor.ae/brand/${slug}`,
+                'ar': `https://smartmotor.ae/ar/brand/${slug}`,
+                'x-default': `https://smartmotor.ae/brand/${slug}`,
+            },
         },
     }
 }

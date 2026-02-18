@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
-import { JsonLd } from "@/components/seo/JsonLd"
-import { WithContext, Service as SchemaService, BreadcrumbList, ListItem, Offer, OfferCatalog, AutoRepair, City } from "schema-dts"
+import { WithContext, BreadcrumbList, ListItem, Offer } from "schema-dts"
 import { notFound } from 'next/navigation'
 import { getAllServices } from '@/lib/firebase-db'
 import { ServiceDetailClient } from '@/components/v2/sections/service-detail-client'
@@ -32,11 +31,19 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
         if (!service) return {}
 
         return {
-            title: `${service.name} | Smart Motor Abu Dhabi`,
-            description: service.description,
+            title: `${service.name} in Abu Dhabi | Smart Motor Auto Repair`,
+            description: service.description || `Professional ${service.name} at Smart Motor Auto Repair, Musaffah, Abu Dhabi. Certified technicians, OEM parts, 6-month warranty.`,
+            alternates: {
+                canonical: `https://smartmotor.ae/services/${id}`,
+                languages: {
+                    'ar': `https://smartmotor.ae/ar/services/${id}`,
+                    'x-default': `https://smartmotor.ae/services/${id}`,
+                }
+            },
             openGraph: {
-                title: `${service.name} | Smart Motor Abu Dhabi`,
+                title: `${service.name} in Abu Dhabi | Smart Motor Auto Repair`,
                 description: service.description,
+                url: `https://smartmotor.ae/services/${id}`,
             }
         }
     } catch (error) {
@@ -83,34 +90,73 @@ export default async function ServiceDetailPage(props: Props) {
         iconImage: undefined
     }
 
-    const itemOffered = subServicesList.map((sub): Offer => ({
+    const itemOffered: Offer[] = subServicesList.map((sub) => ({
         "@type": "Offer",
         itemOffered: {
             "@type": "Service",
             name: sub.title
-        } as SchemaService
-    }));
+        }
+    } as Offer));
 
-    const jsonLd: WithContext<SchemaService> = {
+    const serviceJsonLd: Record<string, unknown> = {
         "@context": "https://schema.org",
         "@type": "Service",
+        "@id": `https://smartmotor.ae/services/${service.id}#service`,
         name: service.name,
-        description: service.description,
+        description: service.description || `Professional ${service.name} in Abu Dhabi by certified technicians.`,
+        url: `https://smartmotor.ae/services/${service.id}`,
         provider: {
             "@type": "AutoRepair",
+            "@id": "https://smartmotor.ae/#organization",
             name: "Smart Motor Auto Repair",
-            url: "https://smartmotor.ae"
-        } as AutoRepair,
-        image: service.image ? `https://smartmotor.ae${service.image}` : undefined,
-        areaServed: {
-            "@type": "City",
-            name: "Abu Dhabi"
-        } as City,
-        hasOfferCatalog: {
-            "@type": "OfferCatalog",
-            name: "Service Features",
-            itemListElement: itemOffered
-        } as OfferCatalog
+            url: "https://smartmotor.ae",
+            telephone: "+97125555443",
+            address: {
+                "@type": "PostalAddress",
+                streetAddress: "M9, Musaffah Industrial Area",
+                addressLocality: "Abu Dhabi",
+                addressCountry: "AE"
+            }
+        },
+        image: service.image ? `https://smartmotor.ae${service.image}` : "https://smartmotor.ae/images/og-image.jpg",
+        areaServed: [
+            { "@type": "City", name: "Abu Dhabi" },
+            { "@type": "City", name: "Musaffah" }
+        ],
+        ...(service.basePrice ? {
+            offers: {
+                "@type": "Offer",
+                priceCurrency: "AED",
+                price: service.basePrice.toString(),
+                priceSpecification: {
+                    "@type": "UnitPriceSpecification",
+                    priceCurrency: "AED",
+                    price: service.basePrice.toString(),
+                    name: `Starting price for ${service.name}`
+                },
+                availability: "https://schema.org/InStock",
+                url: `https://smartmotor.ae/services/${service.id}`,
+                seller: {
+                    "@type": "AutoRepair",
+                    name: "Smart Motor Auto Repair"
+                }
+            }
+        } : {
+            offers: {
+                "@type": "Offer",
+                priceCurrency: "AED",
+                availability: "https://schema.org/InStock",
+                url: `https://smartmotor.ae/services/${service.id}`,
+                description: "Contact us for pricing"
+            }
+        }),
+        ...(itemOffered.length > 0 ? {
+            hasOfferCatalog: {
+                "@type": "OfferCatalog",
+                name: `${service.name} Packages`,
+                itemListElement: itemOffered
+            }
+        } : {})
     };
 
     const breadcrumbLd: WithContext<BreadcrumbList> = {
@@ -121,27 +167,27 @@ export default async function ServiceDetailPage(props: Props) {
                 "@type": "ListItem",
                 position: 1,
                 name: "Home",
-                item: "https://smartmotor.ae/new-home"
+                item: "https://smartmotor.ae"
             } as ListItem,
             {
                 "@type": "ListItem",
                 position: 2,
                 name: "Services",
-                item: "https://smartmotor.ae/new-home#services"
+                item: "https://smartmotor.ae/services"
             } as ListItem,
             {
                 "@type": "ListItem",
                 position: 3,
                 name: service.name,
-                item: `https://smartmotor.ae/new-home/services/${service.id}`
+                item: `https://smartmotor.ae/services/${service.id}`
             } as ListItem
         ]
     };
 
     return (
         <>
-            <JsonLd data={jsonLd} />
-            <JsonLd data={breadcrumbLd} />
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
             <ServiceDetailClient service={service} />
         </>
     )
