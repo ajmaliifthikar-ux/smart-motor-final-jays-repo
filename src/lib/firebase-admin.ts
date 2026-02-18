@@ -1,4 +1,5 @@
 import admin from 'firebase-admin'
+import { getFirestore } from 'firebase-admin/firestore'
 
 if (!admin.apps.length) {
   const serviceAccount = {
@@ -23,8 +24,8 @@ if (!admin.apps.length) {
 }
 
 export const adminAuth = admin.auth()
-// Named Firestore DB: 'smartmotordb' (not the (default) database)
-export const adminDb = admin.firestore(admin.app(), 'smartmotordb')
+// Named Firestore DB: 'smartmotordb' — use firebase-admin/firestore getFirestore with databaseId
+export const adminDb = getFirestore(admin.app(), 'smartmotordb')
 
 export async function verifySession(token: string | undefined) {
     if (!token) return null;

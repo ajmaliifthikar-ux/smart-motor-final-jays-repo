@@ -1,6 +1,6 @@
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
-import { getAllBrands, getServicesByBrand, getAllServices } from '@/lib/firebase-db'
+import { getAllBrands, getAllServices, FirebaseService } from '@/lib/firebase-db'
 import { notFound } from 'next/navigation'
 import { Shield, Wrench, CheckCircle2, ChevronRight, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -18,10 +18,10 @@ export default async function BrandPage({ params }: { params: Promise<{ slug: st
     const models = brand.description ? brand.description.split(',') : []
 
     // Get services available for this brand
-    let services = []
+    let services: FirebaseService[] = []
     if (brand.serviceIds && brand.serviceIds.length > 0) {
         const allServices = await getAllServices()
-        services = allServices.filter(s => brand.serviceIds?.includes(s.slug)) || []
+        services = allServices.filter(s => brand.serviceIds?.includes(s.slug))
     }
 
     // Keep specialties from service names if available
