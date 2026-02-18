@@ -12,7 +12,7 @@ export function AboutSnippet() {
                         Who We Are
                     </span>
                     <h2 className="text-4xl font-black text-[#121212] tracking-tighter uppercase leading-[0.9] mb-8">
-                        Your Trusted <br /> Automotive Partner <br /> <span className="text-gray-400">In Abu Dhabi</span>
+                        Your Trusted <br /> Automotive Partner <br /> <span className="text-gray-500">In Abu Dhabi</span>
                     </h2>
 
                     <p className="text-gray-500 font-medium leading-relaxed mb-6">

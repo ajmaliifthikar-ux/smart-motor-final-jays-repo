@@ -91,7 +91,7 @@ export default async function AboutPage() {
                         <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#E62329]/5 blur-[100px] rounded-full" />
                         <div className="flex-1 space-y-8">
                             <span className="text-[#E62329] font-black text-[10px] uppercase tracking-[0.4em] block">The Customer Journey</span>
-                            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-[#121212] leading-[0.9]">Bespoke <br /> Concierge <br /> <span className="text-gray-300">Service.</span></h2>
+                            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-[#121212] leading-[0.9]">Bespoke <br /> Concierge <br /> <span className="text-gray-400">Service.</span></h2>
                             <p className="text-gray-500 text-lg font-medium leading-relaxed">
                                 At Smart Motor, we don't just repair cars; we manage your automotive lifestyle. From complimentary pickup and delivery to real-time telemetry updates, every step is designed for your convenience.
                             </p>

@@ -153,21 +153,21 @@ export function Footer() {
                 {/* Bottom Bar */}
                 <div className="pt-12 border-t border-gray-900 flex flex-col md:flex-row justify-between items-center gap-8">
                     <div className="flex flex-col gap-4">
-                        <p className="text-gray-600 text-xs font-bold tracking-widest uppercase">
+                        <p className="text-gray-400 text-xs font-bold tracking-widest uppercase">
                             &copy; 2026 SMART MOTOR AUTO REPAIR.
                         </p>
-                        <div className="flex gap-4 opacity-50">
+                        <div className="flex gap-4 opacity-60">
                             <Tooltip content="Visa accepted" position="top"><span><VisaIcon /></span></Tooltip>
                             <Tooltip content="Mastercard accepted" position="top"><span><MastercardIcon /></span></Tooltip>
                             <Tooltip content="Apple Pay accepted" position="top"><span><ApplePayIcon /></span></Tooltip>
                         </div>
                     </div>
                     <div className="flex flex-col gap-4">
-                        <div className="flex gap-12 text-[10px] font-black uppercase tracking-widest text-gray-600">
+                        <div className="flex gap-12 text-[10px] font-black uppercase tracking-widest text-gray-400">
                             <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
                             <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
                         </div>
-                        <p className="text-[8px] text-gray-700 leading-relaxed">
+                        <p className="text-[8px] text-gray-500 leading-relaxed">
                             This site is protected by reCAPTCHA and the Google
                             <a href="https://policies.google.com/privacy" className="hover:text-white transition-colors"> Privacy Policy</a> and
                             <a href="https://policies.google.com/terms" className="hover:text-white transition-colors"> Terms of Service</a> apply.

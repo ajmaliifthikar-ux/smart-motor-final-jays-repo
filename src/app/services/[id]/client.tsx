@@ -53,7 +53,7 @@ export function ServicePageClient({ service }: ServicePageClientProps) {
                             </span>
                             <h1 className="text-6xl md:text-8xl font-black text-black tracking-tighter uppercase leading-none mb-8 italic">
                                 {service.name.split(' ')[0]} <br />
-                                <span className="text-gray-200">{service.name.split(' ').slice(1).join(' ')}</span>
+                                <span className="text-gray-400">{service.name.split(' ').slice(1).join(' ')}</span>
                             </h1>
                             <p className="text-xl text-gray-500 font-medium leading-relaxed mb-12 max-w-xl">
                                 {service.detailedDescription || service.description}
@@ -161,7 +161,7 @@ export function ServicePageClient({ service }: ServicePageClientProps) {
                             <div className="flex flex-wrap gap-8 items-center mb-12">
                                 {Object.entries(brandSocials).slice(0, 4).map(([brand, links]) => (
                                     <div key={brand} className="group">
-                                        <p className="text-[10px] font-black uppercase text-gray-300 mb-3 tracking-widest">{brand}</p>
+                                        <p className="text-[10px] font-black uppercase text-gray-500 mb-3 tracking-widest">{brand}</p>
                                         <div className="flex gap-3">
                                             <a href={links.instagram} target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-50 rounded-lg text-gray-400 hover:text-[#E62329] hover:bg-white transition-all">
                                                 <Instagram size={16} />

@@ -50,7 +50,7 @@ export default function ContactPage() {
                         <h3 className="text-xl font-black text-[#121212] uppercase italic tracking-tight mb-4">Voice Support</h3>
                         <p className="text-gray-400 text-sm font-medium mb-6">Direct line to our engineering team for rapid response.</p>
                         <a href="tel:+97125555443" className="text-2xl font-black text-[#121212] hover:text-[#E62329] transition-colors tracking-tight">+971 2 555 5443</a>
-                        <p className="text-[10px] font-black uppercase text-gray-300 mt-4 tracking-widest">Toll Free: 800 SMART</p>
+                        <p className="text-[10px] font-black uppercase text-gray-400 mt-4 tracking-widest">Toll Free: 800 SMART</p>
                     </div>
 
                     <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-precision hover:shadow-xl transition-all group text-center flex flex-col items-center">

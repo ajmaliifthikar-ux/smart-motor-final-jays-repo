@@ -194,7 +194,7 @@ export function Navbar() {
                 className="font-black text-3xl text-[#121212] uppercase tracking-tighter"
                 style={{ transitionDelay: `${i * 50}ms` }}
               >
-                <span className="text-gray-300 mr-4 text-lg font-medium">0{i + 1}</span>
+                <span className="text-gray-500 mr-4 text-lg font-medium">0{i + 1}</span>
                 {link.label}
               </a>
             ))}

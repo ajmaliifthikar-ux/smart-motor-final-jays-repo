@@ -133,8 +133,8 @@ export function BrandCarousel() {
     if (isLoading) {
         return (
             <div className="w-full py-20 flex flex-col items-center justify-center gap-4 bg-white">
-                <Loader2 className="w-8 h-8 animate-spin text-gray-200" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-300">Synchronizing Marques</span>
+                <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Synchronizing Marques</span>
             </div>
         )
     }

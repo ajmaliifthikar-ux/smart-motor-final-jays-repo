@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import { FAQ as FAQComponent } from '@/components/sections/faq'
@@ -5,6 +6,41 @@ import { getAllPublishedContent } from '@/lib/firebase-db'
 import { HelpCircle, Shield, Clock, Wrench } from 'lucide-react'
 
 export const revalidate = 3600
+
+export const metadata: Metadata = {
+    title: 'FAQ – Car Service Questions Answered | Smart Motor Abu Dhabi',
+    description: 'Answers to common questions about car repair, PPF, ceramic coating, operating hours, warranties and booking at Smart Motor Auto Repair in Musaffah, Abu Dhabi.',
+    openGraph: {
+        title: 'FAQ | Smart Motor Auto Repair Abu Dhabi',
+        description: 'Find answers to frequently asked questions about our automotive services, hours, pricing, and warranties.',
+        url: 'https://smartmotor.ae/faq',
+    },
+    alternates: {
+        canonical: 'https://smartmotor.ae/faq',
+    },
+}
+
+const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+        { "@type": "Question", name: "What car brands do you service?", acceptedAnswer: { "@type": "Answer", text: "We service all brands — BMW, Mercedes-Benz, Audi, Porsche, Toyota, Nissan, Honda, Lexus, Range Rover, Bentley and more. Our factory-certified technicians cover all makes." } },
+        { "@type": "Question", name: "What are your operating hours?", acceptedAnswer: { "@type": "Answer", text: "We are open Monday to Saturday, 8:00 AM to 7:00 PM. Closed on Sundays. Emergency towing is available 24/7." } },
+        { "@type": "Question", name: "Where are you located?", acceptedAnswer: { "@type": "Answer", text: "M9, Musaffah Industrial Area, Abu Dhabi, UAE." } },
+        { "@type": "Question", name: "Do you offer a warranty on repairs?", acceptedAnswer: { "@type": "Answer", text: "Yes. All labour carries a 6-month warranty. Ceramic coating packages come with up to 9 years warranty. PPF films carry the manufacturer warranty (XPEL up to 10 years)." } },
+        { "@type": "Question", name: "How do I book a service?", acceptedAnswer: { "@type": "Answer", text: "Book online via our website, call +971 2 555 5443, or WhatsApp +971 800 5445. Walk-ins are welcome during business hours." } },
+        { "@type": "Question", name: "Do you offer financing?", acceptedAnswer: { "@type": "Answer", text: "Yes, we partner with Tabby for 4 interest-free installments. We accept Visa, Mastercard, Apple Pay and cash." } },
+    ],
+}
+
+const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://smartmotor.ae" },
+        { "@type": "ListItem", position: 2, name: "FAQ", item: "https://smartmotor.ae/faq" },
+    ],
+}
 
 export default async function FAQPage() {
     let faqs: any[] = []
@@ -22,6 +58,8 @@ export default async function FAQPage() {
 
     return (
         <main className="min-h-screen bg-[#FAFAF9]">
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
             <Navbar />
             
             <section className="pt-40 pb-16 relative overflow-hidden">

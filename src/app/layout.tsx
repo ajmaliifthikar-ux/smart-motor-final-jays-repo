@@ -92,8 +92,6 @@ export const metadata: Metadata = {
 import { LanguageProvider } from "@/lib/language-context";
 import { SmartAssistantWithAudio } from "@/components/ui/smart-assistant-with-audio";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
-import { JsonLd } from "@/components/seo/JsonLd";
-import { WithContext, AutoRepair } from "schema-dts";
 
 // ─── Schema.org — AutoRepair + LocalBusiness (SSOT from src/lib/constants.ts) ─────
 const jsonLd = {
@@ -193,7 +191,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className="antialiased" suppressHydrationWarning>
-        <JsonLd data={jsonLd} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         {/* Google Analytics 4 — GA_ID: G-MB61CK4J5Z */}
         <GoogleAnalytics />
         <LanguageProvider>
