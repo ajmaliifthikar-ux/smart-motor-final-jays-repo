@@ -42,61 +42,65 @@ export async function checkRateLimit(
     const windowStart = now - windowSeconds * 1000
 
     try {
-        // 1. Check if key exists in Redis (with timeout)
-        const exists = await withTimeout(redis.exists(key), REDIS_TIMEOUT_MS)
-
-        if (!exists) {
-            // 2. If missing, populate from DB (Hydration)
-            const logs = await prisma.aIUsageLog.findMany({
-                where: {
-                    userId: userId,
-                    action: action,
-                    createdAt: {
-                        gte: new Date(windowStart)
-                    }
-                },
-                select: { createdAt: true }
-            })
-
-            const pipeline = redis.pipeline()
-
-            if (logs.length > 0) {
-                logs.forEach((log, index) => {
-                    pipeline.zadd(key, log.createdAt.getTime(), `${log.createdAt.getTime()}-${index}`)
-                })
-            } else {
-                // No usage, but we set a dummy "INIT" member (score 0) so the key exists
-                // This prevents subsequent checks from hitting the DB
-                pipeline.zadd(key, 0, "INIT")
-            }
-
-            pipeline.expire(key, windowSeconds)
-            await withTimeout(pipeline.exec(), REDIS_TIMEOUT_MS)
-        }
-
-        // 3. Clean old entries & Count
+        // 1. Optimistic Check: Cleanup, Count, and Refresh TTL in one pipeline.
+        // We avoid an initial `exists` check to save 1 RTT.
         const pipeline = redis.pipeline()
 
         // Remove entries older than windowStart but keep "INIT" (score 0)
-        // We start removing from score 1 up to windowStart - 1 (exclusive of windowStart)
         pipeline.zremrangebyscore(key, 1, windowStart - 1)
 
         // Count entries in the current window (score >= windowStart)
-        // "INIT" (score 0) is excluded
         pipeline.zcount(key, windowStart, "+inf")
 
+        // Refresh TTL. Returns 1 if key exists, 0 if not.
         pipeline.expire(key, windowSeconds)
 
         const results = await withTimeout(pipeline.exec(), REDIS_TIMEOUT_MS)
 
-        // Results is [[err, countRemoved], [err, count], [err, expireResult]]
-        // We care about count (index 1)
-        if (!results || results[1][0]) {
-            throw results ? results[1][0] : new Error("Redis pipeline failed")
+        // Check for pipeline errors
+        if (!results) {
+            throw new Error("Redis pipeline failed")
+        }
+        for (const [err] of results) {
+            if (err) throw err
         }
 
-        const count = results[1][1] as number
-        return count < limit
+        // results structure: [[err, zremResult], [err, count], [err, expireResult]]
+        const expireResult = results[2][1] as number
+
+        // If key exists (expire returned 1), we use the count from Redis
+        if (expireResult === 1) {
+            const count = results[1][1] as number
+            return count < limit
+        }
+
+        // 2. If missing (expire returned 0), populate from DB (Hydration)
+        const logs = await prisma.aIUsageLog.findMany({
+            where: {
+                userId: userId,
+                action: action,
+                createdAt: {
+                    gte: new Date(windowStart)
+                }
+            },
+            select: { createdAt: true }
+        })
+
+        const hydrationPipeline = redis.pipeline()
+
+        if (logs.length > 0) {
+            logs.forEach((log, index) => {
+                hydrationPipeline.zadd(key, log.createdAt.getTime(), `${log.createdAt.getTime()}-${index}`)
+            })
+        } else {
+            // No usage, but we set a dummy "INIT" member (score 0) so the key exists
+            hydrationPipeline.zadd(key, 0, "INIT")
+        }
+
+        hydrationPipeline.expire(key, windowSeconds)
+        await withTimeout(hydrationPipeline.exec(), REDIS_TIMEOUT_MS)
+
+        return logs.length < limit
 
     } catch (error) {
         console.error("Rate limit Redis error/timeout, falling back to DB check", error)
