@@ -8,6 +8,7 @@ import { useLanguage } from '@/lib/language-context'
 import { cn, publicPath } from '@/lib/utils'
 import { useTilt } from '@/lib/hooks/useTilt'
 import { Tooltip } from '@/components/ui/tooltip'
+import { trackEvent } from '@/components/analytics/GoogleAnalytics'
 
 export function Hero() {
     const [isCallbackModalOpen, setIsCallbackModalOpen] = useState(false)
@@ -68,7 +69,7 @@ export function Hero() {
                             onMouseMove={bookTilt.tiltHandlers.onMouseMove}
                             onMouseLeave={bookTilt.tiltHandlers.onMouseLeave}
                             className="bg-[#121212] text-white button-overlay rounded-full px-10 py-4 text-xs font-black tracking-widest uppercase hover:bg-[#E62329] transition-all shadow-xl hover:scale-105 h-auto opacity-100 hover:opacity-100 relative overflow-hidden group"
-                            onClick={() => document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' })}
+                            onClick={() => { document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' }); trackEvent('cta_click', 'Engagement', 'book_appointment_hero', 1) }}
                         >
                             <span className="relative z-10">Book Appointment</span>
                             <div className="absolute inset-0 bg-[url('/public/textures/car-paint-texture.png')] opacity-30 mix-blend-overlay pointer-events-none group-hover:opacity-50 transition-opacity" />

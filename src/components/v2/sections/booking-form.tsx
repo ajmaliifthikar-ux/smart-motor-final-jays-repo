@@ -14,6 +14,7 @@ import { Tooltip } from '@/components/ui/tooltip'
 import { getBrandsWithModels, getServices, getAvailableSlots } from '@/app/actions'
 import { useLanguage } from '@/lib/language-context'
 import { toast } from 'sonner'
+import { trackEvent } from '@/components/analytics/GoogleAnalytics'
 
 const bookingSchema = z.object({
     fullName: z.string().min(2, 'Name is required'),
@@ -140,6 +141,7 @@ export function BookingForm() {
 
             setIsSubmitted(true)
             toast.success("Booking confirmed successfully!")
+            trackEvent('booking_submitted', 'Booking', data.service, 1)
         } catch (error: any) {
             console.error(error)
             toast.error(error.message || "Failed to confirm booking. Please try again.")

@@ -8,6 +8,7 @@ import { cn, publicPath } from '@/lib/utils'
 import { motion } from 'framer-motion'
 import { Tooltip } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
+import { trackEvent } from '@/components/analytics/GoogleAnalytics'
 
 const navLinks = [
   { href: '#about', label: 'About Us', id: 'about' },
@@ -132,6 +133,7 @@ export function Navbar() {
               <Tooltip content="Call us directly for immediate assistance" position="bottom">
                 <a
                   href="tel:80076278"
+                  onClick={() => trackEvent('phone_click', 'Contact', 'navbar', 1)}
                   className={cn(
                     'group flex items-center gap-3 pl-1 pr-6 py-1.5 rounded-full transition-all duration-300 border shadow-sm',
                     isScrolled
@@ -198,7 +200,7 @@ export function Navbar() {
             ))}
 
             <div className="mt-12 pt-12 border-t border-gray-100">
-              <a href="tel:80076278" className="flex items-center gap-4 w-full bg-[#121212] text-white p-6 rounded-[2rem] shadow-xl active:scale-95 transition-transform">
+              <a href="tel:80076278" onClick={() => trackEvent('phone_click', 'Contact', 'mobile_menu', 1)} className="flex items-center gap-4 w-full bg-[#121212] text-white p-6 rounded-[2rem] shadow-xl active:scale-95 transition-transform">
                 <div className="w-12 h-12 bg-[#E62329] rounded-full flex items-center justify-center">
                   <PhoneIcon size={24} />
                 </div>
