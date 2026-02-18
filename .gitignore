@@ -70,9 +70,12 @@ google-services.json
 *.log
 *.php
 
-# Explicitly ignore MD files in root (except README if needed, but user said NO MD)
+# Explicitly ignore MD files in root (except docs)
 /*.md
 !README.md
+!CONTENT_BRIEF_ALL_PAGES.md
+!MASTER_SEO_RESEARCH_SMART_MOTOR.md
+!SEED_DATA_PREVIEW.md
 
 # Design & Large Docs
 *.ai
