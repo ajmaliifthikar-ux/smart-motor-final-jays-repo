@@ -154,25 +154,27 @@ function LoginContent() {
                                 </span>
                             </button>
 
-                            <button
-                                type="button"
-                                onClick={async () => {
-                                    setIsLoading(true)
-                                    try {
-                                        await setSessionCookie('mock-token-secret-123')
-                                        toast.success('Mock Session Established')
-                                        router.push(callbackUrl)
-                                        router.refresh()
-                                    } catch (e) {
-                                        toast.error('Mock Login Failed')
-                                    } finally {
-                                        setIsLoading(false)
-                                    }
-                                }}
-                                className="w-full text-center text-[9px] font-black text-gray-400 hover:text-[#E62329] transition-colors mt-2 uppercase tracking-[0.3em] py-2"
-                            >
-                                [DEV] Rapid Authentication Bypass
-                            </button>
+                            {process.env.NODE_ENV === 'development' && (
+                                <button
+                                    type="button"
+                                    onClick={async () => {
+                                        setIsLoading(true)
+                                        try {
+                                            await setSessionCookie('mock-token-secret-123')
+                                            toast.success('Mock Session Established')
+                                            router.push(callbackUrl)
+                                            router.refresh()
+                                        } catch (e) {
+                                            toast.error('Mock Login Failed')
+                                        } finally {
+                                            setIsLoading(false)
+                                        }
+                                    }}
+                                    className="w-full text-center text-[9px] font-black text-gray-400 hover:text-[#E62329] transition-colors mt-2 uppercase tracking-[0.3em] py-2"
+                                >
+                                    [DEV] Rapid Authentication Bypass
+                                </button>
+                            )}
                         </div>
                     </form>
                 </div>

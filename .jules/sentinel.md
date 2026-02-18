@@ -14,3 +14,9 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2026-02-18: Production Authentication Backdoor in Admin Panel
+- **Vulnerability:** A hardcoded "Mock Authentication" bypass (`mock-token-secret-123`) allowed full administrative access if the token was presented. This was intended for development but was not effectively restricted to the development environment.
+- **Fix:** Restricted the mock token logic in `src/lib/firebase-admin.ts` and the UI button in `src/app/auth/page.tsx` to only function when `process.env.NODE_ENV === 'development'`.
+- **File:** `src/lib/firebase-admin.ts`, `src/app/auth/page.tsx`
+- **Mitigation:** Never hardcode bypass tokens. If development bypasses are needed, strictly wrap them in environment checks or use feature flags that default to OFF in production.
