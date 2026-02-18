@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- BIMI-compliant SVG (Tiny PS profile) — Smart Motor Performance -->
+<!-- Hosted at: https://smartmotorlatest.vercel.app/bimi-logo.svg -->
+<!-- DNS TXT record: default._bimi.smartmotor.ae -->
+<!--   v=BIMI1; l=https://smartmotor.ae/bimi-logo.svg; a=; -->
+<svg version="1.2" baseProfile="tiny-ps"
+     xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 500 500"
+     width="500" height="500">
+  <title>Smart Motor Performance</title>
+
+  <!-- Dark background circle (required for square/circle logos in email clients) -->
+  <rect width="500" height="500" rx="250" ry="250" fill="#121212"/>
+
+  <!-- Red accent ring -->
+  <circle cx="250" cy="250" r="232" fill="none" stroke="#E62329" stroke-width="8"/>
+
+  <!-- SM logo paths — centred and scaled from original 121.74x132.12 viewBox -->
+  <!-- Scale: fit 121.74x132.12 into ~320x320, centred at 250,250 -->
+  <!-- Scale factor: 320/132.12 ≈ 2.42; offset X: 250-121.74*2.42/2≈103, Y: 250-132.12*2.42/2≈90 -->
+  <g transform="translate(103,90) scale(2.42)">
+
+    <!-- Main black body bar -->
+    <path fill="#FFFFFF"
+      d="M115.27,41.92H17.54c-2.11,0-3.98,1.36-4.64,3.36L.25,83.7c-1.04,3.16,1.31,6.42,4.64,6.42
+         h98.63c2.15,0,4.05-1.4,4.67-3.46l11.75-38.42c.96-3.14-1.39-6.32-4.67-6.32Z
+         M35.44,84.96h-18.37l1.9-6.32s12.51-.18,16.26-.18,6.04-2.22,7.66-5.73
+         c1.62-3.5-.98-3.74-1.97-3.74h-13.74c-6.44,0-5.81-9.81-.98-15.96
+         c4.83-6.16,13.28-5.93,13.28-5.93h17.3l-2.09,6.61h-12.22c-10.94,0-11.92,5.22-11.97,6.82
+         c-.05,1.6,1.38,2.38,2.63,2.38h12.54c8.1,0,7.09,8.78,2.16,15.31
+         c-4.92,6.54-12.39,6.75-12.39,6.75Z
+         M94.76,85.33h-8.74l5.88-22.27-13,22.27h-10.1l-2.71-23.32-5.99,23.32h-8.74
+         l10.16-38.24h14l1.37,23.79,15.77-23.79h14.5l-12.42,38.24Z"/>
+
+    <!-- Grey top-left tab -->
+    <path fill="#a4a6a8"
+      d="M72.39,0h-30.86c-2.11,0-3.97,1.37-4.59,3.39l-11.03,35.71h40.91
+         l10.15-32.88c.95-3.09-1.36-6.22-4.59-6.22Z"/>
+
+    <!-- Grey bottom-left tab -->
+    <path fill="#a4a6a8"
+      d="M51.37,93.02H10.45L.3,125.9c-.95,3.09,1.36,6.22,4.59,6.22h30.86
+         c2.11,0,3.97-1.37,4.59-3.39l11.03-35.71Z"/>
+
+    <!-- Red top-right tab -->
+    <path fill="#E62329"
+      d="M116.93,0h-30.86c-2.11,0-3.97,1.37-4.59,3.39l-11.03,35.71h40.91
+         l10.15-32.88c.95-3.09-1.36-6.22-4.59-6.22Z"/>
+
+    <!-- Red bottom-right tab -->
+    <path fill="#E62329"
+      d="M95.56,93.02h-40.91l-10.15,32.8c-.95,3.09,1.36,6.22,4.59,6.22h30.86
+         c2.11,0,3.97-1.37,4.59-4.69l11.03-34.34Z"/>
+  </g>
+</svg>

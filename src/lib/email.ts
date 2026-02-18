@@ -20,13 +20,43 @@ interface EmailOptions {
     subject: string
     html: string
     text?: string
+    replyTo?: string
+    listUnsubscribeUrl?: string
+}
+
+// ─── Anti-spam headers applied to every outbound email ───────────────────────
+// - Message-ID with @smartmotor.ae domain (ties to SPF/DKIM domain)
+// - List-Unsubscribe (RFC 2369) — required by Gmail/Yahoo bulk sender rules 2024
+// - Precedence: bulk — signals newsletter, not personal; prevents vacation replies
+// - X-Mailer identifies the sender legitimately
+function buildHeaders(to: string, listUnsubscribeUrl?: string) {
+    const recipient = Array.isArray(to) ? (to as string[])[0] : to
+    const msgId = `<${Date.now()}.${Math.random().toString(36).slice(2)}@smartmotor.ae>`
+    const headers: Record<string, string> = {
+        'Message-ID': msgId,
+        'X-Mailer': 'Smart Motor Mailer 1.0',
+        'X-Entity-Ref-ID': msgId,
+        'Precedence': 'bulk',
+        'X-Priority': '3',
+    }
+    if (listUnsubscribeUrl) {
+        headers['List-Unsubscribe'] = `<${listUnsubscribeUrl}>, <mailto:unsubscribe@smartmotor.ae?subject=unsubscribe>`
+        headers['List-Unsubscribe-Post'] = 'List-Unsubscribe=One-Click'
+    }
+    return headers
 }
 
 /**
  * Send email using Resend (preferred) or SMTP fallback
+ * Includes full anti-spam header set on every send
  */
 export async function sendEmail(options: EmailOptions) {
     const from = process.env.EMAIL_FROM || 'Smart Motor <notifications@smartmotor.ae>'
+    const replyTo = options.replyTo || 'hello@smartmotor.ae'
+    const headers = buildHeaders(
+        Array.isArray(options.to) ? options.to[0] : options.to,
+        options.listUnsubscribeUrl
+    )
 
     try {
         // Try Resend first (faster, more reliable)
@@ -34,9 +64,11 @@ export async function sendEmail(options: EmailOptions) {
             const { data, error } = await resend.emails.send({
                 from,
                 to: Array.isArray(options.to) ? options.to : [options.to],
+                replyTo: replyTo,
                 subject: options.subject,
                 html: options.html,
                 text: options.text,
+                headers,
             })
 
             if (error) {
@@ -47,14 +79,16 @@ export async function sendEmail(options: EmailOptions) {
             return { success: true, messageId: data?.id }
         }
 
-        // Fallback to SMTP
+        // Fallback to SMTP (GreenGeeks, port 465 SSL, SPF+DKIM aligned)
         if (process.env.EMAIL_USER || process.env.EMAIL_PASSWORD) {
             const info = await smtpTransporter.sendMail({
                 from,
                 to: Array.isArray(options.to) ? options.to.join(', ') : options.to,
+                replyTo,
                 subject: options.subject,
                 html: options.html,
                 text: options.text,
+                headers,
             })
 
             return { success: true, messageId: info.messageId }
@@ -420,5 +454,7 @@ export async function sendNewsletterWelcomeEmail(email: string) {
         subject: '🏎️ Welcome to the Smart Motor Elite Club',
         html,
         text: `Welcome to the Smart Motor Elite Club! You'll now receive exclusive offers, maintenance tips, and early access to campaigns. Visit ${appUrl}/new-home to explore our services. Questions? Call us toll free: 800 76278. To unsubscribe: ${appUrl}/unsubscribe?email=${encodeURIComponent(email)}`,
+        replyTo: 'hello@smartmotor.ae',
+        listUnsubscribeUrl: `${appUrl}/unsubscribe?email=${encodeURIComponent(email)}`,
     })
 }
