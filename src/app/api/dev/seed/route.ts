@@ -11,6 +11,7 @@ import {
   collection,
   doc,
   setDoc,
+  updateDoc,
   Timestamp,
   getDocs,
   query,
@@ -215,22 +216,41 @@ export async function GET(req: Request) {
       }
     }
 
-    // ── Seed Brands ──
-    const existingBrands = await getDocs(query(collection(db, 'brands')))
-    if (existingBrands.size >= BRANDS.length) {
-      results.push(`⏭ Brands already seeded (${existingBrands.size} found, skipping)`)
-    } else {
-      for (const brand of BRANDS) {
-        const ref = doc(collection(db, 'brands'))
-        await setDoc(ref, {
-          ...brand,
-          serviceIds: ALL_SERVICE_IDS,
-          createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now(),
-        })
-        results.push(`✅ Brand: ${brand.name}`)
-      }
+    // ── Patch Existing Brands with serviceIds + logoUrl ──
+    // Always run so existing brand docs get service relationships set
+    const existingBrands = await getDocs(collection(db, 'brands'))
+    const logoMap: Record<string, string> = {
+      'Mercedes-Benz': 'mercedes-logo.png',
+      'BMW': 'bmw-logo.png',
+      'Audi': 'audi-logo-150x150-1.png',
+      'Porsche': 'porsche-logo.png',
+      'Range Rover': 'range-rover-logo.png',
+      'Bentley': 'bentley-logo-150x150-1.png',
+      'Lamborghini': 'lamborghini-logo.png',
+      'Bugatti': 'Bugatti-logo.png',
+      'Rolls-Royce': 'rolls-royce-logo.png',
+      'Ferrari': 'ferrari-logo.png',
+      'Alfa Romeo': 'alfa-romeo-logo.png',
+      'Aston Martin': 'aston-martin-logo.png',
+      'Cadillac': 'cadillac.png',
+      'Chevrolet': 'chevrolet.png',
+      'Dodge': 'dodge-logo.png',
+      'Ford': 'ford-logo.png',
+      'Genesis': 'genesis-logo.png',
+      'Chrysler': 'chrysler-logo.png',
     }
+    let patched = 0
+    for (const snap of existingBrands.docs) {
+      const data = snap.data()
+      const logoUrl = data.logoUrl || logoMap[data.name] || ''
+      await updateDoc(snap.ref, {
+        serviceIds: ALL_SERVICE_IDS,
+        logoUrl,
+        updatedAt: Timestamp.now(),
+      })
+      patched++
+    }
+    results.push(`✅ Patched ${patched} existing brands with serviceIds + logoUrl`)
 
     return NextResponse.json({ success: true, results })
   } catch (err: any) {
