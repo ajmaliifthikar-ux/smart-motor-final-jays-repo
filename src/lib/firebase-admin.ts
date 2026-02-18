@@ -32,7 +32,8 @@ export async function verifySession(token: string | undefined) {
     // --- MOCK AUTHENTICATION BYPASS ---
     // Allow access if the special mock token is present.
     // This enables safe testing of the Admin UI without Firebase restrictions.
-    if (token === 'mock-token-secret-123') {
+    // SECURED: ONLY ALLOW IN DEVELOPMENT ENVIRONMENT
+    if (process.env.NODE_ENV === 'development' && token === 'mock-token-secret-123') {
         console.warn('⚠️ MOCK AUTH: Granting Admin Access via Mock Token');
         return {
             uid: 'mock-admin-user',
