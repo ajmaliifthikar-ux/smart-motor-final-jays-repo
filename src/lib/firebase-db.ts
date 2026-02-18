@@ -28,6 +28,9 @@ const firebaseConfig = {
   appId: (process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '').trim(),
 }
 
+// Named Firestore database — must match the actual DB name in Firebase Console
+const FIRESTORE_DB_NAME = 'smartmotordb'
+
 // Avoid re-initialization - handle duplicate app gracefully
 let dbInstance: ReturnType<typeof getFirestore> | null = null
 
@@ -37,14 +40,15 @@ function initializeDb() {
   try {
     const apps = getApps()
     const app = apps.length > 0 ? apps[0] : initializeApp(firebaseConfig)
-    dbInstance = getFirestore(app)
+    // Use named database 'smartmotordb' (not the default)
+    dbInstance = getFirestore(app, FIRESTORE_DB_NAME)
     return dbInstance
   } catch (error: any) {
     // If it's a duplicate app error, get the existing app and its database
     if (error?.code === 'app/duplicate-app' || error?.code === 'app/invalid-credential') {
       const apps = getApps()
       if (apps.length > 0) {
-        dbInstance = getFirestore(apps[0])
+        dbInstance = getFirestore(apps[0], FIRESTORE_DB_NAME)
         return dbInstance
       }
     }
@@ -643,8 +647,8 @@ export function convertDateToTimestamp(date: Date): Timestamp {
 
 export async function getAllQRCodes() {
   try {
-    const db = getFirestore()
-    const snapshot = await getDocs(collection(db, 'qr_codes'))
+    const database = initializeDb()
+    const snapshot = await getDocs(collection(database, 'qr_codes'))
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
@@ -657,8 +661,8 @@ export async function getAllQRCodes() {
 
 export async function getAllShortURLs() {
   try {
-    const db = getFirestore()
-    const snapshot = await getDocs(collection(db, 'short_urls'))
+    const database = initializeDb()
+    const snapshot = await getDocs(collection(database, 'short_urls'))
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),

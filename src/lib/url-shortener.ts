@@ -4,7 +4,7 @@
  */
 
 import { Timestamp } from 'firebase/firestore'
-import { db } from '@/lib/firebase'
+import { db } from '@/lib/firebase-db'
 import { collection, addDoc, query, where, getDocs, getDoc, updateDoc, doc, increment } from 'firebase/firestore'
 import { nanoid } from 'nanoid'
 

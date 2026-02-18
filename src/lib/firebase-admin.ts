@@ -23,7 +23,8 @@ if (!admin.apps.length) {
 }
 
 export const adminAuth = admin.auth()
-export const adminDb = admin.firestore()
+// Named Firestore DB: 'smartmotordb' (not the (default) database)
+export const adminDb = admin.firestore(admin.app(), 'smartmotordb')
 
 export async function verifySession(token: string | undefined) {
     if (!token) return null;
