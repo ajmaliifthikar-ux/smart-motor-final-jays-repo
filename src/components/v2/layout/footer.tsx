@@ -11,6 +11,7 @@ import {
     TikTokIcon,
     ThreadsIcon
 } from '@/components/ui/icons'
+import { TrackedLink } from '@/components/ui/tracked-link'
 import { publicPath } from '@/lib/utils'
 import { VisaIcon, MastercardIcon, ApplePayIcon } from '@/components/ui/payment-icons'
 import { Tooltip } from '@/components/ui/tooltip'
@@ -60,24 +61,24 @@ export function Footer() {
                         </p>
                         <div className="flex flex-wrap gap-3">
                             <Tooltip content="Instagram" position="top">
-                                <a href="https://instagram.com/smartmotor_autorepair" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
+                                <TrackedLink href="https://instagram.com/smartmotor_autorepair" source="footer" medium="social" campaign="instagram" label="instagram-v2-footer" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
                                     <InstagramIcon size={16} />
-                                </a>
+                                </TrackedLink>
                             </Tooltip>
                             <Tooltip content="WhatsApp" position="top">
-                                <a href="https://wa.me/97125555443" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
+                                <TrackedLink href="https://wa.me/97125555443" source="footer" medium="social" campaign="whatsapp" label="whatsapp-v2-footer" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
                                     <WhatsAppIcon size={16} />
-                                </a>
+                                </TrackedLink>
                             </Tooltip>
                             <Tooltip content="Facebook" position="top">
-                                <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
+                                <TrackedLink href="#" source="footer" medium="social" campaign="facebook" label="facebook-v2-footer" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
                                     <FacebookIcon size={16} />
-                                </a>
+                                </TrackedLink>
                             </Tooltip>
                             <Tooltip content="TikTok" position="top">
-                                <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
+                                <TrackedLink href="#" source="footer" medium="social" campaign="tiktok" label="tiktok-v2-footer" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
                                     <TikTokIcon size={16} />
-                                </a>
+                                </TrackedLink>
                             </Tooltip>
                             <Tooltip content="Threads" position="top">
                                 <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">

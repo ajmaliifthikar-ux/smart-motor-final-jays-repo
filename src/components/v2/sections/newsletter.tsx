@@ -32,6 +32,8 @@ export function NewsletterSection() {
             setIsSuccess(true)
             toast.success(data.message)
             setEmail('')
+            // Track successful newsletter subscription
+            fetch('/api/analytics/track-click', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ href: '/api/newsletter/subscribe', source: 'newsletter-section', medium: 'email-capture', campaign: 'newsletter-signup', label: 'newsletter-subscribe' }), keepalive: true }).catch(()=>{})
         } catch (error: any) {
             console.error(error)
             toast.error(error.message || 'Something went wrong')

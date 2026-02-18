@@ -10,6 +10,7 @@ import {
   FacebookIcon,
   WhatsAppIcon
 } from '@/components/ui/icons'
+import { TrackedLink } from '@/components/ui/tracked-link'
 import { VisaIcon, MastercardIcon, ApplePayIcon, GooglePayIcon, AmexIcon } from '@/components/ui/payment-icons'
 
 const services = [
@@ -55,22 +56,30 @@ export function Footer() {
               Twenty years of specialized excellence in performance engineering.
             </p>
             <div className="flex gap-4">
-              <a
+              <TrackedLink
                 href="https://instagram.com/smartmotor_autorepair"
                 target="_blank"
                 rel="noopener noreferrer"
+                source="footer"
+                medium="social"
+                campaign="instagram"
+                label="instagram-footer"
                 className="w-12 h-12 flex items-center justify-center bg-gray-900 rounded-full hover:bg-white hover:text-black transition-all duration-300"
               >
                 <InstagramIcon size={20} />
-              </a>
-              <a
+              </TrackedLink>
+              <TrackedLink
                 href="https://wa.me/97126666789"
                 target="_blank"
                 rel="noopener noreferrer"
+                source="footer"
+                medium="social"
+                campaign="whatsapp"
+                label="whatsapp-footer"
                 className="w-12 h-12 flex items-center justify-center bg-gray-900 rounded-full hover:bg-white hover:text-black transition-all duration-300"
               >
                 <WhatsAppIcon size={20} />
-              </a>
+              </TrackedLink>
             </div>
           </div>
 

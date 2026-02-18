@@ -72,6 +72,29 @@ export async function POST(req: Request) {
             }
         )
 
+        // Fire booking notification (non-blocking)
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://smartmotorlatest.vercel.app'
+        fetch(`${appUrl}/api/notifications/send`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-notification-key': process.env.NOTIFICATION_SECRET || 'sm-notify-secret',
+            },
+            body: JSON.stringify({
+                event: 'booking_new',
+                data: {
+                    customer: data.fullName,
+                    email: data.email,
+                    phone: data.phone,
+                    service: data.serviceId,
+                    date: data.date,
+                    time: data.time,
+                    vehicle: `${data.brand || ''} ${data.model || ''}`.trim() || 'Not specified',
+                    booking_id: bookingData.id,
+                },
+            }),
+        }).catch(() => {})
+
         return NextResponse.json({ success: true, bookingId: bookingData.id })
 
     } catch (error: any) {

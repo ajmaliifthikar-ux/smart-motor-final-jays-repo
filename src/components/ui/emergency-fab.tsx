@@ -35,7 +35,11 @@ export function EmergencyFAB() {
             label: 'WhatsApp',
             color: 'bg-[#25D366]',
             textColor: 'text-white',
-            onClick: () => window.open('https://wa.me/97125555443', '_blank'),
+            onClick: () => {
+                // Track WhatsApp FAB click
+                fetch('/api/analytics/track-click', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ href: 'https://wa.me/97125555443', source: 'fab', medium: 'whatsapp', campaign: 'emergency-fab', label: 'whatsapp-fab' }), keepalive: true }).catch(()=>{})
+                window.open('https://wa.me/97125555443', '_blank')
+            },
             delay: 0.1
         },
         {

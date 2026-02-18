@@ -1,5 +1,11 @@
 {
   "buildCommand": "npx prisma db push --accept-data-loss && npm run build",
   "installCommand": "npm install && npx prisma generate",
-  "devCommand": "next dev"
+  "devCommand": "next dev",
+  "crons": [
+    {
+      "path": "/api/cron/daily-report",
+      "schedule": "0 4 * * *"
+    }
+  ]
 }
