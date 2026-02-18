@@ -362,8 +362,8 @@ export const faqs: FAQ[] = [
     id: '6',
     question: 'What are your operating hours?',
     questionAr: 'ما هي ساعات العمل لديكم؟',
-    answer: 'We are open Saturday to Thursday, 8:00 AM to 6:00 PM. Closed on Fridays. Emergency towing is available 24/7.',
-    answerAr: 'نحن مفتوحون من السبت إلى الخميس، من 8:00 صباحًا إلى 6:00 مساءً. مغلق يوم الجمعة. خدمة السحب الطارئة متاحة على مدار الساعة.',
+    answer: 'We are open Monday to Saturday, 8:00 AM to 7:00 PM. Closed on Sundays. Emergency towing is available 24/7.',
+    answerAr: 'نحن مفتوحون من الاثنين إلى السبت، من 8:00 صباحًا إلى 7:00 مساءً. مغلق يوم الأحد. خدمة السحب الطارئة متاحة على مدار الساعة.',
     category: 'general',
   },
 ]

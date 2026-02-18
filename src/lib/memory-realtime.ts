@@ -276,11 +276,11 @@ function getDefaultTimeSlots() {
     date.setDate(date.getDate() + day)
     const dateStr = date.toISOString().split('T')[0]
 
-    // Skip Fridays (5) - day off
-    if (date.getDay() === 5) continue
+    // Skip Sundays (0) - closed day
+    if (date.getDay() === 0) continue
 
-    // Add slots every hour from 8 AM to 6 PM
-    for (let hour = 8; hour < 18; hour++) {
+    // Add slots every hour from 8 AM to 7 PM
+    for (let hour = 8; hour < 19; hour++) {
       slots.push({
         date: dateStr,
         time: `${hour.toString().padStart(2, '0')}:00`,

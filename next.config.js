@@ -2,6 +2,21 @@
 const nextConfig = {
   reactStrictMode: true,
 
+  async redirects() {
+    return [
+      {
+        source: '/new-home/brands/:slug',
+        destination: '/brand/:slug',
+        permanent: true,
+      },
+      {
+        source: '/new-home/brands',
+        destination: '/brands',
+        permanent: true,
+      },
+    ]
+  },
+
   images: {
     remotePatterns: [
       {

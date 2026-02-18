@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import { getAllBrands, getAllServices, FirebaseService } from '@/lib/firebase-db'
@@ -5,6 +6,26 @@ import { notFound } from 'next/navigation'
 import { Shield, Wrench, CheckCircle2, ChevronRight, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params
+    const allBrands = await getAllBrands()
+    const brand = allBrands.find(b => b.slug === slug)
+    const brandName = brand?.name ?? slug.charAt(0).toUpperCase() + slug.slice(1)
+
+    return {
+        title: `${brandName} Service & Repair Abu Dhabi | Smart Motor`,
+        description: `Expert ${brandName} repair and service in Abu Dhabi. Certified technicians, OEM parts, 6-month warranty. Located in Musaffah. Book online or call +971 2 555 5443.`,
+        openGraph: {
+            title: `${brandName} Service Abu Dhabi | Smart Motor Auto Repair`,
+            description: `Trusted ${brandName} specialists in Abu Dhabi. Engine, AC, electrical, PPF & more. Est. 2009. 4.9★ Google rated.`,
+            url: `https://smartmotor.ae/brand/${slug}`,
+        },
+        alternates: {
+            canonical: `https://smartmotor.ae/brand/${slug}`,
+        },
+    }
+}
 
 export default async function BrandPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;

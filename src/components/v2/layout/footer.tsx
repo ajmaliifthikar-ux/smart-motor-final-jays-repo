@@ -66,7 +66,7 @@ export function Footer() {
                                 </TrackedLink>
                             </Tooltip>
                             <Tooltip content="WhatsApp" position="top">
-                                <TrackedLink href="https://wa.me/97125555443" source="footer" medium="social" campaign="whatsapp" label="whatsapp-v2-footer" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
+                                <TrackedLink href="https://wa.me/9718005445" source="footer" medium="social" campaign="whatsapp" label="whatsapp-v2-footer" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
                                     <WhatsAppIcon size={16} />
                                 </TrackedLink>
                             </Tooltip>
@@ -142,7 +142,8 @@ export function Footer() {
                                     <ClockIcon size={18} className="text-[#E62329] flex-shrink-0" />
                                 </Tooltip>
                                 <span className="text-gray-400 font-medium text-sm">
-                                    Daily: 08:00 AM - 07:00 PM
+                                    Mon–Sat: 08:00 AM – 07:00 PM<br />
+                                    <span className="text-[#E62329]/70">Sunday: Closed</span>
                                 </span>
                             </li>
                         </ul>

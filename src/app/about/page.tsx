@@ -1,8 +1,22 @@
+import type { Metadata } from 'next'
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import { CheckCircle2, Award, ArrowUpRight, Shield, Zap } from 'lucide-react'
 import { AdvancedLogoSlider } from '@/components/v2/sections/advanced-logo-slider'
 import { getAllBrands } from '@/lib/firebase-db'
+
+export const metadata: Metadata = {
+    title: 'About Us – Smart Motor Auto Repair | Est. 2009, Abu Dhabi',
+    description: 'Learn about Smart Motor Auto Repair — Abu Dhabi\'s trusted workshop since 2009. 50+ certified technicians, 1,000+ satisfied clients, 6-month labour warranty. Located in Musaffah.',
+    openGraph: {
+        title: 'About Smart Motor Auto Repair Abu Dhabi',
+        description: 'Abu Dhabi\'s premier automotive service center since 2009. 50+ factory-certified technicians, all brands serviced.',
+        url: 'https://smartmotor.ae/about',
+    },
+    alternates: {
+        canonical: 'https://smartmotor.ae/about',
+    },
+}
 
 export default async function AboutPage() {
     let brandsData: any[] = []

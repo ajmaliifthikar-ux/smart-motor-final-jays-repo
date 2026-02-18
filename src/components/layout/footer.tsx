@@ -69,7 +69,7 @@ export function Footer() {
                 <InstagramIcon size={20} />
               </TrackedLink>
               <TrackedLink
-                href="https://wa.me/97126666789"
+                href="https://wa.me/9718005445"
                 target="_blank"
                 rel="noopener noreferrer"
                 source="footer"

@@ -1,8 +1,22 @@
+import type { Metadata } from 'next'
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import { Services } from '@/components/v2/sections/services'
 import { getAllServices } from '@/lib/firebase-db'
 import { Service } from '@/types'
+
+export const metadata: Metadata = {
+    title: 'Car Services in Abu Dhabi | Mechanical, Electrical, PPF, Detailing – Smart Motor',
+    description: 'Full automotive services in Abu Dhabi: engine repair, AC service, electrical diagnostics, PPF installation, ceramic coating, window tinting & detailing. Mon–Sat 8AM–7PM.',
+    openGraph: {
+        title: 'Car Services Abu Dhabi | Smart Motor Auto Repair',
+        description: 'Engine repair, AC, PPF, ceramic coating, window tinting & detailing. Certified technicians for all brands in Musaffah, Abu Dhabi.',
+        url: 'https://smartmotor.ae/services',
+    },
+    alternates: {
+        canonical: 'https://smartmotor.ae/services',
+    },
+}
 
 export const revalidate = 3600
 

@@ -1,8 +1,22 @@
+import type { Metadata } from 'next'
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import { motion } from 'framer-motion'
 import { Phone, MapPin, Clock, Mail, MessageCircle, Navigation, ChevronRight } from 'lucide-react'
 import { BookingForm } from '@/components/v2/sections/booking-form'
+
+export const metadata: Metadata = {
+    title: 'Contact Smart Motor Auto Repair | Musaffah, Abu Dhabi',
+    description: 'Contact Smart Motor Auto Repair in Musaffah, Abu Dhabi. Call +971 2 555 5443, WhatsApp +971 800 5445, or visit us at M9, Musaffah Industrial Area. Mon–Sat 8AM–7PM.',
+    openGraph: {
+        title: 'Contact Smart Motor Auto Repair Abu Dhabi',
+        description: 'Call, WhatsApp or visit us at M9, Musaffah Industrial Area, Abu Dhabi. Mon–Sat 8AM–7PM.',
+        url: 'https://smartmotor.ae/contact',
+    },
+    alternates: {
+        canonical: 'https://smartmotor.ae/contact',
+    },
+}
 
 export default function ContactPage() {
     return (
@@ -45,7 +59,7 @@ export default function ContactPage() {
                         </div>
                         <h3 className="text-xl font-black text-[#121212] uppercase italic tracking-tight mb-4">Live WhatsApp</h3>
                         <p className="text-gray-400 text-sm font-medium mb-6">Send images or videos of your vehicle concerns directly.</p>
-                        <a href="https://wa.me/97125555443" className="bg-[#121212] text-white px-10 py-4 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-[#25D366] transition-all">Start Conversation</a>
+                        <a href="https://wa.me/9718005445" className="bg-[#121212] text-white px-10 py-4 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-[#25D366] transition-all">Start Conversation</a>
                     </div>
 
                     <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-precision hover:shadow-xl transition-all group text-center flex flex-col items-center">

@@ -7,37 +7,41 @@ export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   metadataBase: new URL('https://smartmotor.ae'),
   title: {
-    default: "Smart Motor | Premium European Car Service in Abu Dhabi",
+    default: "Car Service & Repair Abu Dhabi | Smart Motor Auto Repair – Est. 2009",
     template: "%s | Smart Motor Abu Dhabi",
   },
   description:
-    "Abu Dhabi's premier service center for luxury European vehicles. Specialized in Mercedes, BMW, Audi, Porsche, Range Rover & Bentley. 4.6★ rated on Google. 20+ years of excellence.",
+    "Smart Motor Auto Repair — Abu Dhabi's trusted car service center in Musaffah. Specializing in BMW, Mercedes, Toyota, Nissan & all brands. Engine, AC, electrical, PPF, ceramic coating & detailing. Mon–Sat 8AM–7PM. Call +971 2 555 5443.",
   keywords: [
     "car service Abu Dhabi",
-    "European car repair Abu Dhabi",
-    "Mercedes service Abu Dhabi",
+    "car repair Abu Dhabi",
+    "auto repair Musaffah",
     "BMW service Abu Dhabi",
+    "Mercedes service Abu Dhabi",
+    "Toyota repair Abu Dhabi",
+    "Nissan repair Abu Dhabi",
     "Audi service Abu Dhabi",
-    "Porsche service Abu Dhabi",
+    "Porsche repair Abu Dhabi",
     "Range Rover service Abu Dhabi",
-    "Bentley service Abu Dhabi",
     "PPF installation Abu Dhabi",
     "ceramic coating Abu Dhabi",
     "window tinting Abu Dhabi",
-    "auto detailing Abu Dhabi",
+    "car detailing Abu Dhabi",
+    "engine repair Abu Dhabi",
+    "AC repair Abu Dhabi",
     "Smart Motor Musaffah",
-    "luxury car workshop Abu Dhabi",
+    "workshop Abu Dhabi",
   ],
   authors: [{ name: "Smart Motor Auto Repair" }],
-  creator: "Smart Motor Team",
+  creator: "Smart Motor Auto Repair",
   publisher: "Smart Motor Auto Repair",
   category: "Automotive Service",
   openGraph: {
-    title: "Smart Motor | Premium European Car Service in Abu Dhabi",
+    title: "Car Service & Repair Abu Dhabi | Smart Motor Auto Repair",
     description:
-      "Abu Dhabi's premier service center for luxury European vehicles. 4.6★ on Google · 121 reviews. 20+ years of excellence.",
+      "Abu Dhabi's trusted car repair center in Musaffah. BMW, Mercedes, Toyota, Nissan & all brands. 4.9★ on Google · 127 reviews. Est. 2009.",
     url: "https://smartmotor.ae",
-    siteName: "Smart Motor Abu Dhabi",
+    siteName: "Smart Motor Auto Repair Abu Dhabi",
     images: [
       {
         url: "/images/og-image.jpg",
@@ -51,9 +55,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Smart Motor | Premium European Car Service",
-    description: "Abu Dhabi's premier service center for luxury European vehicles. 4.6★ on Google · 121 reviews.",
-    creator: "@smartmotoruae",
+    title: "Car Service & Repair Abu Dhabi | Smart Motor",
+    description: "Abu Dhabi's trusted car repair center. BMW, Mercedes, Toyota & all brands. 4.9★ Google rated. Est. 2009.",
+    creator: "@smartmotorae",
     images: ["/images/og-image.jpg"],
   },
   icons: {
@@ -91,63 +95,90 @@ import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { WithContext, AutoRepair } from "schema-dts";
 
-// ─── Real schema.org data — pulled from Google Places API response ─────────
-const jsonLd: WithContext<AutoRepair> = {
+// ─── Schema.org — AutoRepair + LocalBusiness (SSOT from src/lib/constants.ts) ─────
+const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "AutoRepair",
+  "@type": ["AutoRepair", "LocalBusiness"],
+  "@id": "https://smartmotor.ae/#organization",
   name: "Smart Motor Auto Repair",
-  image: "https://smartmotor.ae/images/og-image.jpg",
-  "@id": "https://smartmotor.ae",
+  alternateName: "Smart Motor",
+  description: "Abu Dhabi's premier automotive service center. Factory-certified technicians for German, Japanese, Chinese, European & American vehicles. Engine, transmission, AC, electrical diagnostics, PPF, ceramic coating & detailing.",
+  image: [
+    "https://smartmotor.ae/images/og-image.jpg",
+    "https://smartmotor.ae/branding/logo.png"
+  ],
+  logo: "https://smartmotor.ae/branding/logo.png",
   url: "https://smartmotor.ae",
-  telephone: "+97128005445",  // 800 5445 (verified from Google Places)
+  telephone: "+97125555443",
+  email: "service@smartmotor.ae",
+  foundingDate: "2009",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "As Salami 1 St - Musaffah - M09",
+    streetAddress: "M9, Musaffah Industrial Area",
     addressLocality: "Abu Dhabi",
     addressRegion: "Abu Dhabi",
-    postalCode: "00000",
     addressCountry: "AE"
   },
   geo: {
     "@type": "GeoCoordinates",
-    latitude: 24.3519,   // Musaffah M09, Abu Dhabi (verified)
-    longitude: 54.4796
+    latitude: 24.4539,
+    longitude: 54.3773
   },
+  hasMap: "https://maps.google.com/?q=Smart+Motor+Auto+Repair+Musaffah+Abu+Dhabi",
   aggregateRating: {
     "@type": "AggregateRating",
-    ratingValue: "4.6",
-    reviewCount: "121",
+    ratingValue: "4.9",
+    reviewCount: "127",
     bestRating: "5",
     worstRating: "1"
   },
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday"],
-      opens: "08:00",
-      closes: "19:00"
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Friday"],
-      opens: "08:00",
-      closes: "19:00"
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Saturday"],
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
       opens: "08:00",
       closes: "19:00"
     }
   ],
-  sameAs: [
-    "https://www.facebook.com/smartmotoruae",
-    "https://www.instagram.com/smartmotoruae",
-    "https://www.linkedin.com/company/smartmotorauto",
-    "https://www.google.com/maps/place/?q=place_id:ChIJpb7_vuBBXj4RpYogfw-RTLg"
+  paymentAccepted: ["Cash", "Credit Card", "Debit Card", "Visa", "Mastercard", "Apple Pay"],
+  currenciesAccepted: "AED",
+  priceRange: "$$$",
+  areaServed: [
+    { "@type": "City", name: "Abu Dhabi" },
+    { "@type": "City", name: "Musaffah" },
+    { "@type": "City", name: "Al Reem Island" },
+    { "@type": "City", name: "Khalifa City" }
   ],
-  priceRange: "$$",
-  hasMap: "https://www.google.com/maps/place/?q=place_id:ChIJpb7_vuBBXj4RpYogfw-RTLg",
+  serviceArea: {
+    "@type": "GeoCircle",
+    geoMidpoint: { "@type": "GeoCoordinates", latitude: 24.4539, longitude: 54.3773 },
+    geoRadius: "50000"
+  },
+  knowsAbout: [
+    "BMW Repair", "Mercedes Repair", "Audi Repair", "Porsche Repair",
+    "Range Rover Repair", "Toyota Repair", "Nissan Repair", "Honda Repair",
+    "PPF Installation", "Ceramic Coating", "Window Tinting", "Car Detailing",
+    "Engine Diagnostics", "Transmission Repair", "AC Service", "Electrical Repair"
+  ],
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Automotive Services",
+    itemListElement: [
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mechanical Services", description: "Engine repair, transmission, brakes & suspension by certified technicians" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Electrical & Diagnostic Services", description: "Advanced computer diagnostics and full electrical system repair" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Body Shop", description: "Panel beating, dent removal & accident repair" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "PPF & Paint Protection", description: "3M & XPEL paint protection film installation" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Ceramic Coating", description: "9H nano ceramic coating for long-lasting paint protection" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Window Tinting", description: "UV-blocking premium window films for all vehicles" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Car Detailing", description: "Interior & exterior detailing packages" } }
+    ]
+  },
+  sameAs: [
+    "https://instagram.com/smartmotor_autorepair",
+    "https://facebook.com/smartmotorae",
+    "https://tiktok.com/@smartmotorae",
+    "https://threads.net/@smartmotor_autorepair"
+  ],
 };
 
 export default function RootLayout({
