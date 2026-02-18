@@ -4,14 +4,14 @@ import nodemailer from 'nodemailer'
 // Email service configuration
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
-// SMTP fallback
+// SMTP transporter — uses EMAIL_* vars (GreenGeeks, port 465 SSL)
 const smtpTransporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'sgp200.greengeeks.net',
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: false, // Use TLS
+    host: process.env.EMAIL_HOST || 'sgp200.greengeeks.net',
+    port: parseInt(process.env.EMAIL_PORT || '465'),
+    secure: true, // SSL on port 465
     auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD,
+        user: process.env.EMAIL_USER || 'notifications@smartmotor.ae',
+        pass: process.env.EMAIL_PASSWORD,
     },
 })
 
@@ -26,7 +26,7 @@ interface EmailOptions {
  * Send email using Resend (preferred) or SMTP fallback
  */
 export async function sendEmail(options: EmailOptions) {
-    const from = process.env.EMAIL_FROM || process.env.SMTP_FROM || 'Smart Motor <noreply@smartmotor.ae>'
+    const from = process.env.EMAIL_FROM || 'Smart Motor <notifications@smartmotor.ae>'
 
     try {
         // Try Resend first (faster, more reliable)
@@ -48,7 +48,7 @@ export async function sendEmail(options: EmailOptions) {
         }
 
         // Fallback to SMTP
-        if (process.env.SMTP_USER) {
+        if (process.env.EMAIL_USER || process.env.EMAIL_PASSWORD) {
             const info = await smtpTransporter.sendMail({
                 from,
                 to: Array.isArray(options.to) ? options.to.join(', ') : options.to,

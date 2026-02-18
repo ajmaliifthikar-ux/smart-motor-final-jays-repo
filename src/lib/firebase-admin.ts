@@ -16,6 +16,9 @@ if (!admin.apps.length) {
 
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+    // Realtime Database URL — required for admin.database() calls
+    databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL ||
+      'https://smartmotoruae-default-rtdb.asia-southeast1.firebasedatabase.app',
   })
 }
 
