@@ -1,6 +1,6 @@
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
-import { getAllBrands } from '@/lib/firebase-db'
+import { getAllBrands, getServicesByBrand, getAllServices } from '@/lib/firebase-db'
 import { notFound } from 'next/navigation'
 import { Shield, Wrench, CheckCircle2, ChevronRight, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -16,7 +16,18 @@ export default async function BrandPage({ params }: { params: Promise<{ slug: st
     }
 
     const models = brand.description ? brand.description.split(',') : []
-    const specialties: string[] = [] // Specialties not available in Firebase brand model
+
+    // Get services available for this brand
+    let services = []
+    if (brand.serviceIds && brand.serviceIds.length > 0) {
+        const allServices = await getAllServices()
+        services = allServices.filter(s => brand.serviceIds?.includes(s.slug)) || []
+    }
+
+    // Keep specialties from service names if available
+    const specialties = services.length > 0
+        ? services.slice(0, 4).map(s => s.name)
+        : []
 
     return (
         <main className="min-h-screen bg-[#FAFAF9]">
@@ -51,22 +62,53 @@ export default async function BrandPage({ params }: { params: Promise<{ slug: st
                 </div>
             </section>
 
-            {/* Specialties & Models */}
+            {/* Services & Models */}
             <section className="py-24 max-w-7xl mx-auto px-6 md:px-12">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                    {/* Specialties */}
+                    {/* Services & Specialties */}
                     <div className="lg:col-span-2 space-y-12">
+                        {/* Services Section */}
+                        {services.length > 0 && (
+                            <div>
+                                <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#E62329] mb-8">Available Services</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {services.map((service) => (
+                                        <Link
+                                            key={service.id}
+                                            href={`/new-home/services/${service.slug}`}
+                                            className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col items-start gap-4 group hover:shadow-xl hover:border-[#E62329] transition-all duration-500"
+                                        >
+                                            <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-[#121212] group-hover:bg-[#E62329] group-hover:text-white transition-colors duration-500">
+                                                <CheckCircle2 size={20} />
+                                            </div>
+                                            <div className="flex-1">
+                                                <h4 className="font-black text-[#121212] uppercase tracking-tighter text-lg mb-1">{service.name}</h4>
+                                                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest line-clamp-2">{service.description}</p>
+                                            </div>
+                                            <div className="w-full pt-4 border-t border-gray-100 flex items-center justify-between">
+                                                <span className="text-[10px] font-black text-[#E62329] uppercase">Learn More</span>
+                                                <ChevronRight size={16} className="text-gray-300 group-hover:text-[#E62329] transition-colors" />
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Models/Specialties */}
                         <div>
-                            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#E62329] mb-8">Engineering Specialties</h2>
+                            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#E62329] mb-8">
+                                {services.length > 0 ? 'Additional Services & Models' : 'Engineering Specialties'}
+                            </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {specialties.map((spec, i) => (
+                                {specialties.slice(0, 4).map((spec, i) => (
                                     <div key={i} className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm flex items-start gap-5 group hover:shadow-xl transition-all duration-500">
                                         <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-[#121212] group-hover:bg-[#E62329] group-hover:text-white transition-colors duration-500">
                                             <Wrench size={20} />
                                         </div>
                                         <div>
                                             <h4 className="font-black text-[#121212] uppercase tracking-tighter text-lg mb-1">{spec}</h4>
-                                            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Precision Calibration</p>
+                                            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Expert Service</p>
                                         </div>
                                     </div>
                                 ))}

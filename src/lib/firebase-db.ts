@@ -303,6 +303,23 @@ export async function getAllServices(): Promise<FirebaseService[]> {
   }
 }
 
+export async function getServicesByBrand(brandId: string): Promise<FirebaseService[]> {
+  try {
+    // First get the brand to find its service IDs
+    const brand = await getBrand(brandId)
+    if (!brand || !brand.serviceIds || brand.serviceIds.length === 0) {
+      return []
+    }
+
+    // Fetch all services and filter by the brand's service IDs
+    const allServices = await getAllServices()
+    return allServices.filter(service => brand.serviceIds?.includes(service.slug))
+  } catch (error) {
+    console.error('Error fetching services for brand:', error)
+    return []
+  }
+}
+
 export async function createService(
   serviceData: Omit<FirebaseService, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<string> {
@@ -344,6 +361,7 @@ export interface FirebaseBrand {
   description?: string
   logoUrl?: string
   image?: string
+  serviceIds?: string[] // Service slugs available for this brand
   createdAt: Timestamp
   updatedAt: Timestamp
 }

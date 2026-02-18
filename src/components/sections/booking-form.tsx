@@ -143,13 +143,18 @@ export function BookingForm() {
       const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(result.message || result.error || 'Booking failed')
+        const errorMessage = result.message || result.error || result.details?.fieldErrors ? Object.values(result.details.fieldErrors).flat().join(', ') : 'Booking failed'
+        throw new Error(errorMessage)
       }
 
+      // Success - show confirmation screen
       setIsSubmitted(true)
+      toast.success('Booking confirmed! Your appointment has been scheduled.')
     } catch (error: any) {
       console.error(error)
-      alert(error.message || "Failed to confirm booking. Please try again.")
+      const errorMsg = error.message || "Failed to confirm booking. Please try again."
+      toast.error(errorMsg)
+      // Don't reset form on error - let user fix and retry
     } finally {
       setIsSubmitting(false)
     }
@@ -265,37 +270,43 @@ export function BookingForm() {
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 max-h-[500px] overflow-y-auto p-4 subtle-scrollbar">
                         {filteredBrands.length > 0 ? (
                           filteredBrands.map((b) => (
-                            <button
-                              key={b.id}
-                              type="button"
-                              onClick={() => { setValue('brand', b.name); setValue('model', ''); setModelSearch('') }}
-                              className={cn(
-                                "aspect-square rounded-[2rem] flex flex-col items-center justify-center bg-white border-2 transition-all duration-500 gap-4 group relative overflow-hidden p-6 shadow-sm",
-                                selectedBrand === b.name 
-                                  ? "border-[#E62329] bg-white ring-4 ring-[#E62329]/10 shadow-xl scale-[1.02]" 
-                                  : "border-transparent hover:border-gray-200 hover:shadow-lg hover:scale-[1.02]"
-                              )}
-                            >
-                              <div className="w-16 h-16 flex items-center justify-center transition-transform duration-700 group-hover:scale-110">
-                                <img 
-                                  src={b.logoFile ? `/brands-carousel/${b.logoFile}` : `/google-logo.svg`} 
-                                  alt={b.name} 
-                                  className={cn("w-full h-full object-contain transition-all duration-500", selectedBrand === b.name ? "opacity-100 scale-110" : "opacity-40 grayscale group-hover:opacity-100 group-hover:grayscale-0")} 
-                                />
-                              </div>
-                              <span className={cn(
-                                "text-[10px] font-black uppercase tracking-[0.2em] text-center leading-tight transition-colors duration-500",
-                                selectedBrand === b.name ? "text-[#E62329]" : "text-gray-400 group-hover:text-[#121212]"
-                              )}>
+                            <div key={b.id} className="relative group">
+                              <button
+                                type="button"
+                                onClick={() => { setValue('brand', b.name); setValue('model', ''); setModelSearch('') }}
+                                className={cn(
+                                  "w-full aspect-square rounded-[2rem] flex items-center justify-center bg-white border-2 transition-all duration-500 relative overflow-hidden p-6 shadow-sm",
+                                  selectedBrand === b.name
+                                    ? "border-[#E62329] bg-white ring-4 ring-[#E62329]/10 shadow-xl scale-[1.02]"
+                                    : "border-transparent hover:border-gray-200 hover:shadow-lg hover:scale-[1.02]"
+                                )}
+                                title={b.name}
+                              >
+                                <div className="w-full h-full flex items-center justify-center transition-transform duration-700 group-hover:scale-110">
+                                  <img
+                                    src={b.logoFile ? `/brands-carousel/${b.logoFile}` : `/bg-placeholder.jpg`}
+                                    alt={b.name}
+                                    className={cn(
+                                      "w-[80%] h-[80%] object-contain transition-all duration-500",
+                                      selectedBrand === b.name ? "opacity-100 scale-110" : "opacity-60 grayscale group-hover:opacity-100 group-hover:grayscale-0"
+                                    )}
+                                    onError={(e) => {
+                                      e.currentTarget.src = `/bg-placeholder.jpg`
+                                    }}
+                                  />
+                                </div>
+                                {selectedBrand === b.name && (
+                                  <motion.div
+                                    layoutId="activeBrand"
+                                    className="absolute inset-0 bg-[#E62329]/5 pointer-events-none rounded-[2rem]"
+                                  />
+                                )}
+                              </button>
+                              {/* Tooltip - only show on hover */}
+                              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-[#121212] text-white text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50">
                                 {b.name}
-                              </span>
-                              {selectedBrand === b.name && (
-                                <motion.div 
-                                  layoutId="activeBrand"
-                                  className="absolute inset-0 bg-[#E62329]/5 pointer-events-none"
-                                />
-                              )}
-                            </button>
+                              </div>
+                            </div>
                           ))
                         ) : (
                           <div className="col-span-full py-12 text-center">

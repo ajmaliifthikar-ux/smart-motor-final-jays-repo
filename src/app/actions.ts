@@ -11,10 +11,38 @@ export async function getBrandsWithModels() {
                 const brands = await getAllBrands()
                 // If Firebase has brands, use them
                 if (brands && brands.length > 0) {
-                    return brands.map(b => ({
-                        ...b,
-                        models: []
-                    }))
+                    return brands.map(b => {
+                        // Map brand name to logo file if logoUrl not provided
+                        let logoFile = b.logoUrl
+                        if (!logoFile) {
+                            const nameToFile: Record<string, string> = {
+                                'Mercedes-Benz': 'mercedes-logo.png',
+                                'BMW': 'bmw-logo.png',
+                                'Audi': 'audi-logo-150x150-1.png',
+                                'Porsche': 'porsche-logo.png',
+                                'Range Rover': 'range-rover-logo.png',
+                                'Bentley': 'bentley-logo-150x150-1.png',
+                                'Lamborghini': 'lamborghini-logo.png',
+                                'Bugatti': 'Bugatti-logo.png',
+                                'Rolls-Royce': 'rolls-royce-logo.png',
+                                'Ferrari': 'ferrari-logo.png',
+                                'Alfa Romeo': 'alfa-romeo-logo.png',
+                                'Aston Martin': 'aston-martin-logo.png',
+                                'Cadillac': 'cadillac.png',
+                                'Chevrolet': 'chevrolet.png',
+                                'Chrysler': 'chrysler-logo.png',
+                                'Dodge': 'dodge-logo.png',
+                                'Ford': 'ford-logo.png',
+                                'Genesis': 'genesis-logo.png',
+                            }
+                            logoFile = nameToFile[b.name]
+                        }
+                        return {
+                            ...b,
+                            logoFile,
+                            models: []
+                        }
+                    })
                 }
             } catch (err) {
                 console.warn("Firebase brands fetch failed, using local data:", err)
@@ -29,7 +57,7 @@ export async function getBrandsWithModels() {
                     allBrands.push({
                         id: brand.id,
                         name: brand.name,
-                        logo: brand.logo,
+                        logoFile: brand.logo, // Map logo to logoFile for consistency
                         description: brand.description,
                         models: brand.models || []
                     })
