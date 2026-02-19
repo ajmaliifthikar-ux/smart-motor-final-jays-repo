@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { Star, TrendingUp, MapPin, Phone, Clock, ExternalLink, RefreshCw, Quote, ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { GoogleBusinessData } from '@/app/api/google/reviews/route'
+import { DashboardWidget } from '../dashboard/dashboard-widget'
+import { Skeleton } from '@/components/ui/skeleton'
 
 function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
     return (
@@ -13,6 +15,27 @@ function StarRating({ rating, size = 14 }: { rating: number; size?: number }) {
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
             ))}
+        </div>
+    )
+}
+
+function GoogleBusinessSkeleton() {
+    return (
+        <div className="space-y-6">
+            <div className="flex items-start justify-between">
+                <div className="space-y-2">
+                    <Skeleton className="h-12 w-24 rounded-xl" />
+                    <Skeleton className="h-4 w-32" />
+                </div>
+                <Skeleton className="h-8 w-20 rounded-full" />
+            </div>
+            <div className="space-y-2">
+                {[1, 2, 3].map(i => (
+                    <Skeleton key={i} className="h-2 w-full rounded-full" />
+                ))}
+            </div>
+            <Skeleton className="h-32 w-full rounded-2xl" />
+            <Skeleton className="h-40 w-full rounded-2xl" />
         </div>
     )
 }
@@ -52,25 +75,19 @@ export function GoogleBusinessWidget() {
     }))
 
     return (
-        <div className="rounded-3xl border border-gray-100 bg-white overflow-hidden shadow-sm">
-            {/* Header */}
-            <div className="bg-[#121212] px-6 py-5 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center p-1.5 shadow">
-                        <img src="/google-logo.svg" alt="Google" className="w-full h-full object-contain" />
-                    </div>
-                    <div>
-                        <p className="text-white font-black text-sm uppercase tracking-widest">Google Business</p>
-                        <p className="text-white/40 text-[10px] font-medium">Live performance data</p>
-                    </div>
-                </div>
+        <DashboardWidget
+            title="Google Business"
+            subtitle="Live performance data"
+            delay={0.7}
+            className="p-0 border-none shadow-none"
+            headerAction={
                 <div className="flex items-center gap-2">
                     {data?.placeId && (
                         <a
                             href={`https://www.google.com/maps/place/?q=place_id:${data.placeId}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 rounded-xl bg-white/10 text-white/60 hover:text-white hover:bg-white/20 transition-colors"
+                            className="p-2 rounded-xl bg-[#121212]/5 text-[#121212]/60 hover:text-[#121212] hover:bg-[#121212]/10 transition-colors"
                             title="View on Google Maps"
                         >
                             <ExternalLink size={14} />
@@ -79,23 +96,17 @@ export function GoogleBusinessWidget() {
                     <button
                         onClick={fetchData}
                         disabled={isLoading}
-                        className="p-2 rounded-xl bg-white/10 text-white/60 hover:text-white hover:bg-white/20 transition-colors disabled:opacity-40"
+                        className="p-2 rounded-xl bg-[#121212]/5 text-[#121212]/60 hover:text-[#121212] hover:bg-[#121212]/10 transition-colors disabled:opacity-40"
                         title="Refresh data"
                     >
                         <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
                     </button>
                 </div>
-            </div>
-
-            {/* Body */}
-            <div className="p-6 space-y-6">
+            }
+        >
+            <div className="space-y-6">
                 {isLoading && !data ? (
-                    <div className="h-48 flex items-center justify-center">
-                        <div className="flex flex-col items-center gap-3">
-                            <RefreshCw size={24} className="animate-spin text-gray-300" />
-                            <p className="text-sm text-gray-400 font-medium">Fetching live data...</p>
-                        </div>
-                    </div>
+                    <GoogleBusinessSkeleton />
                 ) : error ? (
                     <div className="h-48 flex items-center justify-center">
                         <div className="text-center space-y-3">
@@ -132,7 +143,7 @@ export function GoogleBusinessWidget() {
                                 </div>
                                 <div className="flex items-center gap-1 justify-end text-gray-400">
                                     <TrendingUp size={12} className="text-green-500" />
-                                    <span className="text-[10px] font-bold">Top rated in Abu Dhabi</span>
+                                    <span className="text-[10px] font-bold">Top rated</span>
                                 </div>
                             </div>
                         </div>
@@ -231,34 +242,15 @@ export function GoogleBusinessWidget() {
                             </div>
                         )}
 
-                        {/* Photo strip (if available) */}
-                        {data.photoUrls && data.photoUrls.length > 0 && (
-                            <div>
-                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Google Photos</p>
-                                <div className="grid grid-cols-3 gap-2">
-                                    {data.photoUrls.slice(0, 6).map((url, i) => (
-                                        <div key={i} className="aspect-square rounded-xl overflow-hidden bg-gray-100">
-                                            <img
-                                                src={url}
-                                                alt={`Smart Motor photo ${i + 1}`}
-                                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                                                loading="lazy"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
                         {/* Last updated */}
                         {lastUpdated && (
-                            <p className="text-[9px] text-gray-300 text-center font-medium">
+                            <p className="text-[9px] text-gray-300 text-center font-medium pt-4">
                                 Last synced: {lastUpdated.toLocaleTimeString()}
                             </p>
                         )}
                     </>
                 )}
             </div>
-        </div>
+        </DashboardWidget>
     )
 }
