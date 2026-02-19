@@ -39,6 +39,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isVoiceMode, setIsVoiceMode] = useState(false)
+  const [conversationId] = useState(() => `conv_${Date.now()}_${Math.random().toString(36).substring(7)}`)
   
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -86,8 +87,6 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
     if (!overrideText) setInput('')
     setIsLoading(true)
     
-    const [conversationId] = useState(`conv_${Date.now()}_${Math.random().toString(36).substring(7)}`)
-// ...
     try {
         const response = await fetch('/api/ai/chat', {
             method: 'POST',
@@ -144,7 +143,11 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
+            <button
+                onClick={onClose}
+                aria-label="Close chat"
+                className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10"
+            >
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -271,6 +274,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                   if (e.key === 'Enter') handleSend()
                 }}
                 placeholder="Ask anything..."
+                aria-label="Chat message"
                 className="flex-1 text-xs font-bold bg-transparent border-0 py-2 focus:ring-0 placeholder:text-gray-300"
                 disabled={isLoading || isVoiceMode}
               />
@@ -278,6 +282,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
               <div className="flex items-center gap-1">
                 <button
                     onClick={isVoiceMode ? stopVoiceMode : startVoiceMode}
+                    aria-label="Toggle voice mode"
                     className={cn(
                     "w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-500 group",
                     isVoiceMode 
@@ -290,6 +295,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 
                 <Button
                     onClick={() => handleSend()}
+                    aria-label="Send message"
                     disabled={isLoading || !input.trim() || isVoiceMode}
                     className="rounded-lg bg-[#121212] hover:bg-[#E62329] w-9 h-9 p-0 transition-all duration-500 shadow-xl"
                 >
