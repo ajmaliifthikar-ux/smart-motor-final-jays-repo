@@ -34,9 +34,17 @@ export function Hero({ cmsData }: HeroProps) {
     const imageUrl = cmsData?.imageUrl || publicPath('/images/hero/Hero-Wagon.webp')
     const ctaLabel = cmsData?.ctaLabel || "Book Appointment"
     const ctaLink = cmsData?.ctaLink || "booking"
+    const isVisible = cmsData?.isVisible !== false
+    const theme = cmsData?.theme || 'light'
+
+    if (!isVisible) return null
 
     return (
-        <section className="relative flex-1 min-h-screen flex items-center overflow-hidden bg-white pt-32 pb-20">
+        <section className={cn(
+            "relative flex-1 min-h-screen flex items-center overflow-hidden pt-32 pb-20 transition-colors duration-700",
+            theme === 'dark' ? "bg-[#121212] text-white" : "bg-white text-[#121212]",
+            theme === 'glass' && "bg-white/10 backdrop-blur-md"
+        )}>
             {/* Added top padding to avoid nav overlap and centering */}
 
             {/* Full-width vehicle image — positioned right */}
@@ -45,10 +53,15 @@ export function Hero({ cmsData }: HeroProps) {
                     className="absolute inset-0 bg-cover bg-center md:bg-[center_top_0px]"
                     style={{ backgroundImage: `url(${imageUrl})` }}
                 />
-                <div className={`absolute inset-0 pointer-events-none ${isRTL
-                    ? 'bg-gradient-to-l from-transparent via-white/50 to-white/98'
-                    : 'bg-gradient-to-r from-white/95 via-white/80 to-transparent' // Slightly stronger fade for text readability
-                    }`} />
+                <div className={cn(
+                    "absolute inset-0 pointer-events-none transition-all duration-700",
+                    isRTL
+                        ? 'bg-gradient-to-l from-transparent via-white/50 to-white/98'
+                        : 'bg-gradient-to-r from-white/95 via-white/80 to-transparent',
+                    theme === 'dark' && (isRTL 
+                        ? 'bg-gradient-to-l from-transparent via-black/50 to-black/98' 
+                        : 'bg-gradient-to-r from-black/95 via-black/80 to-transparent')
+                )} />
             </div>
 
             {/* Content centered */}
@@ -60,14 +73,24 @@ export function Hero({ cmsData }: HeroProps) {
                     className="flex flex-col items-center"
                 >
                     {/* Badge */}
-                    <div className="relative inline-flex items-center gap-2.5 px-6 py-2 rounded-full mb-8 shadow-2xl bg-white/10 backdrop-blur-md border border-white/20">
+                    <div className={cn(
+                        "relative inline-flex items-center gap-2.5 px-6 py-2 rounded-full mb-8 shadow-2xl border border-white/20",
+                        theme === 'dark' ? "bg-white/5 backdrop-blur-md" : "bg-white/10 backdrop-blur-md"
+                    )}>
                         <span className="relative z-10 w-2 h-2 bg-[#E62329] rounded-full animate-pulse shadow-[0_0_10px_#E62329]" />
-                        <span className="relative z-10 text-[11px] font-black uppercase tracking-[0.2em] text-[#121212]">
+                        <span className={cn(
+                            "relative z-10 text-[11px] font-black uppercase tracking-[0.2em]",
+                            theme === 'dark' ? "text-white" : "text-[#121212]"
+                        )}>
                             Smart Choices Start Here
                         </span>
                     </div>
 
-                    <h1 className={`flex flex-col items-center mb-10 tracking-tighter text-[#121212] ${isRTL ? 'font-arabic tracking-normal' : ''}`}>
+                    <h1 className={cn(
+                        "flex flex-col items-center mb-10 tracking-tighter",
+                        theme === 'dark' ? "text-white" : "text-[#121212]",
+                        isRTL ? 'font-arabic tracking-normal' : ''
+                    )}>
                         <span className="text-4xl md:text-6xl font-black leading-tight uppercase block mb-2 drop-shadow-sm">
                             {title}
                         </span>
@@ -76,7 +99,11 @@ export function Hero({ cmsData }: HeroProps) {
                         </span>
                     </h1>
 
-                    <p className={`text-gray-600 text-base md:text-lg lg:text-xl max-w-3xl leading-relaxed mb-8 font-medium px-2 ${isRTL ? 'font-arabic' : ''}`}>
+                    <p className={cn(
+                        "text-base md:text-lg lg:text-xl max-w-3xl leading-relaxed mb-8 font-medium px-2",
+                        theme === 'dark' ? "text-white/70" : "text-gray-600",
+                        isRTL ? 'font-arabic' : ''
+                    )}>
                         {body}
                     </p>
 

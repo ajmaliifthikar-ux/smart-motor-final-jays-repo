@@ -34,10 +34,8 @@ Goal: Build the interface to browse and restore historical content states.
 ## Phase 4: Section Polishing & Visibility Toggles
 Goal: Implement layout options and visibility controls for core sections.
 
-- [~] Task: Add "Visibility" and "Layout" toggles to the Section Editor.
-    - [ ] Write Tests: Verify that toggling visibility hides the section for non-admin users.
-    - [ ] Implement Feature: Add "Show/Hide" and "Theme (Light/Dark/Glass)" options to the editing forms.
-- [ ] Task: Final Polish & "Gold Standard" Audit.
+- [x] Task: Add "Visibility" and "Layout" toggles to the Section Editor. (98f290b)
+- [~] Task: Final Polish & "Gold Standard" Audit.
     - [ ] Write Tests: Ensure 100% of new UI components are keyboard and screen-reader accessible.
     - [ ] Implement Feature: Refine animations (Framer Motion) and responsive styles for all admin tools.
 - [ ] Task: Conductor - User Manual Verification 'Phase 4: Section Polishing & Visibility Toggles' (Protocol in workflow.md)

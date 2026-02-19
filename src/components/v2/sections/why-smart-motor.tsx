@@ -61,9 +61,17 @@ interface WhySmartMotorProps {
 export function WhySmartMotor({ cmsData }: WhySmartMotorProps) {
     const title = cmsData?.title || "The Smart <span className=\"silver-shine\">Definition</span>"
     const subtitle = cmsData?.subtitle || "Why Smart Motor?"
+    const isVisible = cmsData?.isVisible !== false
+    const theme = cmsData?.theme || 'light'
+
+    if (!isVisible) return null
 
     return (
-        <section id="why-us" className="py-24 bg-white relative overflow-hidden">
+        <section id="why-us" className={cn(
+            "py-24 relative overflow-hidden transition-colors duration-700",
+            theme === 'dark' ? "bg-[#121212] text-white" : "bg-white text-[#121212]",
+            theme === 'glass' && "bg-white/10 backdrop-blur-md"
+        )}>
             <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col lg:flex-row gap-16 items-center">
 
                 {/* ── Left: 2×2 image grid ── */}
@@ -76,7 +84,10 @@ export function WhySmartMotor({ cmsData }: WhySmartMotorProps) {
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: img.delay, duration: 0.5 }}
-                                className={`relative rounded-[2rem] overflow-hidden shadow-lg group aspect-square${idx === 1 || idx === 3 ? ' mt-8 md:mt-12' : ''}`}
+                                className={cn(
+                                    "relative rounded-[2rem] overflow-hidden shadow-lg group aspect-square",
+                                    (idx === 1 || idx === 3) && "mt-8 md:mt-12"
+                                )}
                             >
                                 <img src={img.src} alt={img.alt} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
@@ -96,7 +107,10 @@ export function WhySmartMotor({ cmsData }: WhySmartMotorProps) {
                         {subtitle}
                     </span>
                     <h2 
-                        className="text-4xl md:text-5xl font-black text-[#121212] tracking-tighter uppercase leading-[0.9] mb-10"
+                        className={cn(
+                            "text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.9] mb-10",
+                            theme === 'dark' ? "text-white" : "text-[#121212]"
+                        )}
                         dangerouslySetInnerHTML={{ __html: title }}
                     />
 
@@ -126,10 +140,16 @@ export function WhySmartMotor({ cmsData }: WhySmartMotorProps) {
                                 </div>
 
                                 <div>
-                                    <h4 className="text-[15px] font-bold text-[#121212] group-hover:text-[#E62329] transition-colors leading-snug mb-0.5">
+                                    <h4 className={cn(
+                                        "text-[15px] font-bold group-hover:text-[#E62329] transition-colors leading-snug mb-0.5",
+                                        theme === 'dark' ? "text-white" : "text-[#121212]"
+                                    )}>
                                         {feature.title}
                                     </h4>
-                                    <p className="text-gray-500 text-sm leading-relaxed">{feature.desc}</p>
+                                    <p className={cn(
+                                        "text-sm leading-relaxed",
+                                        theme === 'dark' ? "text-white/60" : "text-gray-500"
+                                    )}>{feature.desc}</p>
                                 </div>
                             </motion.div>
                         ))}
