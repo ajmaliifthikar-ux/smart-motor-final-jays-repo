@@ -16,10 +16,10 @@ Goal: Implement the "Edit" overlays and forms for Hero, About, and Mission secti
 - [x] Task: Create a reusable `SectionEditor` wrapper component with a contextual menu. (d86c361)
     - [ ] Write Tests: Verify the "Edit" button only appears when `isAdminMode` is true.
     - [ ] Implement Feature: Build the overlay UI with "Edit Content" and "Browse History" options.
-- [~] Task: Build the "Edit Content" form (Dialog) for section metadata.
+- [x] Task: Build the "Edit Content" form (Dialog) for section metadata. (7e4c535)
     - [ ] Write Tests: Verify form validation for text, media URLs, and CTA fields.
     - [ ] Implement Feature: Create a Radix-based Dialog with fields for Headings, Subheadings, Media, and CTAs.
-- [ ] Task: Integrate `updateContentBlock` with the frontend forms.
+- [~] Task: Integrate `updateContentBlock` with the frontend forms.
     - [ ] Write Tests: Verify that saving the form triggers a successful database update and revalidation.
     - [ ] Implement Feature: Connect the "Save" button to the Firestore CMS utility.
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Contextual Section Editing' (Protocol in workflow.md)

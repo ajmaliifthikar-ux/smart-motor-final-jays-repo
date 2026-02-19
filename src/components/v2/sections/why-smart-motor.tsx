@@ -50,7 +50,18 @@ const images = [
 // CSS filter to tint any PNG to the brand red #E62329
 const RED_FILTER = 'brightness(0) saturate(100%) invert(18%) sepia(96%) saturate(4000%) hue-rotate(349deg) brightness(88%) contrast(108%)'
 
-export function WhySmartMotor() {
+interface WhySmartMotorProps {
+    cmsData?: {
+        title?: string
+        subtitle?: string
+        body?: string
+    }
+}
+
+export function WhySmartMotor({ cmsData }: WhySmartMotorProps) {
+    const title = cmsData?.title || "The Smart <span className=\"silver-shine\">Definition</span>"
+    const subtitle = cmsData?.subtitle || "Why Smart Motor?"
+
     return (
         <section id="why-us" className="py-24 bg-white relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col lg:flex-row gap-16 items-center">
@@ -82,11 +93,12 @@ export function WhySmartMotor() {
                 {/* ── Right: feature list ── */}
                 <div className="w-full lg:w-1/2">
                     <span className="text-[#E62329] font-black text-[10px] uppercase tracking-[0.4em] mb-4 block">
-                        Why Smart Motor?
+                        {subtitle}
                     </span>
-                    <h2 className="text-4xl md:text-5xl font-black text-[#121212] tracking-tighter uppercase leading-[0.9] mb-10">
-                        The Smart <span className="silver-shine">Definition</span>
-                    </h2>
+                    <h2 
+                        className="text-4xl md:text-5xl font-black text-[#121212] tracking-tighter uppercase leading-[0.9] mb-10"
+                        dangerouslySetInnerHTML={{ __html: title }}
+                    />
 
                     <div className="space-y-5">
                         {features.map((feature, i) => (

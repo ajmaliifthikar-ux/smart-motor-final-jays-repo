@@ -10,12 +10,30 @@ import { useTilt } from '@/lib/hooks/useTilt'
 import { Tooltip } from '@/components/ui/tooltip'
 import { trackEvent } from '@/components/analytics/GoogleAnalytics'
 
-export function Hero() {
+interface HeroProps {
+    cmsData?: {
+        title?: string
+        subtitle?: string
+        body?: string
+        imageUrl?: string
+        ctaLabel?: string
+        ctaLink?: string
+    }
+}
+
+export function Hero({ cmsData }: HeroProps) {
     const [isCallbackModalOpen, setIsCallbackModalOpen] = useState(false)
     const { isRTL } = useLanguage()
 
     const bookTilt = useTilt({ maxDegrees: 6, perspective: 800 })
     const callbackTilt = useTilt({ maxDegrees: 6, perspective: 800 })
+
+    const title = cmsData?.title || "PROFESSIONAL AUTOMOTIVE"
+    const subtitle = cmsData?.subtitle || "SERVICE CENTER"
+    const body = cmsData?.body || "Abu Dhabi's premier car service & repair center in Musaffah. Engine repair, AC service, PPF, ceramic coating & full detailing — for every brand, every budget."
+    const imageUrl = cmsData?.imageUrl || publicPath('/images/hero/Hero-Wagon.webp')
+    const ctaLabel = cmsData?.ctaLabel || "Book Appointment"
+    const ctaLink = cmsData?.ctaLink || "booking"
 
     return (
         <section className="relative flex-1 min-h-screen flex items-center overflow-hidden bg-white pt-32 pb-20">
@@ -25,7 +43,7 @@ export function Hero() {
             <div className="absolute inset-0 z-0">
                 <div
                     className="absolute inset-0 bg-cover bg-center md:bg-[center_top_0px]"
-                    style={{ backgroundImage: `url(${publicPath('/images/hero/Hero-Wagon.webp')})` }}
+                    style={{ backgroundImage: `url(${imageUrl})` }}
                 />
                 <div className={`absolute inset-0 pointer-events-none ${isRTL
                     ? 'bg-gradient-to-l from-transparent via-white/50 to-white/98'
@@ -51,15 +69,15 @@ export function Hero() {
 
                     <h1 className={`flex flex-col items-center mb-10 tracking-tighter text-[#121212] ${isRTL ? 'font-arabic tracking-normal' : ''}`}>
                         <span className="text-4xl md:text-6xl font-black leading-tight uppercase block mb-2 drop-shadow-sm">
-                            PROFESSIONAL AUTOMOTIVE
+                            {title}
                         </span>
                         <span className="text-6xl md:text-8xl lg:text-9xl font-black leading-[0.8] silver-shine block drop-shadow-md">
-                            SERVICE CENTER
+                            {subtitle}
                         </span>
                     </h1>
 
                     <p className={`text-gray-600 text-base md:text-lg lg:text-xl max-w-3xl leading-relaxed mb-8 font-medium px-2 ${isRTL ? 'font-arabic' : ''}`}>
-                        Abu Dhabi&apos;s premier car service & repair center in Musaffah. Engine repair, AC service, PPF, ceramic coating & full detailing — for every brand, every budget.
+                        {body}
                     </p>
 
                     {/* CTA Buttons */}
@@ -69,9 +87,13 @@ export function Hero() {
                             onMouseMove={bookTilt.tiltHandlers.onMouseMove}
                             onMouseLeave={bookTilt.tiltHandlers.onMouseLeave}
                             className="bg-[#121212] text-white button-overlay rounded-full px-10 py-4 text-xs font-black tracking-widest uppercase hover:bg-[#E62329] transition-all shadow-xl hover:scale-105 h-auto opacity-100 hover:opacity-100 relative overflow-hidden group"
-                            onClick={() => { document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' }); trackEvent('cta_click', 'Engagement', 'book_appointment_hero', 1) }}
+                            onClick={() => { 
+                                const el = document.getElementById(ctaLink.replace('#', ''))
+                                if (el) el.scrollIntoView({ behavior: 'smooth' })
+                                trackEvent('cta_click', 'Engagement', 'book_appointment_hero', 1) 
+                            }}
                         >
-                            <span className="relative z-10">Book Appointment</span>
+                            <span className="relative z-10">{ctaLabel}</span>
                             <div className="absolute inset-0 bg-[url('/public/textures/car-paint-texture.png')] opacity-30 mix-blend-overlay pointer-events-none group-hover:opacity-50 transition-opacity" />
                         </Button>
                         <Button

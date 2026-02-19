@@ -3,28 +3,43 @@
 import { motion } from 'framer-motion'
 import { ArrowRightIcon } from 'lucide-react'
 
-export function AboutSnippet() {
+interface AboutSnippetProps {
+    cmsData?: {
+        title?: string
+        subtitle?: string
+        body?: string
+        imageUrl?: string
+        ctaLabel?: string
+        ctaLink?: string
+    }
+}
+
+export function AboutSnippet({ cmsData }: AboutSnippetProps) {
+    const title = cmsData?.title || "Your Trusted <br /> Automotive Partner <br /> <span className=\"text-gray-500\">In Abu Dhabi</span>"
+    const subtitle = cmsData?.subtitle || "Who We Are"
+    const body = cmsData?.body || "Smart Motor Auto Repair is Abu Dhabi's trusted car service center — located at M9, Musaffah Industrial Area. Since 2009, our factory-certified technicians have specialized in luxury, sports, and European car repair, with proven expertise across German, Japanese, American, and Chinese brands.\n\nFrom routine oil changes and engine diagnostics to PPF installation, ceramic coating, body shop, and full car detailing — we are your one-stop automotive care destination in Abu Dhabi. 6-month labour warranty on all repairs."
+    const ctaLabel = cmsData?.ctaLabel || "Learn More About Us"
+
     return (
         <section id="about" className="py-24 bg-white relative">
             <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row gap-12 items-center">
                 <div className="w-full md:w-1/2">
                     <span className="text-[#E62329] font-black text-[10px] uppercase tracking-[0.4em] mb-4 block">
-                        Who We Are
+                        {subtitle}
                     </span>
-                    <h2 className="text-4xl font-black text-[#121212] tracking-tighter uppercase leading-[0.9] mb-8">
-                        Your Trusted <br /> Automotive Partner <br /> <span className="text-gray-500">In Abu Dhabi</span>
-                    </h2>
+                    <h2 
+                        className="text-4xl font-black text-[#121212] tracking-tighter uppercase leading-[0.9] mb-8"
+                        dangerouslySetInnerHTML={{ __html: title }}
+                    />
 
-                    <p className="text-gray-500 font-medium leading-relaxed mb-6">
-                        Smart Motor Auto Repair is Abu Dhabi&apos;s trusted car service center — located at M9, Musaffah Industrial Area. Since 2009, our factory-certified technicians have specialized in luxury, sports, and European car repair, with proven expertise across German, Japanese, American, and Chinese brands.
-                    </p>
-
-                    <p className="text-gray-500 font-medium leading-relaxed mb-8">
-                        From routine oil changes and engine diagnostics to PPF installation, ceramic coating, body shop, and full car detailing — we are your one-stop automotive care destination in Abu Dhabi. 6-month labour warranty on all repairs.
-                    </p>
+                    <div className="space-y-6 mb-8 text-gray-500 font-medium leading-relaxed">
+                        {body.split('\n\n').map((paragraph, i) => (
+                            <p key={i}>{paragraph}</p>
+                        ))}
+                    </div>
 
                     <button className="group flex items-center gap-2 text-sm font-black uppercase tracking-widest text-[#121212] hover:text-[#E62329] transition-colors">
-                        Learn More About Us <ArrowRightIcon size={16} className="group-hover:translate-x-1 transition-transform" />
+                        {ctaLabel} <ArrowRightIcon size={16} className="group-hover:translate-x-1 transition-transform" />
                     </button>
                 </div>
 

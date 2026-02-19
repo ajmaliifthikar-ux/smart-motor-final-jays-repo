@@ -103,6 +103,16 @@ export async function adminGetAllPublishedContent(type?: string) {
   }
 }
 
+export async function adminGetContentBlock(key: string) {
+  try {
+    const doc = await adminDb.collection('contentBlocks').doc(key).get()
+    return doc.exists ? serializeDoc(doc.data()!) : null
+  } catch (error) {
+    console.error(`adminGetContentBlock error for ${key}:`, error)
+    return null
+  }
+}
+
 export async function verifySession(token: string | undefined) {
     if (!token) return null;
 

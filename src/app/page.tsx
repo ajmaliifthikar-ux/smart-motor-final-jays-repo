@@ -3,7 +3,8 @@ import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import { Hero } from '@/components/v2/sections/hero'
 import { EmergencyFAB } from '@/components/ui/emergency-fab'
-import { adminGetAllServices, adminGetAllBrands } from '@/lib/firebase-admin'
+import { adminGetAllServices, adminGetAllBrands, adminGetContentBlock } from '@/lib/firebase-admin'
+import { HomeCmsWrapper } from '@/components/admin/cms/home-cms-wrapper'
 import { Service } from '@/types'
 import { ServicePackage } from '@/types/v2'
 
@@ -35,15 +36,24 @@ export default async function Home() {
     let servicesData: any[] = []
     let packagesData: any[] = []
     let brandsData: any[] = []
+    let heroCms: any = null
+    let aboutCms: any = null
+    let whyCms: any = null
 
     try {
-        const [s, b] = await Promise.all([
+        const [s, b, h, a, w] = await Promise.all([
             adminGetAllServices(),
-            adminGetAllBrands()
+            adminGetAllBrands(),
+            adminGetContentBlock('home_hero'),
+            adminGetContentBlock('home_about'),
+            adminGetContentBlock('home_why')
         ])
         servicesData = s
         packagesData = [] // No service packages in Firebase yet
         brandsData = b
+        heroCms = h ? JSON.parse(h.value) : null
+        aboutCms = a ? JSON.parse(a.value) : null
+        whyCms = w ? JSON.parse(w.value) : null
     } catch (e) {
         console.error("DB Error", e);
     }
@@ -92,13 +102,19 @@ export default async function Home() {
     return (
         <main className="min-h-screen bg-white">
             <Navbar />
-            <Hero />
+            <HomeCmsWrapper sectionId="home_hero" sectionName="Hero" initialData={heroCms}>
+                <Hero cmsData={heroCms} />
+            </HomeCmsWrapper>
             <div className="overflow-hidden">
                 <AdvancedLogoSlider brands={brands} />
             </div>
-            <AboutSnippet />
+            <HomeCmsWrapper sectionId="home_about" sectionName="About Snippet" initialData={aboutCms}>
+                <AboutSnippet cmsData={aboutCms} />
+            </HomeCmsWrapper>
             <Services services={services} />
-            <WhySmartMotor />
+            <HomeCmsWrapper sectionId="home_why" sectionName="Why Smart Motor" initialData={whyCms}>
+                <WhySmartMotor cmsData={whyCms} />
+            </HomeCmsWrapper>
             <ServicePackages packages={packages} />
             <BookingForm />
             <ReviewsCarousel />
