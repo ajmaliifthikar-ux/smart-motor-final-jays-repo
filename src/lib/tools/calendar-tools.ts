@@ -1,44 +1,23 @@
-import { prisma } from '@/lib/prisma'
+import { getBookingsByDate } from '@/lib/firebase-db'
 
 export interface TimeSlot {
     time: string
     available: boolean
 }
 
-// Helper to get available slots (Mock logic + Real DB check)
-// Real implementation would check work hours, breaks, and existing bookings
-const WORK_HOURS = { start: 9, end: 18 } // 9 AM to 6 PM
+const WORK_HOURS = { start: 8, end: 19 } // 8 AM to 7 PM (Matches layout.tsx JSON-LD)
 
 export async function getAvailableSlots(date: Date): Promise<TimeSlot[]> {
-    // 1. Generate all possible slots for the day
     const slots: TimeSlot[] = []
     for (let h = WORK_HOURS.start; h < WORK_HOURS.end; h++) {
-        // Hourly slots for simplicity
         const timeString = `${h.toString().padStart(2, '0')}:00`
         slots.push({ time: timeString, available: true })
     }
 
-    // 2. Fetch existing bookings for this date
-    // We need to define start and end of the day for the query
-    const startOfDay = new Date(date)
-    startOfDay.setHours(0, 0, 0, 0)
+    const bookings = await getBookingsByDate(date)
+    const activeBookings = bookings.filter(b => b.status !== 'CANCELLED')
     
-    const endOfDay = new Date(date)
-    endOfDay.setHours(23, 59, 59, 999)
-
-    const bookings = await prisma.booking.findMany({
-        where: {
-            date: {
-                gte: startOfDay,
-                lte: endOfDay
-            },
-            status: { not: 'CANCELLED' }
-        },
-        select: { slot: true }
-    })
-
-    // 3. Mark taken slots as unavailable
-    const bookedTimes = new Set(bookings.map(b => b.slot))
+    const bookedTimes = new Set(activeBookings.map(b => b.slot))
     
     return slots.map(s => ({
         ...s,

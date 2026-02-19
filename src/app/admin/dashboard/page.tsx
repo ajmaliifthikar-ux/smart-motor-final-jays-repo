@@ -1,5 +1,4 @@
-import { getAllUsers, getAllBookings } from '@/lib/firebase-db'
-import { RecentActivity } from '@/components/admin/recent-activity'
+import { RecentActivityLive } from '@/components/admin/recent-activity-live'
 import { formatPrice } from '@/lib/utils'
 import { getHeatmapData, getTrafficTrends } from '@/lib/analytics'
 import { UAEHeatmap } from '@/components/admin/analytics/uae-heatmap'
@@ -12,7 +11,6 @@ export default async function AdminDashboard() {
     let userCount = 0
     let activeBookingsCount = 0
     let revenueRaw: any[] = []
-    let recentBookings: any[] = []
     let heatmapData: any[] = []
     let trafficTrends: any[] = []
 
@@ -35,11 +33,6 @@ export default async function AdminDashboard() {
         // Calculate revenue from completed bookings
         revenueRaw = allBookings.filter(b => b.status === 'COMPLETED')
         
-        // Get recent 5 bookings
-        recentBookings = allBookings
-            .sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime())
-            .slice(0, 5)
-        
         heatmapData = hmd
         trafficTrends = tt
     } catch (error) {
@@ -51,7 +44,7 @@ export default async function AdminDashboard() {
 
     return (
         <div className="space-y-10 pb-20">
-            {/* Header */}
+            {/* ... previous header and stat cards ... */}
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-4xl font-black tracking-tighter text-[#121212] uppercase italic">
@@ -63,7 +56,6 @@ export default async function AdminDashboard() {
                 </div>
             </div>
 
-            {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <StatCard
                     label="Total Users"
@@ -88,9 +80,7 @@ export default async function AdminDashboard() {
                 />
             </div>
 
-            {/* Content Area */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Traffic chart — take 8 cols */}
                 <div className="lg:col-span-8 space-y-8">
                     <DashboardWidget 
                         title="Traffic Projection" 
@@ -128,7 +118,6 @@ export default async function AdminDashboard() {
                     </DashboardWidget>
                 </div>
 
-                {/* Google Business Widget — 4 columns */}
                 <div className="lg:col-span-4">
                     <GoogleBusinessWidget />
                 </div>
@@ -136,10 +125,10 @@ export default async function AdminDashboard() {
 
             <DashboardWidget 
                 title="Recent Activity" 
-                subtitle="Latest platform transitions"
+                subtitle="Live Booking Stream"
                 delay={0.6}
             >
-                <RecentActivity bookings={recentBookings} />
+                <RecentActivityLive />
             </DashboardWidget>
         </div>
     )

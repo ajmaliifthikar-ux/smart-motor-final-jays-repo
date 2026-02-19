@@ -1,5 +1,4 @@
-import { prisma } from '@/lib/prisma'
-import { Service, Booking } from '@prisma/client'
+import { getService, getBookingsByDate } from '@/lib/firebase-db'
 
 export interface TimeSlot {
     time: string
@@ -16,16 +15,28 @@ interface AvailabilityConfig {
     maxConcurrentBookings: number
 }
 
-export async function getServiceSlots(serviceId: string, date: Date): Promise<TimeSlot[]> {
-    const service = await prisma.service.findUnique({
-        where: { id: serviceId },
-    })
+const DEFAULT_AVAILABILITY: AvailabilityConfig = {
+    daysOpen: [1, 2, 3, 4, 5, 6], // Mon-Sat
+    startHour: '08:00',
+    endHour: '19:00',
+    slotDuration: 60,
+    maxConcurrentBookings: 2
+}
 
-    if (!service || !(service as any).availability) {
+export async function getServiceSlots(serviceId: string, date: Date): Promise<TimeSlot[]> {
+    const service = await getService(serviceId)
+
+    if (!service) {
         return []
     }
 
-    const config: AvailabilityConfig = JSON.parse((service as any).availability as string)
+    // Use specific service config or default
+    const config: AvailabilityConfig = (service as any).availability 
+        ? (typeof (service as any).availability === 'string' 
+            ? JSON.parse((service as any).availability) 
+            : (service as any).availability)
+        : DEFAULT_AVAILABILITY
+
     const dayOfWeek = date.getDay()
 
     // 1. Check if open on this day
@@ -56,27 +67,12 @@ export async function getServiceSlots(serviceId: string, date: Date): Promise<Ti
         currentMinutes += config.slotDuration
     }
 
-    // 3. Fetch existing bookings for this service and date
-    const startOfDay = new Date(date)
-    startOfDay.setHours(0, 0, 0, 0)
-
-    const endOfDay = new Date(date)
-    endOfDay.setHours(23, 59, 59, 999)
-
-    const bookings = await prisma.booking.findMany({
-        where: {
-            serviceId: serviceId,
-            date: {
-                gte: startOfDay,
-                lte: endOfDay
-            },
-            status: { not: 'CANCELLED' }
-        },
-        select: { slot: true }
-    })
+    // 3. Fetch existing bookings for this date from Firestore
+    const bookings = await getBookingsByDate(date)
+    const activeBookings = bookings.filter(b => b.serviceId === serviceId && b.status !== 'CANCELLED')
 
     // 4. Calculate availability based on concurrency
-    const bookingCounts = bookings.reduce((acc: any, booking) => {
+    const bookingCounts = activeBookings.reduce((acc: any, booking) => {
         acc[booking.slot] = (acc[booking.slot] || 0) + 1
         return acc
     }, {} as Record<string, number>)

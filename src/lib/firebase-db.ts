@@ -620,6 +620,43 @@ export async function updateSubscriber(email: string, updates: Partial<FirebaseS
   }
 }
 
+// ─── ANALYTICS & LOGGING ───
+
+export interface FirebaseAnalyticsLog {
+  id?: string
+  eventType: string
+  resource?: string
+  emirate?: string
+  city?: string
+  device?: string
+  browser?: string
+  metadata?: any
+  createdAt: Timestamp
+}
+
+export async function createAnalyticsLog(logData: Omit<FirebaseAnalyticsLog, 'createdAt'>): Promise<void> {
+  try {
+    const newDocRef = doc(collection(db, 'analyticsLogs'))
+    await setDoc(newDocRef, {
+      ...logData,
+      createdAt: Timestamp.now(),
+    })
+  } catch (error) {
+    console.error('Error creating analytics log:', error)
+  }
+}
+
+export async function getAnalyticsLogs(limitCount: number = 100): Promise<FirebaseAnalyticsLog[]> {
+  try {
+    const q = query(collection(db, 'analyticsLogs'), orderBy('createdAt', 'desc'), limit(limitCount))
+    const querySnapshot = await getDocs(q)
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as FirebaseAnalyticsLog))
+  } catch (error) {
+    console.error('Error fetching analytics logs:', error)
+    return []
+  }
+}
+
 // ─── BATCH OPERATIONS ───
 
 export async function batchWrite(callback: (batch: WriteBatch) => Promise<void>): Promise<void> {

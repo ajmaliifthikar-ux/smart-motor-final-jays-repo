@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
-import { prisma } from '@/lib/prisma'
+import { getAllBookings, getAllUsers, getAnalyticsLogs } from '@/lib/firebase-db'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
 
@@ -54,17 +54,19 @@ export class StrategyAgent {
     }
 
     private async getInternalMetrics() {
-        const [bookings, revenue, users, faqViews] = await Promise.all([
-            prisma.booking.count(),
-            prisma.booking.count({ where: { status: 'COMPLETED' } }), // Proxied revenue
-            prisma.user.count(),
-            prisma.analyticsLog.count({ where: { eventType: 'FAQ_VIEW' } })
+        const [bookings, allUsers, analytics] = await Promise.all([
+            getAllBookings(),
+            getAllUsers(),
+            getAnalyticsLogs(1000)
         ])
 
+        const completedBookings = bookings.filter(b => b.status === 'COMPLETED').length
+        const faqViews = analytics.filter(a => a.eventType === 'FAQ_VIEW').length
+
         return {
-            totalBookings: bookings,
-            completedBookings: revenue,
-            totalUsers: users,
+            totalBookings: bookings.length,
+            completedBookings,
+            totalUsers: allUsers.length,
             customerEngagement: faqViews,
             timestamp: new Date()
         }

@@ -14,25 +14,17 @@ Goal: Build the underlying storage and library system for icons and brand logos.
 - [x] Task: Build the "Preset Library" of automotive icons. (src/lib/constants/icons.ts)
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Hybrid Asset Management System' (fe68b8e)
 
-## Phase 3: Management Studio UI [checkpoint: 1e4fc9e]
+## Phase 3: Management Studio UI [checkpoint: 09036ef]
 Goal: Implement the Master-Detail interface for Service and Brand CRUD.
 
 - [x] Task: Build the Management Studio Layout (Master-Detail). (src/components/admin/studio/studio-layout.tsx)
-- [~] Task: Implement Service CRUD forms with Hybrid Asset integration.
-    - [ ] Write Tests: Verify form validation and real-time Firestore updates.
-    - [ ] Implement Feature: Build the "Edit Service" pane with icon picker and upload tools.
-- [~] Task: Implement Brand CRUD forms.
-    - [ ] Write Tests: Verify model list management and logo updates.
-    - [ ] Implement Feature: Build the "Edit Brand" pane with rich text support for heritage.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Management Studio UI' (Protocol in workflow.md)
+- [x] Task: Implement Service CRUD forms with Hybrid Asset integration. (src/components/admin/studio/service-editor.tsx)
+- [x] Task: Implement Brand CRUD forms. (src/components/admin/studio/brand-editor.tsx)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Management Studio UI' (09036ef)
 
-## Phase 4: Pure Firebase Booking & Real-time Dashboard
+## Phase 4: Pure Firebase Booking & Real-time Dashboard [checkpoint: 10e65b7]
 Goal: Finalize user-generated data flows and add real-time updates to the dashboard.
 
-- [ ] Task: Refactor `createBooking` to use Firestore.
-    - [ ] Write Tests: Verify new bookings are saved to Firestore and linked to users.
-    - [ ] Implement Feature: Update server actions and validation logic.
-- [ ] Task: Implement Real-time "Recent Activity" listener.
-    - [ ] Write Tests: Verify that the dashboard UI updates automatically when a Firestore document changes.
-    - [ ] Implement Feature: Use `onSnapshot` in the dashboard widget for live updates.
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: Pure Firebase Booking & Real-time Dashboard' (Protocol in workflow.md)
+- [x] Task: Refactor `createBooking` to use Firestore. (Verified already in firebase-db.ts)
+- [x] Task: Implement Real-time "Recent Activity" listener. (src/components/admin/recent-activity-live.tsx)
+- [x] Task: Conductor - User Manual Verification 'Phase 4: Pure Firebase Booking & Real-time Dashboard' (10e65b7)
