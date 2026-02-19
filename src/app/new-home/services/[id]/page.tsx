@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { WithContext, BreadcrumbList, ListItem, Offer } from "schema-dts"
 import { notFound } from 'next/navigation'
-import { getAllServices } from '@/lib/firebase-db'
+import { adminGetAllServices } from '@/lib/firebase-admin'
 import { ServiceDetailClient } from '@/components/v2/sections/service-detail-client'
 import { Service } from '@/types'
 
@@ -11,7 +11,7 @@ type Props = {
 
 export async function generateStaticParams() {
     try {
-        const services = await getAllServices()
+        const services = await adminGetAllServices()
         return services.map((service) => ({
             id: service.slug,
         }))
@@ -25,7 +25,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     const params = await props.params
     const id = params.id
     try {
-        const allServices = await getAllServices()
+        const allServices = await adminGetAllServices()
         const service = allServices.find(s => s.slug === id)
 
         if (!service) return {}
@@ -59,7 +59,7 @@ export default async function ServiceDetailPage(props: Props) {
 
     let serviceData
     try {
-        const allServices = await getAllServices()
+        const allServices = await adminGetAllServices()
         serviceData = allServices.find(s => s.slug === serviceId)
     } catch (error) {
         console.error('Database error:', error)

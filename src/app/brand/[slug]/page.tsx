@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
-import { getAllBrands, getAllServices, FirebaseService } from '@/lib/firebase-db'
+import { FirebaseService } from '@/lib/firebase-db'
+import { adminGetAllBrands, adminGetAllServices } from '@/lib/firebase-admin'
 import { notFound } from 'next/navigation'
 import { Shield, Wrench, CheckCircle2, ChevronRight, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -9,7 +10,7 @@ import Link from 'next/link'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params
-    const allBrands = await getAllBrands()
+    const allBrands = await adminGetAllBrands()
     const brand = allBrands.find(b => b.slug === slug)
     const brandName = brand?.name ?? slug.charAt(0).toUpperCase() + slug.slice(1)
 
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BrandPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const allBrands = await getAllBrands()
+    const allBrands = await adminGetAllBrands()
     const brand = allBrands.find(b => b.slug === slug)
 
     if (!brand) {
@@ -46,7 +47,7 @@ export default async function BrandPage({ params }: { params: Promise<{ slug: st
     // Get services available for this brand
     let services: FirebaseService[] = []
     if (brand.serviceIds && brand.serviceIds.length > 0) {
-        const allServices = await getAllServices()
+        const allServices = await adminGetAllServices()
         services = allServices.filter(s => brand.serviceIds?.includes(s.slug))
     }
 
@@ -145,7 +146,7 @@ export default async function BrandPage({ params }: { params: Promise<{ slug: st
                         <div>
                             <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#E62329] mb-8">Performance Models Serviced</h2>
                             <div className="flex flex-wrap gap-3">
-                                {models.map((model, i) => (
+                                {models.map((model: string, i: number) => (
                                     <div key={i} className="px-8 py-4 bg-white rounded-full border border-gray-100 text-xs font-black uppercase tracking-widest text-[#121212] shadow-sm hover:border-[#E62329] transition-colors cursor-default">
                                         {model}
                                     </div>

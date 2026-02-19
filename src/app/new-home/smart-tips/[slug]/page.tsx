@@ -3,7 +3,7 @@ import { JsonLd } from "@/components/seo/JsonLd"
 import { WithContext, BlogPosting, BreadcrumbList, ListItem, Person, Organization, ImageObject, WebPage } from "schema-dts"
 import { BlogPostClient } from '@/components/v2/sections/blog-post-client'
 import Link from 'next/link'
-import { getAllPublishedContent } from '@/lib/firebase-db'
+import { adminGetAllPublishedContent } from '@/lib/firebase-admin'
 import { BlogPost } from '@/types/v2'
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 
 export async function generateStaticParams() {
     try {
-        const posts = await getAllPublishedContent('BLOG')
+        const posts = await adminGetAllPublishedContent('BLOG')
         return posts.map(p => ({ slug: p.slug }))
     } catch {
         return []
@@ -23,7 +23,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     const params = await props.params
     const slug = params.slug
 
-    const allContent = await getAllPublishedContent('BLOG')
+    const allContent = await adminGetAllPublishedContent('BLOG')
     const post = allContent.find(p => p.slug === slug)
 
     if (!post) {
@@ -50,7 +50,7 @@ export default async function BlogPostPage(props: Props) {
     const params = await props.params
     const slug = params.slug
 
-    const allContent = await getAllPublishedContent('BLOG')
+    const allContent = await adminGetAllPublishedContent('BLOG')
     const postData = allContent.find(c => c.slug === slug)
 
     if (!postData) {

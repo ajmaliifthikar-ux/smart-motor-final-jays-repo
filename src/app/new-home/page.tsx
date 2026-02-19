@@ -4,7 +4,7 @@ import { Footer } from '@/components/v2/layout/footer'
 import { Hero } from '@/components/v2/sections/hero'
 import { EmergencyFAB } from '@/components/ui/emergency-fab'
 import dynamic from 'next/dynamic'
-import { getAllServices, getAllBrands } from '@/lib/firebase-db'
+import { adminGetAllServices, adminGetAllBrands } from '@/lib/firebase-admin'
 import { Service } from '@/types'
 import { ServicePackage } from '@/types/v2'
 
@@ -39,8 +39,8 @@ export default async function Home() {
 
     try {
         const [s, b] = await Promise.all([
-            getAllServices(),
-            getAllBrands()
+            adminGetAllServices(),
+            adminGetAllBrands()
         ])
         servicesData = s
         packagesData = [] // No service packages in Firebase yet

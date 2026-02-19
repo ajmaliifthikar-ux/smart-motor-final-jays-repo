@@ -3,7 +3,7 @@ import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import { CheckCircle2, Award, ArrowUpRight, Shield, Zap } from 'lucide-react'
 import { AdvancedLogoSlider } from '@/components/v2/sections/advanced-logo-slider'
-import { getAllBrands } from '@/lib/firebase-db'
+import { adminGetAllBrands } from '@/lib/firebase-admin'
 
 export const metadata: Metadata = {
     title: 'About Us – Smart Motor Auto Repair | Est. 2009, Abu Dhabi',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 export default async function AboutPage() {
     let brandsData: any[] = []
     try {
-        const allBrands = await getAllBrands()
+        const allBrands = await adminGetAllBrands()
         brandsData = allBrands.slice(0, 20)
     } catch (e) {}
 

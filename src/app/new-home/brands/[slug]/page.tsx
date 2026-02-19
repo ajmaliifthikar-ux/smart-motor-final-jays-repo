@@ -4,7 +4,7 @@ import { WithContext, Service, BreadcrumbList, AutoRepair, City, Brand as Schema
 import { BrandDetailClient } from '@/components/v2/sections/brand-detail-client'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getAllBrands } from '@/lib/firebase-db'
+import { adminGetAllBrands } from '@/lib/firebase-admin'
 import { Brand } from '@/types/v2'
 
 type Props = {
@@ -21,7 +21,7 @@ const CATEGORIES_MAP: Record<string, string> = {
 
 export async function generateStaticParams() {
     try {
-        const brands = await getAllBrands()
+        const brands = await adminGetAllBrands()
         return brands.map(b => ({ slug: b.slug || b.id }))
 
     } catch {
@@ -34,7 +34,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     const brandId = params.slug
 
     // Find by slug first, then by id
-    const allBrands = await getAllBrands()
+    const allBrands = await adminGetAllBrands()
     const brand = allBrands.find(b => b.slug === brandId || b.id === brandId)
 
     if (!brand) {
@@ -58,7 +58,7 @@ export default async function BrandDetailPage(props: Props) {
     const params = await props.params
     const brandId = params.slug
 
-    const allBrands = await getAllBrands()
+    const allBrands = await adminGetAllBrands()
     const brandData = allBrands.find(b => b.slug === brandId || b.id === brandId)
 
     if (!brandData) {

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import { FAQ as FAQComponent } from '@/components/sections/faq'
-import { getAllPublishedContent } from '@/lib/firebase-db'
+import { adminGetAllPublishedContent } from '@/lib/firebase-admin'
 import { HelpCircle, Shield, Clock, Wrench } from 'lucide-react'
 
 export const revalidate = 3600
@@ -50,7 +50,7 @@ const breadcrumbSchema = {
 export default async function FAQPage() {
     let faqs: any[] = []
     try {
-        const content = await getAllPublishedContent('FAQ')
+        const content = await adminGetAllPublishedContent('FAQ')
         faqs = content.map(c => ({
             id: c.id,
             question: c.title,

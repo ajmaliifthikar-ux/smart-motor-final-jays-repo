@@ -27,6 +27,46 @@ export const adminAuth = admin.auth()
 // Named Firestore DB: 'smartmotordb' — use firebase-admin/firestore getFirestore with databaseId
 export const adminDb = getFirestore(admin.app(), 'smartmotordb')
 
+// ─── Server-side data fetchers (use these in Server Components) ───────────────
+
+export async function adminGetAllServices() {
+  try {
+    const snapshot = await adminDb
+      .collection('services')
+      .where('active', '==', true)
+      .get()
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as any[]
+  } catch (error) {
+    console.error('adminGetAllServices error:', error)
+    return []
+  }
+}
+
+export async function adminGetAllBrands() {
+  try {
+    const snapshot = await adminDb
+      .collection('brands')
+      .orderBy('name', 'asc')
+      .get()
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as any[]
+  } catch (error) {
+    console.error('adminGetAllBrands error:', error)
+    return []
+  }
+}
+
+export async function adminGetAllPublishedContent(type?: string) {
+  try {
+    let query = adminDb.collection('content').where('published', '==', true)
+    if (type) query = (query as any).where('type', '==', type)
+    const snapshot = await (query as any).orderBy('createdAt', 'desc').get()
+    return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })) as any[]
+  } catch (error) {
+    console.error('adminGetAllPublishedContent error:', error)
+    return []
+  }
+}
+
 export async function verifySession(token: string | undefined) {
     if (!token) return null;
 

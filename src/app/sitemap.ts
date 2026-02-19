@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { getAllServices, getAllBrands, getAllPublishedContent } from '@/lib/firebase-db'
+import { adminGetAllServices, adminGetAllBrands, adminGetAllPublishedContent } from '@/lib/firebase-admin'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://smartmotor.ae'
@@ -31,9 +31,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     try {
         const [s, b, p] = await Promise.all([
-            getAllServices(),
-            getAllBrands(),
-            getAllPublishedContent('BLOG')
+            adminGetAllServices(),
+            adminGetAllBrands(),
+            adminGetAllPublishedContent('BLOG')
         ])
         services = s
         brands = b

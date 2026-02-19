@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import { Services } from '@/components/v2/sections/services'
-import { getAllServices } from '@/lib/firebase-db'
+import { adminGetAllServices } from '@/lib/firebase-admin'
 import { Service } from '@/types'
 
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ export const revalidate = 3600
 export default async function ServicesPage() {
     let servicesData: any[] = []
     try {
-        servicesData = await getAllServices()
+        servicesData = await adminGetAllServices()
     } catch (e) {
         console.error("DB Error", e);
     }

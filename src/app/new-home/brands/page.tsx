@@ -2,7 +2,7 @@ import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import Link from 'next/link'
 import { ArrowRight, ShieldCheck } from 'lucide-react'
-import { getAllBrands } from '@/lib/firebase-db'
+import { adminGetAllBrands } from '@/lib/firebase-admin'
 import { BrandsHero } from '@/components/v2/sections/brands-hero'
 import { Metadata } from 'next'
 
@@ -44,7 +44,7 @@ const CATEGORIES = [
 export default async function BrandsPage() {
     let brandsData: any[] = []
     try {
-        const allBrands = await getAllBrands()
+        const allBrands = await adminGetAllBrands()
         brandsData = allBrands.map(b => ({
             id: b.id,
             name: b.name,

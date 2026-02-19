@@ -1,7 +1,7 @@
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import dynamic from 'next/dynamic'
-import { getAllPublishedContent } from '@/lib/firebase-db'
+import { adminGetAllPublishedContent } from '@/lib/firebase-admin'
 import { BlogPost } from '@/types/v2'
 import { SmartTipsList } from '@/components/v2/sections/smart-tips-list'
 import { SmartTipsHero } from '@/components/v2/sections/smart-tips-hero'
@@ -19,7 +19,7 @@ export const revalidate = 3600
 export default async function SmartTipsPage() {
     let postsData: any[] = []
     try {
-        const content = await getAllPublishedContent('BLOG')
+        const content = await adminGetAllPublishedContent('BLOG')
         postsData = content
             .sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime())
     } catch (e) {
