@@ -1,19 +1,16 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
 import { useAdminMode } from '@/hooks/use-admin-mode'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Settings, Eye, Edit3, LogOut } from 'lucide-react'
+import { Settings, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { signOut } from 'next-auth/react'
+import { auth } from '@/lib/firebase'
+import { signOut } from 'firebase/auth'
 
 export function AdminToolbar() {
-  const { data: session, status } = useSession()
-  const { isAdminMode, toggleAdminMode } = useAdminMode()
+  const { isAdminMode, toggleAdminMode, isAdmin, loading } = useAdminMode()
 
-  const isAdmin = session?.user?.role === 'ADMIN'
-
-  if (status === 'loading' || !isAdmin) return null
+  if (loading || !isAdmin) return null
 
   return (
     <AnimatePresence>
@@ -77,7 +74,7 @@ export function AdminToolbar() {
               <Settings size={14} />
             </button>
             <button
-              onClick={() => signOut()}
+              onClick={() => signOut(auth)}
               className="p-1.5 rounded-full hover:bg-white/10 text-white/60 hover:text-[#E62329] transition-all active:scale-90"
               title="Sign Out"
             >

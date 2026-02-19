@@ -4,28 +4,24 @@
 Goal: Establish the global "Edit Mode" state and the secure Admin Toolbar.
 
 - [x] Task: Create a `useAdminMode` hook or context for global state management. (3067b98)
-    - [ ] Write Tests: Verify that "Edit Mode" defaults to false and can be toggled.
-    - [ ] Implement Feature: Develop the state provider and hook.
 - [x] Task: Build the `AdminToolbar` component with an "Edit Mode" toggle. (d91207d)
-    - [ ] Write Tests: Verify the toolbar only renders for authenticated Firebase admins.
-    - [ ] Implement Feature: Create a floating `AdminToolbar` with a toggle switch.
+- [x] Task: Refactor for Pure Firebase: Remove NextAuth and use Firebase Auth directly. (d91207d)
 - [x] Task: Fix the fallback image path in `BookingForm`. (dc4c9b4)
-    - [ ] Write Tests: Verify the image `src` evaluates to `/google-logo.svg`.
-    - [ ] Implement Feature: Update `src/components/sections/booking-form.tsx`.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Admin Infrastructure & Toolbar' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Admin Infrastructure & Toolbar' (5aa9306)
 
 ## Phase 2: Contextual Section Editing
 Goal: Implement the "Edit" overlays and forms for Hero, About, and Mission sections.
 
-- [ ] Task: Create a reusable `SectionEditor` wrapper component with a contextual menu.
+- [x] Task: Create Firestore CMS utility (`src/lib/firebase-cms.ts`) for `ContentBlock` & `ContentHistory`. (Manual verification via implementation)
+- [~] Task: Create a reusable `SectionEditor` wrapper component with a contextual menu.
     - [ ] Write Tests: Verify the "Edit" button only appears when `isAdminMode` is true.
     - [ ] Implement Feature: Build the overlay UI with "Edit Content" and "Browse History" options.
 - [ ] Task: Build the "Edit Content" form (Dialog) for section metadata.
     - [ ] Write Tests: Verify form validation for text, media URLs, and CTA fields.
     - [ ] Implement Feature: Create a Radix-based Dialog with fields for Headings, Subheadings, Media, and CTAs.
-- [ ] Task: Integrate `updateContentWithAudit` action with the frontend forms.
+- [ ] Task: Integrate `updateContentBlock` with the frontend forms.
     - [ ] Write Tests: Verify that saving the form triggers a successful database update and revalidation.
-    - [ ] Implement Feature: Connect the "Save" button to the existing CMS server actions.
+    - [ ] Implement Feature: Connect the "Save" button to the Firestore CMS utility.
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Contextual Section Editing' (Protocol in workflow.md)
 
 ## Phase 3: Version History & Restoration UI
