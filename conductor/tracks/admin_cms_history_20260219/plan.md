@@ -13,10 +13,10 @@ Goal: Establish the global "Edit Mode" state and the secure Admin Toolbar.
 Goal: Implement the "Edit" overlays and forms for Hero, About, and Mission sections.
 
 - [x] Task: Create Firestore CMS utility (`src/lib/firebase-cms.ts`) for `ContentBlock` & `ContentHistory`. (Manual verification via implementation)
-- [~] Task: Create a reusable `SectionEditor` wrapper component with a contextual menu.
+- [x] Task: Create a reusable `SectionEditor` wrapper component with a contextual menu. (d86c361)
     - [ ] Write Tests: Verify the "Edit" button only appears when `isAdminMode` is true.
     - [ ] Implement Feature: Build the overlay UI with "Edit Content" and "Browse History" options.
-- [ ] Task: Build the "Edit Content" form (Dialog) for section metadata.
+- [~] Task: Build the "Edit Content" form (Dialog) for section metadata.
     - [ ] Write Tests: Verify form validation for text, media URLs, and CTA fields.
     - [ ] Implement Feature: Create a Radix-based Dialog with fields for Headings, Subheadings, Media, and CTAs.
 - [ ] Task: Integrate `updateContentBlock` with the frontend forms.
