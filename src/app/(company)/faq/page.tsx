@@ -62,9 +62,10 @@ export default async function FAQPage() {
     }
 
     return (
-        <main className="min-h-screen bg-[#FAFAF9]">
+        <>
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+            <main className="min-h-screen bg-[#FAFAF9]">
             <Navbar />
             
             <section className="pt-40 pb-16 relative overflow-hidden">
@@ -121,5 +122,6 @@ export default async function FAQPage() {
 
             <Footer />
         </main>
+        </>
     )
 }
