@@ -11,7 +11,9 @@ To provide an uncompromising luxury service experience. This involves transition
 
 # Core Features
 - **Robust Multi-Step Booking:** A fully functional, reliable booking flow that successfully handles vehicle selection (Brand/Model) and service details, fetching all data dynamically from the database.
-- **Firebase Admin Authentication:** A secure admin panel fully integrated with Firebase Auth for robust identity management and access control.
+- **Firebase Admin Authentication:** A secure admin panel fully integrated with Firebase Auth and NextAuth for robust identity management and access control.
+- **Inline Content Management System (CMS):** A high-fidelity inline editing experience allowing real-time, on-page modification of core sections (Hero, About, Why Us) with integrated version control and visual theme toggling.
+- **Dynamic Command Center Dashboard:** A grid-based widget system for platform intelligence, featuring sequential entry animations and precision skeleton loading for a premium management experience.
 - **Dynamic Brand & Service Catalog:** A seeded database (migrated from `data.tsx`) powering brand-specific pages, the "Under One Roof" service section, and the brand-logo hero carousel.
 - **Agentic Floating Chatbot:** A beautiful, non-intrusive floating chatbot (not a drawer) with a dedicated "Conversational Mode" (headphone icon).
 - **Voice-First AI Experience:** Bi-directional voice interaction with audio visualization for both user and AI, removing technical jargon (like "memory activated") for a cleaner interface.

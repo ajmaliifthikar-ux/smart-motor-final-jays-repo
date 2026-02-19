@@ -13,6 +13,7 @@
 - **Logic:** Next.js Server Actions & API Routes
 - **ORM:** Prisma 6
 - **Caching:** Redis (Upstash / ioredis)
+- **Utilities:** date-fns
 
 ## Database
 - **Development:** SQLite (`file:./dev.db`)

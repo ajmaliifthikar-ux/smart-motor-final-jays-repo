@@ -31,4 +31,4 @@
 
 ## 5. User Experience (UX) Standards
 - **Robustness:** No "broken" buttons or partial sections. Every "Next" action in multi-step flows (like Booking) must be validated and fully functional.
-- **Speed & Precision:** Fast loading states for database fetches with elegant skeletons or transitions that match the luxury theme.
+- **Speed & Precision:** Fast loading states for database fetches with high-fidelity skeleton loaders and sequential entry animations (Framer Motion) that match the luxury theme.
