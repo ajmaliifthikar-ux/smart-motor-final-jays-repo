@@ -2,25 +2,36 @@ import admin from 'firebase-admin'
 import { getFirestore } from 'firebase-admin/firestore'
 
 if (!admin.apps.length) {
-  const serviceAccount = {
-    type: 'service_account',
-    project_id: process.env.FIREBASE_PROJECT_ID,
-    private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
-    private_key: (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
-    client_email: process.env.FIREBASE_CLIENT_EMAIL,
-    client_id: process.env.FIREBASE_CLIENT_ID,
-    auth_uri: 'https://accounts.google.com/o/oauth2/auth',
-    token_uri: 'https://oauth2.googleapis.com/token',
-    auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
-    client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
+  const projectId = process.env.FIREBASE_PROJECT_ID
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL
+  const privateKey = (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n')
+
+  if (!projectId || !clientEmail || !privateKey) {
+    console.error('❌ Firebase Admin: Missing required env vars:', {
+      hasProjectId: !!projectId,
+      hasClientEmail: !!clientEmail,
+      hasPrivateKey: !!privateKey,
+    })
   }
 
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-    // Realtime Database URL — required for admin.database() calls
-    databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL ||
-      'https://smartmotoruae-default-rtdb.asia-southeast1.firebasedatabase.app',
-  })
+  // Only the three required fields — optional fields cause init failures if undefined
+  const serviceAccount = {
+    type: 'service_account' as const,
+    project_id: projectId || '',
+    private_key: privateKey,
+    client_email: clientEmail || '',
+  }
+
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+      databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL ||
+        'https://smartmotoruae-default-rtdb.asia-southeast1.firebasedatabase.app',
+    })
+    console.log('✅ Firebase Admin initialized for project:', projectId)
+  } catch (initError) {
+    console.error('❌ Firebase Admin initializeApp failed:', initError)
+  }
 }
 
 export const adminAuth = admin.auth()
