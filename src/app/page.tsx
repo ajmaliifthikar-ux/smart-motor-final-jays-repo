@@ -70,10 +70,23 @@ export default async function Home() {
         isPromotional: p.isPromotional
     }))
 
+    // Normalize brand logo URLs: Firestore may store root-level paths like /bmw-logo.png
+    // which don't exist at root. Remap them to /brands-carousel/ where they actually live.
+    function normalizeBrandLogo(logoUrl: string | undefined): string {
+        if (!logoUrl) return '/bg-placeholder.jpg'
+        // Already a full valid path with subdirectory → keep as-is
+        if (logoUrl.includes('/brands-carousel/') || logoUrl.includes('/brands/') || logoUrl.startsWith('http')) {
+            return logoUrl
+        }
+        // Root-level path like /bmw-logo.png → remap to /brands-carousel/bmw-logo.png
+        const filename = logoUrl.replace(/^\//, '')
+        return `/brands-carousel/${filename}`
+    }
+
     const brands = brandsData.map(b => ({
         id: b.id,
         name: b.name,
-        src: b.logoUrl || '/bg-placeholder.jpg',
+        src: normalizeBrandLogo(b.logoUrl),
         slug: b.slug || b.id
     }))
 

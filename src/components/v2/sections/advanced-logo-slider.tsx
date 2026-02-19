@@ -122,7 +122,7 @@ export function AdvancedLogoSlider({ brands: initialBrands }: { brands?: BrandIt
                             >
                                 <Tooltip content={`View ${brand.name} services`} position="bottom">
                                     <Link
-                                        href={`/brands#${brand.slug}`}
+                                        href={`/brand/${brand.slug}`}
                                         className="group"
                                     >
                                         <div className="flex items-center justify-center rounded-2xl bg-gray-50 border border-gray-100 shadow-sm group-hover:shadow-lg group-hover:border-gray-200 transition-all duration-300 w-20 h-20 md:w-24 md:h-24 p-4 md:p-5">
@@ -168,13 +168,13 @@ export function AdvancedLogoSlider({ brands: initialBrands }: { brands?: BrandIt
             </div>
 
             <div className="text-center mt-12">
-                <Link
-                    href="/brands"
+                <button
+                    onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
                     className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-gray-400 hover:text-[#E62329] transition-all duration-300 group"
                 >
-                    View All Capabilities
+                    View All Services
                     <span className="group-hover:translate-x-1 transition-transform" aria-hidden="true">&rarr;</span>
-                </Link>
+                </button>
             </div>
         </section>
     )
