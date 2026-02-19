@@ -18,6 +18,8 @@ interface HeroProps {
         imageUrl?: string
         ctaLabel?: string
         ctaLink?: string
+        isVisible?: boolean
+        theme?: 'light' | 'dark' | 'glass'
     }
 }
 

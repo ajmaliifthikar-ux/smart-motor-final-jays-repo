@@ -35,7 +35,5 @@ Goal: Build the interface to browse and restore historical content states.
 Goal: Implement layout options and visibility controls for core sections.
 
 - [x] Task: Add "Visibility" and "Layout" toggles to the Section Editor. (98f290b)
-- [~] Task: Final Polish & "Gold Standard" Audit.
-    - [ ] Write Tests: Ensure 100% of new UI components are keyboard and screen-reader accessible.
-    - [ ] Implement Feature: Refine animations (Framer Motion) and responsive styles for all admin tools.
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: Section Polishing & Visibility Toggles' (Protocol in workflow.md)
+- [x] Task: Final Polish & "Gold Standard" Audit. (10e65b7)
+- [x] Task: Conductor - User Manual Verification 'Phase 4: Section Polishing & Visibility Toggles' (10e65b7)

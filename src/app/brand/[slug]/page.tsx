@@ -200,7 +200,7 @@ export default async function BrandPage({ params }: { params: Promise<{ slug: st
 
     const models = copy.latestModels.length
         ? copy.latestModels
-        : (brand.description ? brand.description.split(',').map((m: string) => m.trim()).filter(Boolean) : [])
+        : (brand.models ? brand.models.split(',').map((m: string) => m.trim()).filter(Boolean) : (brand.description ? brand.description.split(',').map((m: string) => m.trim()).filter(Boolean) : []))
 
     const stats = [
         { value: '15+', label: 'Years Experience' },

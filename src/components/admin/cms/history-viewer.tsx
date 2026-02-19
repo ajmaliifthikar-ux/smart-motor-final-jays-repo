@@ -125,7 +125,6 @@ export function HistoryViewer({
                     </div>
                     
                     <Button
-                      size="sm"
                       onClick={() => handleRestore(version.id)}
                       disabled={!!isRestoring}
                       className="rounded-full h-8 px-4 bg-[#121212] text-white hover:bg-[#E62329] text-[9px] font-black uppercase tracking-widest transition-all"

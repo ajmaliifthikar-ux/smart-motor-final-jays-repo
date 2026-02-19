@@ -358,9 +358,17 @@ export interface FirebaseBrand {
   name: string
   nameAr?: string
   slug: string
-  description?: string
+  category?: string
   logoUrl?: string
-  image?: string
+  logoFile?: string
+  heroImage?: string
+  color?: string
+  description?: string
+  heritage?: string
+  heritageAr?: string
+  models?: string // Comma separated list of models
+  specialties?: string
+  services?: string
   serviceIds?: string[] // Service slugs available for this brand
   createdAt: Timestamp
   updatedAt: Timestamp

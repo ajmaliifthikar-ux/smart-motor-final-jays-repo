@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { cn } from '@/lib/utils'
 
 const features = [
     {
@@ -55,6 +56,8 @@ interface WhySmartMotorProps {
         title?: string
         subtitle?: string
         body?: string
+        isVisible?: boolean
+        theme?: 'light' | 'dark' | 'glass'
     }
 }
 

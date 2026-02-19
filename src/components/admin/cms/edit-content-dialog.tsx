@@ -25,8 +25,8 @@ const contentSchema = z.object({
   imageUrl: z.string().url('Invalid URL').or(z.string().length(0)).optional(),
   ctaLabel: z.string().optional(),
   ctaLink: z.string().optional(),
-  isVisible: z.boolean().default(true),
-  theme: z.enum(['light', 'dark', 'glass']).default('light'),
+  isVisible: z.boolean(),
+  theme: z.enum(['light', 'dark', 'glass']),
 })
 
 export type ContentFormData = z.infer<typeof contentSchema>
@@ -61,7 +61,7 @@ export function EditContentDialog({
       imageUrl: initialData?.imageUrl || '',
       ctaLabel: initialData?.ctaLabel || '',
       ctaLink: initialData?.ctaLink || '',
-      isVisible: initialData?.isVisible !== false, // Default to true
+      isVisible: initialData?.isVisible ?? true,
       theme: initialData?.theme || 'light',
     }
   })

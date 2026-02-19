@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { ArrowRightIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface AboutSnippetProps {
     cmsData?: {
@@ -11,6 +12,8 @@ interface AboutSnippetProps {
         imageUrl?: string
         ctaLabel?: string
         ctaLink?: string
+        isVisible?: boolean
+        theme?: 'light' | 'dark' | 'glass'
     }
 }
 

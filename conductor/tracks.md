@@ -14,5 +14,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [x] **Track: Admin Content Management & History UI with Inline Editing**
-*Link: [./tracks/admin_cms_history_20260219/](./tracks/admin_cms_history_20260219/)*
+- [~] **Track: Pure Firebase Migration & Management Studio UI**
+*Link: [./tracks/firebase_migration_studio_20260219/](./tracks/firebase_migration_studio_20260219/)*
