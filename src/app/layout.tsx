@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { RecaptchaProvider } from "@/components/providers/RecaptchaProvider";
 import "./globals.css";
 
-// Removed force-dynamic — individual pages control their rendering strategy
-// force-dynamic in root layout conflicts with page-level revalidate and metadata
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://smartmotor.ae'),

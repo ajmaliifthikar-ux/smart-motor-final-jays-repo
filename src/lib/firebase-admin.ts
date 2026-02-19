@@ -39,6 +39,30 @@ export const adminAuth = admin.auth()
 // Named Firestore DB: 'smartmotordb' — use firebase-admin/firestore getFirestore with databaseId
 export const adminDb = getFirestore(admin.app(), 'smartmotordb')
 
+// ─── Serialization helper — converts Firestore Timestamps to ISO strings ─────
+// Required so data can cross the Server→Client component boundary as plain objects
+function serializeDoc(data: Record<string, any>): Record<string, any> {
+  const result: Record<string, any> = {}
+  for (const [key, value] of Object.entries(data)) {
+    if (value && typeof value === 'object' && typeof value.toDate === 'function') {
+      // Firestore Timestamp — convert to ISO string
+      result[key] = value.toDate().toISOString()
+    } else if (value && typeof value === 'object' && '_seconds' in value && '_nanoseconds' in value) {
+      // Firestore Timestamp plain object form
+      result[key] = new Date(value._seconds * 1000).toISOString()
+    } else if (Array.isArray(value)) {
+      result[key] = value.map(v =>
+        v && typeof v === 'object' ? serializeDoc(v) : v
+      )
+    } else if (value && typeof value === 'object' && value.constructor?.name === 'Object') {
+      result[key] = serializeDoc(value)
+    } else {
+      result[key] = value
+    }
+  }
+  return result
+}
+
 // ─── Server-side data fetchers (use these in Server Components) ───────────────
 
 export async function adminGetAllServices() {
@@ -47,7 +71,7 @@ export async function adminGetAllServices() {
       .collection('services')
       .where('active', '==', true)
       .get()
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as any[]
+    return snapshot.docs.map(doc => serializeDoc({ id: doc.id, ...doc.data() })) as any[]
   } catch (error) {
     console.error('adminGetAllServices error:', error)
     return []
@@ -60,7 +84,7 @@ export async function adminGetAllBrands() {
       .collection('brands')
       .orderBy('name', 'asc')
       .get()
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as any[]
+    return snapshot.docs.map(doc => serializeDoc({ id: doc.id, ...doc.data() })) as any[]
   } catch (error) {
     console.error('adminGetAllBrands error:', error)
     return []
@@ -72,7 +96,7 @@ export async function adminGetAllPublishedContent(type?: string) {
     let query = adminDb.collection('content').where('published', '==', true)
     if (type) query = (query as any).where('type', '==', type)
     const snapshot = await (query as any).orderBy('createdAt', 'desc').get()
-    return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })) as any[]
+    return snapshot.docs.map((doc: any) => serializeDoc({ id: doc.id, ...doc.data() })) as any[]
   } catch (error) {
     console.error('adminGetAllPublishedContent error:', error)
     return []
