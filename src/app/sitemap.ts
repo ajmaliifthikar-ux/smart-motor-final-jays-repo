@@ -7,7 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Static routes — canonical URLs only
     const staticRoutes = [
         { path: '', priority: 1.0 },
-        { path: '/new-home', priority: 1.0 },
+        { path: '/smart-tips', priority: 0.8 },
         { path: '/services', priority: 0.9 },
         { path: '/brands', priority: 0.9 },
         { path: '/about', priority: 0.8 },

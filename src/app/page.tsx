@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { Navbar } from '@/components/v2/layout/navbar'
 import { Footer } from '@/components/v2/layout/footer'
 import { Hero } from '@/components/v2/sections/hero'
@@ -11,10 +12,24 @@ import { AboutSnippet } from '@/components/v2/sections/about-snippet'
 import { Services } from '@/components/v2/sections/services'
 import { WhySmartMotor } from '@/components/v2/sections/why-smart-motor'
 import { ServicePackages } from '@/components/v2/sections/service-packages'
+import { Testimonials } from '@/components/v2/sections/testimonials'
 import { BookingForm } from '@/components/v2/sections/booking-form'
-import { NewsletterSection } from '@/components/v2/sections/newsletter'
 import { ReviewsCarousel } from '@/components/v2/sections/reviews-carousel'
+import { NewsletterSection } from '@/components/v2/sections/newsletter'
 import { FAQ } from '@/components/sections/faq'
+
+export const metadata: Metadata = {
+    title: 'Car Service & Repair Abu Dhabi | Smart Motor Auto Repair – Est. 2009',
+    description: 'Smart Motor — Abu Dhabi\'s trusted car service & repair center in Musaffah. BMW, Mercedes, Toyota, Nissan & all brands. Engine repair, AC, PPF, ceramic coating, window tinting & detailing. 4.9★ Google rated. Mon–Sat 8AM–7PM. Call +971 2 555 5443.',
+    alternates: {
+        canonical: 'https://smartmotor.ae',
+        languages: {
+            'en': 'https://smartmotor.ae',
+            'ar': 'https://smartmotor.ae/ar',
+            'x-default': 'https://smartmotor.ae',
+        },
+    },
+}
 
 export const revalidate = 3600 // Revalidate every hour
 
@@ -42,12 +57,12 @@ export default async function Home() {
         descriptionAr: s.descriptionAr || '',
         category: (s.category as any) || 'mechanical',
         icon: s.icon || 'wrench',
-        process: undefined,
-        subServices: undefined,
-        seo: undefined,
+        process: s.process as any,
+        subServices: s.subServices as any,
+        seo: s.seo as any,
         detailedDescription: s.detailedDescription || undefined,
         image: s.image || undefined,
-        iconImage: undefined
+        iconImage: s.iconImage || undefined
     }))
 
     const packages: ServicePackage[] = packagesData.map(p => ({
@@ -75,6 +90,7 @@ export default async function Home() {
             <WhySmartMotor />
             <ServicePackages packages={packages} />
             <BookingForm />
+            <Testimonials />
             <ReviewsCarousel />
             <NewsletterSection />
             <FAQ />

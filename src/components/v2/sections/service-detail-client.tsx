@@ -32,7 +32,7 @@ export function ServiceDetailClient({ service }: ServiceDetailClientProps) {
                 </div>
 
                 <div className="relative z-20 max-w-7xl mx-auto px-6 md:px-12 w-full pt-20">
-                    <Link href="/new-home#services" className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-8 transition-colors text-xs font-bold uppercase tracking-widest">
+                    <Link href="/#services" className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-8 transition-colors text-xs font-bold uppercase tracking-widest">
                         <ArrowLeft size={16} /> Back to Services
                     </Link>
 

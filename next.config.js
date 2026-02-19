@@ -4,6 +4,35 @@ const nextConfig = {
 
   async redirects() {
     return [
+      // Canonical homepage redirect
+      {
+        source: '/new-home',
+        destination: '/',
+        permanent: true,
+      },
+      // Smart Tips
+      {
+        source: '/new-home/smart-tips/:slug',
+        destination: '/smart-tips/:slug',
+        permanent: true,
+      },
+      {
+        source: '/new-home/smart-tips',
+        destination: '/smart-tips',
+        permanent: true,
+      },
+      // Services
+      {
+        source: '/new-home/services/:slug',
+        destination: '/services/:slug',
+        permanent: true,
+      },
+      {
+        source: '/new-home/services',
+        destination: '/services',
+        permanent: true,
+      },
+      // Brands
       {
         source: '/new-home/brands/:slug',
         destination: '/brand/:slug',

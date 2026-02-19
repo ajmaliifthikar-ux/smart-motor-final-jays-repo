@@ -27,7 +27,7 @@ const services = [
 ]
 
 const quickLinks = [
-    { label: 'Home', href: '/new-home' },
+    { label: 'Home', href: '/' },
     { label: 'About Us', href: '/about' },
     { label: 'Services', href: '/services' },
     { label: 'FAQ', href: '/faq' },
@@ -49,7 +49,7 @@ export function Footer() {
 
                     {/* Column 1: About */}
                     <div>
-                        <Link href="/new-home" className="inline-block mb-8">
+                        <Link href="/" className="inline-block mb-8">
                             <img
                                 src={publicPath("/branding/logo.png")}
                                 alt="Smart Motor"
@@ -71,17 +71,17 @@ export function Footer() {
                                 </TrackedLink>
                             </Tooltip>
                             <Tooltip content="Facebook" position="top">
-                                <TrackedLink href="#" source="footer" medium="social" campaign="facebook" label="facebook-v2-footer" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
+                                <TrackedLink href="https://facebook.com/smartmotorae" source="footer" medium="social" campaign="facebook" label="facebook-v2-footer" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
                                     <FacebookIcon size={16} />
                                 </TrackedLink>
                             </Tooltip>
                             <Tooltip content="TikTok" position="top">
-                                <TrackedLink href="#" source="footer" medium="social" campaign="tiktok" label="tiktok-v2-footer" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
+                                <TrackedLink href="https://tiktok.com/@smartmotorae" source="footer" medium="social" campaign="tiktok" label="tiktok-v2-footer" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
                                     <TikTokIcon size={16} />
                                 </TrackedLink>
                             </Tooltip>
                             <Tooltip content="Threads" position="top">
-                                <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
+                                <a href="https://threads.net/@smartmotor_autorepair" className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all">
                                     <ThreadsIcon size={16} />
                                 </a>
                             </Tooltip>

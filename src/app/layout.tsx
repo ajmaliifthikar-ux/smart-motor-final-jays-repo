@@ -97,6 +97,7 @@ export const metadata: Metadata = {
   },
 };
 
+import Script from "next/script";
 import { LanguageProvider } from "@/lib/language-context";
 import { SmartAssistantWithAudio } from "@/components/ui/smart-assistant-with-audio";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
@@ -206,14 +207,14 @@ export default function RootLayout({
           <RecaptchaProvider>
             {children}
             <SmartAssistantWithAudio />
-            <script dangerouslySetInnerHTML={{ __html: `
+            <Script id="audio-context-resume" strategy="afterInteractive">{`
               document.addEventListener('click', function() {
                 if (typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext)) {
-                  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                  var ctx = new (window.AudioContext || window.webkitAudioContext)();
                   if (ctx.state === 'suspended') ctx.resume();
                 }
               }, { once: true });
-            `}} />
+            `}</Script>
           </RecaptchaProvider>
         </LanguageProvider>
       </body>

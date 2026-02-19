@@ -17,7 +17,7 @@ export function SmartTipsList({ posts }: { posts: BlogPost[] }) {
                     transition={{ delay: index * 0.1 }}
                     className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-lg hover:shadow-2xl hover:border-[#E62329]/30 transition-all duration-500 group flex flex-col h-full"
                 >
-                    <Link href={`/new-home/smart-tips/${post.slug || post.id}`} className="block relative h-64 overflow-hidden">
+                    <Link href={`/smart-tips/${post.slug || post.id}`} className="block relative h-64 overflow-hidden">
                         <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10" />
                         <img
                             src={post.image || '/bg-placeholder.jpg'}
@@ -39,7 +39,7 @@ export function SmartTipsList({ posts }: { posts: BlogPost[] }) {
                             </div>
                         </div>
 
-                        <Link href={`/new-home/smart-tips/${post.slug || post.id}`} className="group-hover:text-[#E62329] transition-colors">
+                        <Link href={`/smart-tips/${post.slug || post.id}`} className="group-hover:text-[#E62329] transition-colors">
                             <h3 className="text-xl font-black uppercase tracking-tight leading-tight mb-4 min-h-[3.75rem]">
                                 {post.title}
                             </h3>
@@ -57,7 +57,7 @@ export function SmartTipsList({ posts }: { posts: BlogPost[] }) {
                                 {post.author || 'Smart Motor'}
                             </div>
 
-                            <Link href={`/new-home/smart-tips/${post.slug || post.id}`} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#121212] group-hover:bg-[#E62329] group-hover:text-white transition-all">
+                            <Link href={`/smart-tips/${post.slug || post.id}`} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#121212] group-hover:bg-[#E62329] group-hover:text-white transition-all">
                                 <ArrowRight size={18} />
                             </Link>
                         </div>

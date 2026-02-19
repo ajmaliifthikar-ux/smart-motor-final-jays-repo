@@ -71,7 +71,7 @@ export function BlogPostClient({ post, relatedPosts }: BlogPostClientProps) {
                 <div className="max-w-3xl mx-auto px-6 md:px-12 relative z-10">
 
                     {/* Back Link */}
-                    <Link href="/new-home/smart-tips" className="inline-flex items-center gap-2 text-gray-500 hover:text-[#E62329] mb-12 transition-colors text-xs font-black uppercase tracking-widest group">
+                    <Link href="/smart-tips" className="inline-flex items-center gap-2 text-gray-500 hover:text-[#E62329] mb-12 transition-colors text-xs font-black uppercase tracking-widest group">
                         <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to Smart Tips
                     </Link>
 
@@ -115,7 +115,7 @@ export function BlogPostClient({ post, relatedPosts }: BlogPostClientProps) {
                 <div className="max-w-7xl mx-auto px-6 md:px-12">
                     <div className="flex items-end justify-between mb-12">
                         <h2 className="text-3xl font-black uppercase tracking-tighter">Related <span className="text-[#E62329]">Articles</span></h2>
-                        <Link href="/new-home/smart-tips" className="hidden md:flex items-center gap-2 text-xs font-black uppercase tracking-widest hover:text-[#E62329] transition-colors">
+                        <Link href="/smart-tips" className="hidden md:flex items-center gap-2 text-xs font-black uppercase tracking-widest hover:text-[#E62329] transition-colors">
                             View All <ArrowRight size={14} />
                         </Link>
                     </div>
@@ -130,7 +130,7 @@ export function BlogPostClient({ post, relatedPosts }: BlogPostClientProps) {
                                 transition={{ delay: index * 0.1 }}
                                 className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-md hover:shadow-xl hover:border-[#E62329]/30 transition-all duration-500 group flex flex-col h-full"
                             >
-                                <Link href={`/new-home/smart-tips/${rPost.slug}`} className="block relative h-56 overflow-hidden">
+                                <Link href={`/smart-tips/${rPost.slug}`} className="block relative h-56 overflow-hidden">
                                     <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10" />
                                     <img
                                         src={rPost.image || '/bg-placeholder.jpg'}
@@ -145,7 +145,7 @@ export function BlogPostClient({ post, relatedPosts }: BlogPostClientProps) {
                                 </Link>
 
                                 <div className="p-8 flex flex-col flex-grow">
-                                    <Link href={`/new-home/smart-tips/${rPost.slug}`} className="group-hover:text-[#E62329] transition-colors">
+                                    <Link href={`/smart-tips/${rPost.slug}`} className="group-hover:text-[#E62329] transition-colors">
                                         <h3 className="text-lg font-black uppercase tracking-tight leading-tight mb-4 min-h-[3.5rem]">
                                             {rPost.title}
                                         </h3>

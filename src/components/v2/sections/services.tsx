@@ -32,7 +32,7 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
             transition={{ duration: 0.5, delay: index * 0.1 }}
             className="h-[320px] md:h-[380px]"
         >
-            <Link href={`/new-home/services/${service.id}`} className="relative group overflow-hidden rounded-[2rem] bg-[#121212] carbon-fiber border border-white/5 h-full transition-all duration-700 hover:shadow-[0_0_80px_rgba(230,35,41,0.15)] flex flex-col block">
+            <Link href={`/services/${service.id}`} className="relative group overflow-hidden rounded-[2rem] bg-[#121212] carbon-fiber border border-white/5 h-full transition-all duration-700 hover:shadow-[0_0_80px_rgba(230,35,41,0.15)] flex flex-col block">
                 {/* Background Image */}
                 <div className="absolute inset-0 z-0 opacity-40 group-hover:opacity-60 transition-opacity duration-700">
                     <picture>

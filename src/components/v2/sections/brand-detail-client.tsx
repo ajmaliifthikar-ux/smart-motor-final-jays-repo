@@ -34,7 +34,7 @@ export function BrandDetailClient({ brand, categoryName }: BrandDetailClientProp
 
                 <div className="relative z-20 max-w-7xl mx-auto px-6 md:px-12 w-full pt-16">
                     <div className="flex items-center gap-4 mb-8">
-                        <Link href="/new-home/brands" className="text-white/60 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                        <Link href="/brands" className="text-white/60 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest flex items-center gap-2">
                             <ArrowLeft size={14} /> Brands
                         </Link>
                         <span className="text-white/40">/</span>
@@ -61,7 +61,7 @@ export function BrandDetailClient({ brand, categoryName }: BrandDetailClientProp
                             >
                                 Book {brand.name} Service
                             </Button>
-                            <Link href="/new-home#packages">
+                            <Link href="/#packages">
                                 <Button
                                     variant="outline"
                                     className="bg-transparent border-white/20 text-white hover:bg-white hover:text-black px-8 py-6 rounded-full font-black uppercase tracking-widest text-xs"

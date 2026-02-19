@@ -15,7 +15,7 @@ const navLinks = [
   { href: '#services', label: 'Services', id: 'services' },
   { href: '#brands', label: 'Brands', id: 'brands' },
   { href: '#packages', label: 'Packages', id: 'packages' },
-  { href: '/new-home/smart-tips', label: 'Smart Tips', id: 'smart-tips' },
+  { href: '/smart-tips', label: 'Smart Tips', id: 'smart-tips' },
   { href: '#contact', label: 'Contact', id: 'contact' },
 ]
 
@@ -26,7 +26,7 @@ export function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
   // True when we're on the home page and anchor scrolling works
-  const isHomePage = pathname === '/new-home' || pathname === '/'
+  const isHomePage = pathname === '/'
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40)
@@ -72,9 +72,9 @@ export function Navbar() {
       return
     }
 
-    // On other pages (e.g. /new-home/smart-tips), navigate to home with hash
+    // On other pages, navigate to home with hash
     // After navigation the browser will auto-scroll to the anchor
-    router.push(`/new-home#${targetId}`)
+    router.push(`/#${targetId}`)
   }
 
   return (
@@ -87,7 +87,7 @@ export function Navbar() {
       )}>
         <nav className="flex items-center justify-between relative">
           {/* Logo */}
-          <Link href="/new-home" className="flex items-center group relative z-50">
+          <Link href="/" className="flex items-center group relative z-50">
             <img
               src={publicPath("/branding/logo.png")}
               alt="Smart Motor"
