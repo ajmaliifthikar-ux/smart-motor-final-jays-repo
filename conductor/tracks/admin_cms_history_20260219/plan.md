@@ -27,18 +27,14 @@ Goal: Implement the "Edit" overlays and forms for Hero, About, and Mission secti
 ## Phase 3: Version History & Restoration UI
 Goal: Build the interface to browse and restore historical content states.
 
-- [~] Task: Build the `HistoryViewer` component to list versions for a specific section.
-    - [ ] Write Tests: Verify the component fetches and displays `ContentHistory` records for a given section ID.
-    - [ ] Implement Feature: Create a list view showing timestamp, author (from audit log), and a "Preview/Restore" action.
-- [ ] Task: Implement the "Restore" functionality with real-time feedback.
-    - [ ] Write Tests: Verify that clicking "Restore" triggers `restoreContentSnapshot` and updates the UI.
-    - [ ] Implement Feature: Connect the restore button and add a loading/success state.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Version History & Restoration UI' (Protocol in workflow.md)
+- [x] Task: Build the `HistoryViewer` component to list versions for a specific section. (4138a44)
+- [x] Task: Implement the "Restore" functionality with real-time feedback. (4138a44)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Version History & Restoration UI' (4138a44)
 
 ## Phase 4: Section Polishing & Visibility Toggles
 Goal: Implement layout options and visibility controls for core sections.
 
-- [ ] Task: Add "Visibility" and "Layout" toggles to the Section Editor.
+- [~] Task: Add "Visibility" and "Layout" toggles to the Section Editor.
     - [ ] Write Tests: Verify that toggling visibility hides the section for non-admin users.
     - [ ] Implement Feature: Add "Show/Hide" and "Theme (Light/Dark/Glass)" options to the editing forms.
 - [ ] Task: Final Polish & "Gold Standard" Audit.

@@ -15,7 +15,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Loader2, Save } from 'lucide-react'
+import { Loader2, Save, Eye, EyeOff, Sun, Moon, Sparkles } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const contentSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -24,6 +25,8 @@ const contentSchema = z.object({
   imageUrl: z.string().url('Invalid URL').or(z.string().length(0)).optional(),
   ctaLabel: z.string().optional(),
   ctaLink: z.string().optional(),
+  isVisible: z.boolean().default(true),
+  theme: z.enum(['light', 'dark', 'glass']).default('light'),
 })
 
 export type ContentFormData = z.infer<typeof contentSchema>
@@ -45,7 +48,9 @@ export function EditContentDialog({
 }: EditContentDialogProps) {
   const { 
     register, 
-    handleSubmit, 
+    handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isSubmitting } 
   } = useForm<ContentFormData>({
     resolver: zodResolver(contentSchema),
@@ -56,8 +61,13 @@ export function EditContentDialog({
       imageUrl: initialData?.imageUrl || '',
       ctaLabel: initialData?.ctaLabel || '',
       ctaLink: initialData?.ctaLink || '',
+      isVisible: initialData?.isVisible !== false, // Default to true
+      theme: initialData?.theme || 'light',
     }
   })
+
+  const isVisible = watch('isVisible')
+  const currentTheme = watch('theme')
 
   const onSubmit = async (data: ContentFormData) => {
     try {
@@ -106,6 +116,60 @@ export function EditContentDialog({
               error={errors.body?.message}
               rows={4}
             />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-100">
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Section Visibility</label>
+                <div className="flex items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setValue('isVisible', true)}
+                    className={cn(
+                      "flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl border-2 transition-all font-black text-[10px] uppercase tracking-widest",
+                      isVisible ? "bg-[#121212] text-white border-[#121212] shadow-lg" : "bg-white text-gray-400 border-gray-100 hover:border-gray-200"
+                    )}
+                  >
+                    <Eye size={14} /> Visible
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setValue('isVisible', false)}
+                    className={cn(
+                      "flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl border-2 transition-all font-black text-[10px] uppercase tracking-widest",
+                      !isVisible ? "bg-[#E62329] text-white border-[#E62329] shadow-lg" : "bg-white text-gray-400 border-gray-100 hover:border-gray-200"
+                    )}
+                  >
+                    <EyeOff size={14} /> Hidden
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Visual Theme</label>
+                <div className="flex items-center gap-2">
+                  {[
+                    { id: 'light', icon: Sun, label: 'Light' },
+                    { id: 'dark', icon: Moon, label: 'Dark' },
+                    { id: 'glass', icon: Sparkles, label: 'Glass' }
+                  ].map((theme) => (
+                    <button
+                      key={theme.id}
+                      type="button"
+                      onClick={() => setValue('theme', theme.id as any)}
+                      className={cn(
+                        "flex-1 flex flex-col items-center justify-center gap-1.5 py-2.5 rounded-2xl border-2 transition-all font-black text-[8px] uppercase tracking-tighter",
+                        currentTheme === theme.id 
+                          ? "bg-[#121212] text-white border-[#121212] shadow-md" 
+                          : "bg-white text-gray-400 border-gray-50 hover:border-gray-200"
+                      )}
+                    >
+                      <theme.icon size={14} />
+                      {theme.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
               <Input 
