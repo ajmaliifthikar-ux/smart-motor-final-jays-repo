@@ -14,3 +14,9 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2026-02-17: Critical Mock Auth Bypass in Production
+- **Vulnerability:** A hardcoded "Mock Authentication Bypass" token (`mock-token-secret-123`) was active in production, allowing full administrative access to anyone knowing the token.
+- **Fix:** Restricted the usage of `mock-token-secret-123` strictly to the development environment (`process.env.NODE_ENV === 'development'`) in `src/lib/firebase-admin.ts` and conditionally rendered the bypass button in `src/app/auth/page.tsx`.
+- **File:** `src/lib/firebase-admin.ts`, `src/app/auth/page.tsx`
+- **Mitigation:** Always wrap test/mock logic in environment conditionals. Use dedicated test environments or feature flags rather than inline mock logic in core authentication paths when possible.
