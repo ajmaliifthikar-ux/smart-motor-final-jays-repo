@@ -1,6 +1,7 @@
 import { initializeApp, getApps } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
+import { getStorage } from 'firebase/storage'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -17,5 +18,6 @@ const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig)
 export const auth = getAuth(app)
 // Named Firestore database — must match Firebase Console: 'smartmotordb'
 export const db = getFirestore(app, 'smartmotordb')
+export const storage = getStorage(app)
 
 export default app

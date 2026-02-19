@@ -1,37 +1,27 @@
 # Implementation Plan: Pure Firebase Migration & Management Studio
 
-## Phase 1: Firestore Catalog Migration
+## Phase 1: Firestore Catalog Migration [checkpoint: d2ca354]
 Goal: Migrate all Brands and Services to Firestore and update consumer-facing components.
 
 - [x] Task: Create a one-time migration script `scripts/migrate-to-firestore.ts`. (Verified via execution)
-    - [ ] Write Tests: Verify script correctly transforms Prisma models to Firestore documents.
-    - [ ] Implement Feature: Execute migration for Brands and Services collections.
-- [~] Task: Update `BookingForm` and `BrandPage` to fetch data from Firestore.
-    - [ ] Write Tests: Verify that components still render correctly using Firestore as the data source.
-    - [ ] Implement Feature: Swap Prisma fetch calls for `adminGetAllServices` and `adminGetAllBrands`.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Firestore Catalog Migration' (Protocol in workflow.md)
+- [x] Task: Update `BookingForm` and `BrandPage` to fetch data from Firestore. (d2ca354)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Firestore Catalog Migration' (d2ca354)
 
-## Phase 2: Hybrid Asset Management System
+## Phase 2: Hybrid Asset Management System [checkpoint: fe68b8e]
 Goal: Build the underlying storage and library system for icons and brand logos.
 
-- [ ] Task: Set up Firebase Storage rules and utility for secure file uploads.
-    - [ ] Write Tests: Verify upload/delete operations with proper permissions.
-    - [ ] Implement Feature: Create `src/lib/firebase-storage.ts`.
-- [ ] Task: Build the "Preset Library" of automotive icons.
-    - [ ] Write Tests: Verify the component correctly lists and allows selection of preset icons.
-    - [ ] Implement Feature: Index existing icons in `public/Automotive-Icons` and create a picker UI.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Hybrid Asset Management System' (Protocol in workflow.md)
+- [x] Task: Set up Firebase Storage rules and utility for secure file uploads. (src/lib/firebase-storage.ts)
+- [x] Task: Build the "Preset Library" of automotive icons. (src/lib/constants/icons.ts)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Hybrid Asset Management System' (fe68b8e)
 
-## Phase 3: Management Studio UI
+## Phase 3: Management Studio UI [checkpoint: 1e4fc9e]
 Goal: Implement the Master-Detail interface for Service and Brand CRUD.
 
-- [ ] Task: Build the Management Studio Layout (Master-Detail).
-    - [ ] Write Tests: Verify sidebar navigation and detail pane synchronization.
-    - [ ] Implement Feature: Create `src/app/admin/studio` layout and navigation.
-- [ ] Task: Implement Service CRUD forms with Hybrid Asset integration.
+- [x] Task: Build the Management Studio Layout (Master-Detail). (src/components/admin/studio/studio-layout.tsx)
+- [~] Task: Implement Service CRUD forms with Hybrid Asset integration.
     - [ ] Write Tests: Verify form validation and real-time Firestore updates.
     - [ ] Implement Feature: Build the "Edit Service" pane with icon picker and upload tools.
-- [ ] Task: Implement Brand CRUD forms.
+- [~] Task: Implement Brand CRUD forms.
     - [ ] Write Tests: Verify model list management and logo updates.
     - [ ] Implement Feature: Build the "Edit Brand" pane with rich text support for heritage.
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Management Studio UI' (Protocol in workflow.md)

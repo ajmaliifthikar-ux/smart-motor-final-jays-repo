@@ -124,12 +124,18 @@ export const adminNavigation: NavSection[] = [
     ],
   },
 
-  // 🎨 AI STUDIO
+  // 🎨 MANAGEMENT STUDIO
   {
     id: 'studio',
-    label: 'AI Studio',
+    label: 'Management Studio',
     icon: Palette,
     items: [
+      {
+        id: 'studio-home',
+        label: 'Catalog Manager',
+        href: '/admin/studio',
+        icon: LayoutGrid,
+      },
       {
         id: 'content-calendar',
         label: 'Content Calendar',
