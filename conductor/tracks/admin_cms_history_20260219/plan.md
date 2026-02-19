@@ -1,6 +1,6 @@
 # Implementation Plan: Admin Content & History UI (Inline Editing)
 
-## Phase 1: Admin Infrastructure & Toolbar
+## Phase 1: Admin Infrastructure & Toolbar [checkpoint: 5aa9306]
 Goal: Establish the global "Edit Mode" state and the secure Admin Toolbar.
 
 - [x] Task: Create a `useAdminMode` hook or context for global state management. (3067b98)
