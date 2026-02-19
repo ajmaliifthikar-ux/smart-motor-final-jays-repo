@@ -22,12 +22,12 @@ Goal: Implement the "Edit" overlays and forms for Hero, About, and Mission secti
 - [x] Task: Integrate `updateContentBlock` with the frontend forms. (edbe790)
     - [ ] Write Tests: Verify that saving the form triggers a successful database update and revalidation.
     - [ ] Implement Feature: Connect the "Save" button to the Firestore CMS utility.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Contextual Section Editing' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Contextual Section Editing' (a5e2587)
 
 ## Phase 3: Version History & Restoration UI
 Goal: Build the interface to browse and restore historical content states.
 
-- [ ] Task: Build the `HistoryViewer` component to list versions for a specific section.
+- [~] Task: Build the `HistoryViewer` component to list versions for a specific section.
     - [ ] Write Tests: Verify the component fetches and displays `ContentHistory` records for a given section ID.
     - [ ] Implement Feature: Create a list view showing timestamp, author (from audit log), and a "Preview/Restore" action.
 - [ ] Task: Implement the "Restore" functionality with real-time feedback.

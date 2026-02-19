@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { SectionEditor } from './section-editor'
 import { EditContentDialog, ContentFormData } from './edit-content-dialog'
+import { HistoryViewer } from './history-viewer'
 import { updateContentBlock } from '@/lib/firebase-cms'
 import { useFirebaseAuth } from '@/hooks/use-firebase-auth'
 import { toast } from 'sonner'
@@ -22,6 +23,7 @@ export function HomeCmsWrapper({
   initialData
 }: HomeCmsWrapperProps) {
   const [isEditDialogOpen, setIsEditOpen] = useState(false)
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false)
   const { user } = useFirebaseAuth()
   const router = useRouter()
 
@@ -54,7 +56,7 @@ export function HomeCmsWrapper({
         sectionId={sectionId}
         sectionName={sectionName}
         onEdit={() => setIsEditOpen(true)}
-        onHistory={() => toast.info('History viewer coming in Phase 3!')}
+        onHistory={() => setIsHistoryOpen(true)}
       >
         {children}
       </SectionEditor>
@@ -64,6 +66,13 @@ export function HomeCmsWrapper({
         onClose={() => setIsEditOpen(false)}
         onSave={handleSave}
         initialData={initialData}
+        sectionName={sectionName}
+      />
+
+      <HistoryViewer
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        sectionId={sectionId}
         sectionName={sectionName}
       />
     </>
