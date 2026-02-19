@@ -11,13 +11,13 @@
 ## Backend & API
 - **Runtime:** Node.js 22
 - **Logic:** Next.js Server Actions & API Routes
-- **ORM:** Prisma 6
 - **Caching:** Redis (Upstash / ioredis)
 - **Utilities:** date-fns
 
 ## Database
-- **Development:** SQLite (`file:./dev.db`)
-- **Production Support:** MySQL / PostgreSQL
+- **Primary:** Firestore (`smartmotordb`)
+- **Storage:** Firebase Storage (Assets & Logos)
+- **Secondary/Legacy:** Prisma 6 (SQLite/MySQL/PostgreSQL)
 
 ## Authentication & Security
 - **Providers:** NextAuth.js v5 (Beta), Firebase Authentication
