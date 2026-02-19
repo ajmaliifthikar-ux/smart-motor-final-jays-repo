@@ -40,7 +40,7 @@ const nextConfig = {
       },
       {
         source: '/new-home/brands',
-        destination: '/brands',
+        destination: '/',
         permanent: true,
       },
     ]
