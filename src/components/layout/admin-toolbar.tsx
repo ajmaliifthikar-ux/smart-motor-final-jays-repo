@@ -5,10 +5,18 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Settings, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { auth } from '@/lib/firebase'
-import { signOut } from 'firebase/auth'
+import { signOut as firebaseSignOut } from 'firebase/auth'
+import { signOut as nextAuthSignOut } from 'next-auth/react'
 
 export function AdminToolbar() {
   const { isAdminMode, toggleAdminMode, isAdmin, loading } = useAdminMode()
+
+  const handleSignOut = async () => {
+    await Promise.all([
+      firebaseSignOut(auth),
+      nextAuthSignOut({ callbackUrl: '/' })
+    ])
+  }
 
   if (loading || !isAdmin) return null
 
@@ -74,7 +82,7 @@ export function AdminToolbar() {
               <Settings size={14} />
             </button>
             <button
-              onClick={() => signOut(auth)}
+              onClick={handleSignOut}
               className="p-1.5 rounded-full hover:bg-white/10 text-white/60 hover:text-[#E62329] transition-all active:scale-90"
               title="Sign Out"
             >

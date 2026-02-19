@@ -1,16 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { AdminToolbar } from '@/components/layout/admin-toolbar'
-import { useSession } from 'next-auth/react'
 import { useAdminMode } from '@/hooks/use-admin-mode'
 import React from 'react'
 
-vi.mock('next-auth/react', () => ({
-  useSession: vi.fn(),
-}))
-
 vi.mock('@/hooks/use-admin-mode', () => ({
   useAdminMode: vi.fn(),
+}))
+
+vi.mock('@/lib/firebase', () => ({
+  auth: {},
+}))
+
+vi.mock('firebase/auth', () => ({
+  signOut: vi.fn(),
 }))
 
 describe('AdminToolbar', () => {
@@ -19,14 +22,12 @@ describe('AdminToolbar', () => {
   })
 
   it('should not render if user is not an admin', () => {
-    vi.mocked(useSession).mockReturnValue({
-      data: { user: { role: 'USER' } },
-      status: 'authenticated',
-    } as any)
     vi.mocked(useAdminMode).mockReturnValue({
       isAdminMode: false,
       toggleAdminMode: vi.fn(),
       setAdminMode: vi.fn(),
+      isAdmin: false,
+      loading: false,
     })
 
     const { container } = render(<AdminToolbar />)
@@ -34,14 +35,12 @@ describe('AdminToolbar', () => {
   })
 
   it('should render if user is an admin', () => {
-    vi.mocked(useSession).mockReturnValue({
-      data: { user: { role: 'ADMIN' } },
-      status: 'authenticated',
-    } as any)
     vi.mocked(useAdminMode).mockReturnValue({
       isAdminMode: false,
       toggleAdminMode: vi.fn(),
       setAdminMode: vi.fn(),
+      isAdmin: true,
+      loading: false,
     })
 
     render(<AdminToolbar />)
@@ -51,14 +50,12 @@ describe('AdminToolbar', () => {
 
   it('should call toggleAdminMode when toggle is clicked', () => {
     const toggleAdminMode = vi.fn()
-    vi.mocked(useSession).mockReturnValue({
-      data: { user: { role: 'ADMIN' } },
-      status: 'authenticated',
-    } as any)
     vi.mocked(useAdminMode).mockReturnValue({
       isAdminMode: false,
       toggleAdminMode,
       setAdminMode: vi.fn(),
+      isAdmin: true,
+      loading: false,
     })
 
     render(<AdminToolbar />)
