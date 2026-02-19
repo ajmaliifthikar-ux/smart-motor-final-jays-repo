@@ -11,8 +11,3 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Code Review Optimization & Robustness**
 *Link: [./tracks/code_review_fixes_20260216/](./tracks/code_review_fixes_20260216/)*
-
----
-
-- [x] **Track: Pure Firebase Migration & Management Studio UI**
-*Link: [./tracks/firebase_migration_studio_20260219/](./tracks/firebase_migration_studio_20260219/)*
