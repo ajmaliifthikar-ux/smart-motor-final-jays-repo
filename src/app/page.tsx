@@ -31,8 +31,7 @@ export const metadata: Metadata = {
     },
 }
 
-export const revalidate = 3600 // Revalidate every hour
-
+// Note: layout.tsx sets force-dynamic — this page renders server-side on each request
 export default async function Home() {
     let servicesData: any[] = []
     let packagesData: any[] = []
