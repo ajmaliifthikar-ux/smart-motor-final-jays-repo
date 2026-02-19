@@ -34,6 +34,8 @@ import {
   Layers,
   Smartphone,
   LineChart,
+  Mail,
+  FileOutput,
 } from 'lucide-react'
 
 export interface NavItem {
@@ -431,6 +433,12 @@ export const adminNavigation: NavSection[] = [
         href: '/admin/bookings/history',
         icon: FileText,
       },
+      {
+        id: 'subscribers',
+        label: 'Email Subscribers',
+        href: '/admin/subscribers',
+        icon: Mail,
+      },
     ],
   },
 
@@ -481,6 +489,12 @@ export const adminNavigation: NavSection[] = [
         label: 'Invoice Generator',
         href: '/admin/tools/invoice-gen',
         icon: FileCheck,
+      },
+      {
+        id: 'pdf-builder',
+        label: 'PDF Builder',
+        href: '/admin/tools/pdf-builder',
+        icon: FileOutput,
       },
       {
         id: 'calculator',

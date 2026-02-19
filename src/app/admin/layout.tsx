@@ -18,8 +18,8 @@ export default async function AdminLayout({
       {/* Sidebar */}
       <AdminSidebar />
 
-      {/* Main Content */}
-      <main className="md:ml-64 pt-20 md:pt-0 p-4 md:p-8 min-h-screen relative">
+      {/* Main Content — offset by sidebar (w-60) + padding (p-3 = 12px each side = 24px) */}
+      <main className="md:ml-[252px] pt-20 md:pt-0 p-4 md:p-8 min-h-screen relative">
         {/* Subtle Background Accent */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#E62329]/5 blur-[120px] rounded-full pointer-events-none" />
 

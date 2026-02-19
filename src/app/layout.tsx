@@ -99,6 +99,7 @@ export const metadata: Metadata = {
 
 import Script from "next/script";
 import { LanguageProvider } from "@/lib/language-context";
+import { AdminModeProvider } from "@/components/providers/AdminModeProvider";
 import { SmartAssistantWithAudio } from "@/components/ui/smart-assistant-with-audio";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 
@@ -203,20 +204,22 @@ export default function RootLayout({
       <body className="antialiased" suppressHydrationWarning>
         {/* Google Analytics 4 — GA_ID: G-MB61CK4J5Z */}
         <GoogleAnalytics />
-        <LanguageProvider>
-          <RecaptchaProvider>
-            {children}
-            <SmartAssistantWithAudio />
-            <Script id="audio-context-resume" strategy="afterInteractive">{`
-              document.addEventListener('click', function() {
-                if (typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext)) {
-                  var ctx = new (window.AudioContext || window.webkitAudioContext)();
-                  if (ctx.state === 'suspended') ctx.resume();
-                }
-              }, { once: true });
-            `}</Script>
-          </RecaptchaProvider>
-        </LanguageProvider>
+        <AdminModeProvider>
+          <LanguageProvider>
+            <RecaptchaProvider>
+              {children}
+              <SmartAssistantWithAudio />
+              <Script id="audio-context-resume" strategy="afterInteractive">{`
+                document.addEventListener('click', function() {
+                  if (typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext)) {
+                    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    if (ctx.state === 'suspended') ctx.resume();
+                  }
+                }, { once: true });
+              `}</Script>
+            </RecaptchaProvider>
+          </LanguageProvider>
+        </AdminModeProvider>
       </body>
     </html>
   );

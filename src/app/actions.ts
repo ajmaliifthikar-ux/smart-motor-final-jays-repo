@@ -13,7 +13,11 @@ export async function getBrandsWithModels() {
                 if (brands && brands.length > 0) {
                     return brands.map(b => {
                         // Map brand name to logo file if logoUrl not provided
-                        let logoFile = b.logoUrl
+                        // Normalise logoUrl: strip any leading /brands-carousel/ so we always
+                        // store just the bare filename, then re-prefix below
+                        const rawLogo = (b.logoUrl || '').replace(/^\/brands-carousel\//, '').replace(/^\/brands\//, '')
+                        let logoFile = rawLogo || undefined
+
                         if (!logoFile) {
                             const nameToFile: Record<string, string> = {
                                 'Mercedes-Benz': 'mercedes-logo.png',
@@ -21,6 +25,7 @@ export async function getBrandsWithModels() {
                                 'Audi': 'audi-logo-150x150-1.png',
                                 'Porsche': 'porsche-logo.png',
                                 'Range Rover': 'range-rover-logo.png',
+                                'Land Rover': 'land-rover-logo.png',
                                 'Bentley': 'bentley-logo-150x150-1.png',
                                 'Lamborghini': 'lamborghini-logo.png',
                                 'Bugatti': 'Bugatti-logo.png',
@@ -28,17 +33,52 @@ export async function getBrandsWithModels() {
                                 'Ferrari': 'ferrari-logo.png',
                                 'Alfa Romeo': 'alfa-romeo-logo.png',
                                 'Aston Martin': 'aston-martin-logo.png',
+                                'Maserati': 'maserati-logo.png',
+                                'McLaren': 'mclaren-logo.png',
+                                'Lotus': 'lotus-logo.png',
                                 'Cadillac': 'cadillac.png',
                                 'Chevrolet': 'chevrolet.png',
                                 'Chrysler': 'chrysler-logo.png',
                                 'Dodge': 'dodge-logo.png',
                                 'Ford': 'ford-logo.png',
                                 'Genesis': 'genesis-logo.png',
+                                'GMC': 'gmc-logo.png',
+                                'Hummer': 'hummer-logo.png',
+                                'Lincoln': 'lincoln-logo.png',
+                                'Jeep': 'jeeplogo.png',
+                                'Toyota': 'toyota-logo.png',
+                                'Lexus': 'lexus-logo.png',
+                                'Nissan': 'nissan-logo.png',
+                                'Honda': 'honda.png',
+                                'Infiniti': 'infiniti-logo.png',
+                                'Mitsubishi': 'mitsubishi-logo.png',
+                                'Mazda': 'mazda-logo.png',
+                                'Hyundai': 'hyundai-logo.png',
+                                'Kia': 'kia-logo.png',
+                                'Tesla': 'tesla-logo.png',
+                                'Volkswagen': 'volkswagen-logo.png',
+                                'Peugeot': 'peugeot-logo.png',
+                                'Renault': 'renault-logo.png',
+                                'Fiat': 'fiat-logo.png',
+                                'Mini': 'mini-cooper-logo.png',
+                                'MINI': 'mini-cooper-logo.png',
+                                'Volvo': 'volvo-logo.png',
+                                'Jaguar': 'jaguar-logo.png',
+                                'MG': 'mg-logo.png',
+                                'SEAT': 'seat-logo.png',
+                                'Skoda': 'skuda-logo.png',
+                                'Brabus': 'brabus-logo.png',
+                                'Camaro': 'camaro-logo.png',
+                                'Mustang': 'mustang-logo.png',
+                                'Corvette': 'corvette-logopng.png',
                             }
                             logoFile = nameToFile[b.name]
                         }
+                        // Ensure slug is always set — fall back to name-derived slug
+                        const slug = b.slug || b.id || b.name.toLowerCase().replace(/[\s_]+/g, '-').replace(/[^a-z0-9-]/g, '')
                         return {
                             ...b,
+                            slug,
                             logoFile,
                             models: []
                         }
@@ -54,10 +94,13 @@ export async function getBrandsWithModels() {
 
             brandCategories.forEach(category => {
                 category.brands.forEach((brand: any) => {
+                    // Fix v2-data logos: they use /brands/ path which doesn't exist;
+                    // remap to /brands-carousel/ bare filename
+                    const rawLogo = (brand.logo || '').replace(/^\/brands\//, '').replace(/^\/brands-carousel\//, '')
                     allBrands.push({
                         id: brand.id,
                         name: brand.name,
-                        logoFile: brand.logo, // Map logo to logoFile for consistency
+                        logoFile: rawLogo || undefined,
                         description: brand.description,
                         models: brand.models || []
                     })

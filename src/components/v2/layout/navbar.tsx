@@ -129,7 +129,10 @@ export function Navbar() {
           {/* Desktop Right Actions - Call Button ONLY (no socials) */}
           <div className="hidden lg:flex items-center gap-6">
             <div className="flex items-center gap-3">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#121212]/40">Toll Free</span>
+              <span className={cn(
+                "text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-300",
+                isScrolled ? "text-[#121212]/40" : "text-[#121212]"
+              )}>Toll Free</span>
               <Tooltip content="Call us directly for immediate assistance" position="bottom">
                 <a
                   href="tel:80076278"

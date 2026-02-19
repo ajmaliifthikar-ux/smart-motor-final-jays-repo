@@ -338,7 +338,7 @@ export function BookingForm() {
                                                                     >
                                                                         <div className="w-12 h-12 flex items-center justify-center mb-3">
                                                                             <img
-                                                                                src={b.logoUrl || (b.logoFile ? `/brands-carousel/${b.logoFile}` : '/branding/logo.png')}
+                                                                                src={(() => { const raw = b.logoUrl || b.logoFile || ''; return raw.startsWith('http') || raw.startsWith('/') ? raw : raw ? '/brands-carousel/' + raw : '/branding/logo.png'; })()}
                                                                                 alt={b.name}
                                                                                 className={cn(
                                                                                     "w-full h-full object-contain transition-all duration-700",

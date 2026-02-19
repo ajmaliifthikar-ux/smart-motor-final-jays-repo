@@ -12,7 +12,6 @@ import { AboutSnippet } from '@/components/v2/sections/about-snippet'
 import { Services } from '@/components/v2/sections/services'
 import { WhySmartMotor } from '@/components/v2/sections/why-smart-motor'
 import { ServicePackages } from '@/components/v2/sections/service-packages'
-import { Testimonials } from '@/components/v2/sections/testimonials'
 import { BookingForm } from '@/components/v2/sections/booking-form'
 import { ReviewsCarousel } from '@/components/v2/sections/reviews-carousel'
 import { NewsletterSection } from '@/components/v2/sections/newsletter'
@@ -102,7 +101,6 @@ export default async function Home() {
             <WhySmartMotor />
             <ServicePackages packages={packages} />
             <BookingForm />
-            <Testimonials />
             <ReviewsCarousel />
             <NewsletterSection />
             <FAQ />
