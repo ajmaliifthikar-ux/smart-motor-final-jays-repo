@@ -6,10 +6,10 @@ Goal: Establish the global "Edit Mode" state and the secure Admin Toolbar.
 - [x] Task: Create a `useAdminMode` hook or context for global state management. (3067b98)
     - [ ] Write Tests: Verify that "Edit Mode" defaults to false and can be toggled.
     - [ ] Implement Feature: Develop the state provider and hook.
-- [~] Task: Build the `AdminToolbar` component with an "Edit Mode" toggle.
+- [x] Task: Build the `AdminToolbar` component with an "Edit Mode" toggle. (d91207d)
     - [ ] Write Tests: Verify the toolbar only renders for authenticated Firebase admins.
     - [ ] Implement Feature: Create a floating `AdminToolbar` with a toggle switch.
-- [ ] Task: Fix the fallback image path in `BookingForm`.
+- [~] Task: Fix the fallback image path in `BookingForm`.
     - [ ] Write Tests: Verify the image `src` evaluates to `/google-logo.svg`.
     - [ ] Implement Feature: Update `src/components/sections/booking-form.tsx`.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Admin Infrastructure & Toolbar' (Protocol in workflow.md)

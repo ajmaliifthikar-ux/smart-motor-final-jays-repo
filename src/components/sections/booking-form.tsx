@@ -244,9 +244,9 @@ export function BookingForm() {
                 {/* STEP 1: Details */}
                 {currentStep === 1 && (
                   <div className="grid grid-cols-1 gap-8 max-w-xl mx-auto bg-white/50 backdrop-blur-sm p-8 md:p-12 rounded-[2.5rem] border border-white/50 shadow-sm">
-                    <Input label="Owner Name" placeholder="e.g. John Doe" {...register('fullName')} error={errors.fullName?.message} />
-                    <Input label="Secure Email" type="email" placeholder="owner@domain.com" {...register('email')} error={errors.email?.message} />
-                    <Input label="Phone Contact" type="tel" placeholder="+971 XX XXX XXXX" {...register('phone')} error={errors.phone?.message} />
+                    <Input id="fullName" label="Owner Name" placeholder="e.g. John Doe" {...register('fullName')} error={errors.fullName?.message} />
+                    <Input id="email" label="Secure Email" type="email" placeholder="owner@domain.com" {...register('email')} error={errors.email?.message} />
+                    <Input id="phone" label="Phone Contact" type="tel" placeholder="+971 XX XXX XXXX" {...register('phone')} error={errors.phone?.message} />
                   </div>
                 )}
 
@@ -284,14 +284,14 @@ export function BookingForm() {
                               >
                                 <div className="w-full h-full flex items-center justify-center transition-transform duration-700 group-hover:scale-110">
                                   <img
-                                    src={b.logoFile ? `/brands-carousel/${b.logoFile}` : `/bg-placeholder.jpg`}
+                                    src={b.logoFile ? `/brands-carousel/${b.logoFile}` : `/google-logo.svg`}
                                     alt={b.name}
                                     className={cn(
                                       "w-[80%] h-[80%] object-contain transition-all duration-500",
                                       selectedBrand === b.name ? "opacity-100 scale-110" : "opacity-60 grayscale group-hover:opacity-100 group-hover:grayscale-0"
                                     )}
                                     onError={(e) => {
-                                      e.currentTarget.src = `/bg-placeholder.jpg`
+                                      e.currentTarget.src = `/google-logo.svg`
                                     }}
                                   />
                                 </div>
