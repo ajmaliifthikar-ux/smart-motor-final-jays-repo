@@ -24,6 +24,7 @@ if (!admin.apps.length) {
 
 export const adminAuth = admin.auth()
 // Named Firestore DB: 'smartmotordb' (not the (default) database)
+// @ts-ignore - firestore supports databaseId as second argument in newer versions or via direct access, but types might be outdated
 export const adminDb = admin.firestore(admin.app(), 'smartmotordb')
 
 export async function verifySession(token: string | undefined) {
@@ -32,7 +33,7 @@ export async function verifySession(token: string | undefined) {
     // --- MOCK AUTHENTICATION BYPASS ---
     // Allow access if the special mock token is present.
     // This enables safe testing of the Admin UI without Firebase restrictions.
-    if (token === 'mock-token-secret-123') {
+    if (process.env.NODE_ENV === 'development' && token === 'mock-token-secret-123') {
         console.warn('⚠️ MOCK AUTH: Granting Admin Access via Mock Token');
         return {
             uid: 'mock-admin-user',
