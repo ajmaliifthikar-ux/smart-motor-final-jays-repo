@@ -3,6 +3,7 @@
 
 import {
   LayoutDashboard,
+  LayoutGrid,
   Brain,
   Palette,
   Zap,

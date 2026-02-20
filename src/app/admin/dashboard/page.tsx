@@ -1,6 +1,7 @@
 import { RecentActivityLive } from '@/components/admin/recent-activity-live'
 import { formatPrice } from '@/lib/utils'
 import { getHeatmapData, getTrafficTrends } from '@/lib/analytics'
+import { getAllUsers, getAllBookings } from '@/lib/firebase-db'
 import { UAEHeatmap } from '@/components/admin/analytics/uae-heatmap'
 import { GoogleBusinessWidget } from '@/components/admin/analytics/google-business-widget'
 import { DashboardWidget } from '@/components/admin/dashboard/dashboard-widget'

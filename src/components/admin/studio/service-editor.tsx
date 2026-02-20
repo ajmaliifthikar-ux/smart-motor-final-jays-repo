@@ -23,7 +23,7 @@ const serviceSchema = z.object({
   basePrice: z.number().optional(),
   category: z.string().optional(),
   icon: z.string().optional(),
-  active: z.boolean().default(true),
+  active: z.boolean().catch(true),
 })
 
 type ServiceFormData = z.infer<typeof serviceSchema>
@@ -32,7 +32,7 @@ export function ServiceEditor({ id, initialData }: { id: string | null, initialD
   const router = useRouter()
   const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<ServiceFormData>({
     resolver: zodResolver(serviceSchema),
-    values: initialData ? {
+    defaultValues: initialData ? {
       name: initialData.name || '',
       nameAr: initialData.nameAr || '',
       description: initialData.description || '',
