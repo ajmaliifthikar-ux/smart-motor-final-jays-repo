@@ -27,7 +27,14 @@ export async function POST(req: NextRequest) {
     }
 
     const adminId = session.uid
-    const email = session.email
+    const email = session.email || ''
+
+    if (!email) {
+      return NextResponse.json(
+        { error: 'Email not found in session' },
+        { status: 400 }
+      )
+    }
 
     // Generate TOTP secret
     const { secret, qrCode, manualEntry } = await generateTOTPSecret(
