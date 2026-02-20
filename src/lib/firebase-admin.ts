@@ -120,16 +120,18 @@ export async function verifySession(token: string | undefined) {
         const decodedToken = await adminAuth.verifyIdToken(token);
         
         // Fallback: Check for explicit role OR the specific admin email
-        // We also check if the email domain is @smartmotor.ae for broader internal access if needed
         const isAdmin = decodedToken.role === 'ADMIN' || 
-                        decodedToken.email === 'admin@smartmotor.ae' || 
-                        decodedToken.email === 'dev@smartmotor.ae' ||
-                        (decodedToken.email?.endsWith('@smartmotor.ae') ?? false);
+                        decodedToken.email === 'admin@smartmotor.ae';
         
         if (!isAdmin) {
             console.warn('Unauthorized access attempt by non-admin:', decodedToken.email);
             return null;
         }
+
+        if (decodedToken.role !== 'ADMIN' && decodedToken.email === 'admin@smartmotor.ae') {
+             console.warn('SECURITY WARNING: Admin access granted via legacy email whitelist. Please migrate to Custom Claims.');
+        }
+
         return decodedToken;
     } catch (error) {
         console.error('Session verification failed:', error);
