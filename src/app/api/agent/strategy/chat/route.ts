@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { StrategyAgent } from '@/lib/agents/strategy/research-agent'
-import { getAdminSession } from '@/lib/firebase-auth'
+import { getAdminSession } from '@/lib/session'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60

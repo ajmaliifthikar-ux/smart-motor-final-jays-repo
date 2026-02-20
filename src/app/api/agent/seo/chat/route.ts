@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { SEOSpecialistAgent } from '@/lib/agents/seo/seo-agent'
-import { getAdminSession } from '@/lib/firebase-auth'
+import { getAdminSession } from '@/lib/session'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
