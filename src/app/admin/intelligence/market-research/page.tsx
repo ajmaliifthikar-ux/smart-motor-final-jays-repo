@@ -1,13 +1,15 @@
-import { BarChart3 } from 'lucide-react'
-import { ToolPlaceholder } from '@/components/admin/tool-placeholder'
+import { Search } from 'lucide-react'
+import { AgenticChat } from '@/components/admin/agents/agentic-chat'
 
 export default function MarketResearchPage() {
   return (
-    <ToolPlaceholder
-      title="Market Research"
-      description="Comprehensive market analysis, trends, and consumer behavior insights powered by AI. Track market movements and identify emerging opportunities."
-      icon={BarChart3}
-      status="coming-soon"
+    <AgenticChat
+      title="SEO Intelligence & Keyword Research"
+      description="AI-powered SEO specialist for keyword strategy, content optimization, and ranking analysis"
+      placeholder="Ask about keywords, content optimization, rankings, or backlinks..."
+      agentEndpoint="/api/agent/seo/chat"
+      icon={<Search className="w-6 h-6" />}
+      initialMessage="How can I help with your SEO strategy? I can assist with keyword research, content optimization, ranking analysis, and link building."
     />
   )
 }
