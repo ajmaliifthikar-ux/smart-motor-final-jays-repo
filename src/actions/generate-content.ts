@@ -5,7 +5,7 @@ import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { checkRateLimit, incrementRateLimit } from "@/lib/rate-limit"
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk")
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
 export async function generateContent(formData: FormData) {
     const session = await auth()
@@ -23,7 +23,7 @@ export async function generateContent(formData: FormData) {
     if (!canProceed) {
         return {
             success: false,
-            message: "Rate limit exceeded. You can specific number of articles per hour.",
+            message: "Rate limit exceeded. You can generate up to 10 articles per hour.",
             content: ""
         }
     }
