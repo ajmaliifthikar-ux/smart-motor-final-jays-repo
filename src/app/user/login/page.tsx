@@ -74,8 +74,8 @@ async function exchangeTokenAndRedirect(
     throw new Error(data.error ?? 'Session creation failed')
   }
   const data = await res.json()
-  // Admin users (smartmotor.ae domain) get routed to the admin panel
-  const isAdmin = data.email?.endsWith('@smartmotor.ae') || data.role === 'ADMIN'
+  // Admin users (checked by role) get routed to the admin panel
+  const isAdmin = data.role === 'ADMIN'
   router.push(isAdmin ? '/admin' : '/user/dashboard')
   router.refresh()
 }

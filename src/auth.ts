@@ -74,7 +74,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                             userRecord = { uid: data.localId, displayName: null, customClaims: {} };
                         }
 
-                        const isFirebaseAdmin = (userRecord as any).customClaims?.role === 'ADMIN' || email.toLowerCase() === 'admin@smartmotor.ae';
+                        // Strict check for ADMIN custom claim, no email whitelist
+                        const isFirebaseAdmin = (userRecord as any).customClaims?.role === 'ADMIN';
                         console.log('DEBUG: Is Firebase Admin:', isFirebaseAdmin);
                         
                         let dbUser = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });

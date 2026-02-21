@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2026-02-21 - Hardcoded Admin Email Whitelist Vulnerability
+**Vulnerability:** Admin privileges were granted based on email domain checks (e.g., `endsWith('@smartmotor.ae')`) in multiple locations (`src/lib/firebase-admin.ts`, `src/auth.ts`, API routes).
+**Learning:** Hardcoded whitelists are fragile and can lead to privilege escalation if an attacker can register an email with the target domain or if the domain is spoofed.
+**Prevention:** Strictly enforce Role-Based Access Control (RBAC) using validated custom claims (e.g., `token.role === 'ADMIN'`) and remove all email-based privilege checks.
