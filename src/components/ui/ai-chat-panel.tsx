@@ -144,7 +144,11 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
+            <button
+              onClick={onClose}
+              className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10"
+              aria-label="Close chat"
+            >
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -210,6 +214,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                                         const val = (e.currentTarget.previousSibling as HTMLInputElement).value
                                         if (val) handleSend(val)
                                     }}
+                                    aria-label="Submit"
                                 >
                                     <Check size={14} />
                                 </button>
@@ -253,6 +258,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 <button 
                   onClick={stopVoiceMode}
                   className="mt-6 px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-[7px] font-black uppercase tracking-widest text-white/60 transition-all border border-white/5 relative z-10"
+                  aria-label="Close voice mode"
                 >
                   Close Voice
                 </button>
@@ -271,6 +277,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                   if (e.key === 'Enter') handleSend()
                 }}
                 placeholder="Ask anything..."
+                aria-label="Chat input"
                 className="flex-1 text-xs font-bold bg-transparent border-0 py-2 focus:ring-0 placeholder:text-gray-300"
                 disabled={isLoading || isVoiceMode}
               />
@@ -278,6 +285,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
               <div className="flex items-center gap-1">
                 <button
                     onClick={isVoiceMode ? stopVoiceMode : startVoiceMode}
+                    aria-label={isVoiceMode ? "Stop voice mode" : "Start voice mode"}
                     className={cn(
                     "w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-500 group",
                     isVoiceMode 
@@ -292,6 +300,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                     onClick={() => handleSend()}
                     disabled={isLoading || !input.trim() || isVoiceMode}
                     className="rounded-lg bg-[#121212] hover:bg-[#E62329] w-9 h-9 p-0 transition-all duration-500 shadow-xl"
+                    aria-label={isLoading ? "Sending..." : "Send message"}
                 >
                     {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 </Button>
