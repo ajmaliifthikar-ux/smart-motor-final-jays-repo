@@ -21,7 +21,8 @@ export async function POST(req: NextRequest) {
 
         const decoded = await adminAuth.verifyIdToken(idToken)
         const email = decoded.email ?? ''
-        const isAdmin = decoded.role === 'ADMIN' || email.endsWith('@smartmotor.ae')
+        // Strict role check, no email whitelist
+        const isAdmin = decoded.role === 'ADMIN'
 
         const response = NextResponse.json({
             success: true,
