@@ -78,13 +78,15 @@ export function EmergencyFAB() {
                     >
                         <Tooltip content={fab.label} position="left">
                             <button
+                                type="button"
+                                aria-label={fab.label}
                                 onClick={fab.onClick}
                                 className={cn(
-                                    "w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 relative overflow-hidden",
+                                    "w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 relative overflow-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black focus-visible:outline-none",
                                     fab.color,
                                     fab.textColor,
                                     fab.borderColor && `border ${fab.borderColor}`,
-                                    fab.main && "w-16 h-16 shadow-2xl z-10"
+                                    fab.main && "w-16 h-16 shadow-2xl z-10 animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite]"
                                 )}
                             >
                                 <div className="relative z-10">
