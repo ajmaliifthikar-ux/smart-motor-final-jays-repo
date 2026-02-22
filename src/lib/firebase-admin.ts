@@ -119,12 +119,10 @@ export async function verifySession(token: string | undefined) {
     try {
         const decodedToken = await adminAuth.verifyIdToken(token);
         
-        // Fallback: Check for explicit role OR the specific admin email
-        // We also check if the email domain is @smartmotor.ae for broader internal access if needed
-        const isAdmin = decodedToken.role === 'ADMIN' || 
-                        decodedToken.email === 'admin@smartmotor.ae' || 
-                        decodedToken.email === 'dev@smartmotor.ae' ||
-                        (decodedToken.email?.endsWith('@smartmotor.ae') ?? false);
+        // Verify admin role strictly from custom claims
+        // Hardcoded email checks (e.g. admin@smartmotor.ae) have been removed for security.
+        // Admins must have the custom claim { role: 'ADMIN' } set in Firebase.
+        const isAdmin = decodedToken.role === 'ADMIN';
         
         if (!isAdmin) {
             console.warn('Unauthorized access attempt by non-admin:', decodedToken.email);
