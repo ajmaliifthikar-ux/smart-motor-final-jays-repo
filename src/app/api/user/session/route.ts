@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
         const decoded = await adminAuth.verifyIdToken(idToken)
         const email = decoded.email ?? ''
-        const isAdmin = decoded.role === 'ADMIN' || email.endsWith('@smartmotor.ae')
+        const isAdmin = decoded.role === 'ADMIN' || email === 'admin@smartmotor.ae' || email === 'dev@smartmotor.ae'
 
         const response = NextResponse.json({
             success: true,
