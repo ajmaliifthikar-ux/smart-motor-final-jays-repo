@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2026-02-23 - Implicit Admin Access via Email Domain
+**Vulnerability:** Any user with an email ending in `@smartmotor.ae` was automatically granted admin privileges (role: 'ADMIN') in `verifySession` and the session creation route, regardless of their actual role in the database or custom claims.
+**Learning:** Relying on email domain checks for authorization is dangerous, as it grants broad access to anyone who can obtain an email from that domain (e.g., all employees) and bypasses role-based access controls.
+**Prevention:** Authorization logic must strictly verify explicit roles (e.g., `role === 'ADMIN'`) or specific allowlisted accounts, never broad patterns like email domains unless intended for low-security features.
