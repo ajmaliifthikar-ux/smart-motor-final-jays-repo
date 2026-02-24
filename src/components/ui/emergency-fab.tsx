@@ -54,7 +54,7 @@ export function EmergencyFAB() {
         {
             id: 'ai',
             icon: <Sparkles size={24} />,
-            label: 'AI Assistant',
+            label: isChatOpen ? 'Close AI Assistant' : 'AI Assistant',
             color: 'bg-[#121212]',
             textColor: 'text-[#FFD700]',
             borderColor: 'border-[#FFD700]/20',
@@ -79,6 +79,7 @@ export function EmergencyFAB() {
                         <Tooltip content={fab.label} position="left">
                             <button
                                 onClick={fab.onClick}
+                                aria-label={fab.label}
                                 className={cn(
                                     "w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 relative overflow-hidden",
                                     fab.color,
