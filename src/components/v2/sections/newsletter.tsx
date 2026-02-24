@@ -111,10 +111,10 @@ export function NewsletterSection() {
                                 />
                                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#E62329]/0 via-[#E62329]/0 to-[#E62329]/0 group-hover:via-[#E62329]/10 transition-all pointer-events-none" />
                             </div>
-                            <Button
+                            <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full h-14 bg-[#E62329] hover:bg-white hover:text-[#E62329] text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 group shadow-xl shadow-[#E62329]/20"
+                                className="w-full h-14 bg-[#E62329] hover:bg-white hover:text-[#E62329] text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 group shadow-xl shadow-[#E62329]/20 disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                                 {isLoading ? (
                                     <>
@@ -127,7 +127,7 @@ export function NewsletterSection() {
                                         <Send size={16} className="group-hover:translate-x-1 transition-transform" />
                                     </>
                                 )}
-                            </Button>
+                            </button>
                             <p className="text-[10px] text-gray-500 text-center uppercase tracking-wider font-medium">
                                 No spam. Unsubscribe anytime.
                             </p>

@@ -2,8 +2,8 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { signInWithEmailAndPassword } from 'firebase/auth'
@@ -84,11 +84,22 @@ async function exchangeTokenAndRedirect(
 
 export default function UserLoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState<string | null>(null) // provider name or 'email'
+
+  // Handle URL error parameters
+  useEffect(() => {
+    const error = searchParams.get('error')
+    if (error === 'UNAUTHORIZED') {
+      toast.error('Invalid email or password. Please try again.')
+    } else if (error === 'SESSION_FAILED') {
+      toast.error('Session creation failed. Please try again.')
+    }
+  }, [searchParams])
 
   // ─── Social sign-in ────────────────────────────────────────────────────────
 
@@ -177,6 +188,21 @@ export default function UserLoginPage() {
 
             {/* Social sign-in buttons */}
             <div className="space-y-3 mb-6">
+              {/* Passkey */}
+              <motion.button
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  toast.info('Passkey authentication coming soon')
+                }}
+                disabled={isLoading}
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border border-[#E62329]/30 bg-[#E62329]/10 text-[#E62329] text-sm font-semibold hover:bg-[#E62329]/20 hover:border-[#E62329]/50 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                Sign in with Passkey
+              </motion.button>
               {/* Google */}
               <motion.button
                 whileTap={{ scale: 0.98 }}

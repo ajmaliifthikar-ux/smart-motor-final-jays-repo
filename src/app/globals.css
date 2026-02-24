@@ -719,6 +719,27 @@ section[class*="bg-[#2"] * {
   color: rgba(255,255,255,0.80) !important;
 }
 
+/* ── RED BUTTON HOVER STATES ── */
+/* Ensure red buttons with any hover state have white text */
+button[class*="hover:bg-red-"],
+button[class*="hover:bg-[#E62"],
+a[class*="hover:bg-red-"],
+a[class*="hover:bg-[#E62"] {
+  transition: all 0.3s ease;
+}
+
+/* When a red button is hovered, ensure white text */
+button[class*="hover:bg-red-"]:hover,
+button[class*="hover:bg-[#E62"]:hover,
+a[class*="hover:bg-red-"]:hover,
+a[class*="hover:bg-[#E62"]:hover,
+button[class*="bg-red-"]:hover,
+button[class*="bg-[#E62"]:hover,
+a[class*="bg-red-"]:hover,
+a[class*="bg-[#E62"]:hover {
+  color: #FFFFFF !important;
+}
+
 
 /* ── BOOKING FORM ── */
 /* Step-indicator: active step bg-[#121212] must show white step number */

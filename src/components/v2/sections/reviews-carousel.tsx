@@ -122,10 +122,10 @@ export function ReviewsCarousel() {
                 <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-8">
                     <div className="space-y-4">
                         <span className="text-[#E62329] font-black text-[10px] uppercase tracking-[0.4em] block">
-                            Elite Performance Sentiment
+                            Trusted Client Testimonials
                         </span>
                         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-[#121212] leading-none">
-                            Verified <span className="text-[#E62329]">Client Logs</span>
+                            Google <span className="text-[#E62329]">Reviews</span>
                         </h2>
                         <div className="flex items-center gap-3">
                             <div className="flex gap-1">
