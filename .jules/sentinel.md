@@ -6,6 +6,7 @@
 - **Logging**: Avoid logging full error objects or raw request/response data in production logs (`console.error`), as they may contain PII or secrets. Log safe, high-level error messages instead.
 - **Refactoring - Utility Functions**: Extract repeated sensitive logic (like third-party API verification) into a single utility function to ensure consistency and easier security auditing.
 - **Testing - Mocking Fetch**: When testing code that makes external API calls (like `fetch`), use `global.fetch` mocking to inspect the request URL and body without making actual network requests. This allows verifying security properties (e.g., "secret is not in URL").
+- **Environment Variables**: Never use hardcoded fallbacks for sensitive keys (e.g., `process.env.KEY || 'secret'`). Always throw an error if the key is missing to force proper configuration and prevent accidental exposure.
 
 ## Fixed Vulnerabilities
 
@@ -14,3 +15,9 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2026-02-21: Hardcoded API Key Fallbacks
+- **Vulnerability:** The codebase contained `process.env.GEMINI_API_KEY || 'hardcoded_key'` patterns in multiple files, exposing a valid Google Gemini API key.
+- **Fix:** Removed all hardcoded fallbacks and implemented a centralized `getGeminiClient()` helper that throws an error if the environment variable is missing.
+- **Files:** `src/lib/gemini.ts` (created), `src/lib/gemini-live.ts`, `src/lib/diagnostics.ts`, `src/lib/agents/smart-assistant/agent.ts`, `src/lib/agents/strategy/research-agent.ts`, `src/lib/ai-memory.ts`, `src/app/api/diag/gemini/route.ts`, `src/app/api/admin/seo/analyze/route.ts`
+- **Mitigation:** Strictly enforce environment variable usage without fallbacks for secrets. Use centralized client factories to manage sensitive configurations.
