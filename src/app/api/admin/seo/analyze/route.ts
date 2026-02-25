@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
 import { createSEOReport } from '@/lib/firebase-db'
 import { requireAdmin } from '@/lib/session'
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
+import { getGeminiClient } from '@/lib/gemini'
 
 export async function POST(req: NextRequest) {
     try {
@@ -21,7 +19,7 @@ export async function POST(req: NextRequest) {
         const html = await response.text()
 
         // 2. Prepare the prompt for Gemini
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+        const model = getGeminiClient().getGenerativeModel({ model: 'gemini-2.5-flash' })
 
         const prompt = `
             Analyze the following HTML content for SEO purposes. 
