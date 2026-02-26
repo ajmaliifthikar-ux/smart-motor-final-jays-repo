@@ -144,13 +144,22 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
+            <button
+              onClick={onClose}
+              className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10"
+              aria-label="Close chat"
+            >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar">
+          <div
+            ref={scrollRef}
+            className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar"
+            role="log"
+            aria-live="polite"
+          >
             {messages.map((msg) => (
               <div key={msg.id} className="space-y-3">
                 <motion.div
@@ -273,6 +282,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 placeholder="Ask anything..."
                 className="flex-1 text-xs font-bold bg-transparent border-0 py-2 focus:ring-0 placeholder:text-gray-300"
                 disabled={isLoading || isVoiceMode}
+                aria-label="Chat message"
               />
               
               <div className="flex items-center gap-1">
@@ -284,6 +294,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                         ? "bg-[#E62329] text-white animate-pulse shadow-lg shadow-[#E62329]/30" 
                         : "text-gray-400 hover:bg-gray-200 hover:text-[#121212]"
                     )}
+                    aria-label={isVoiceMode ? "Stop voice mode" : "Start voice mode"}
                 >
                     {isVoiceMode ? <Volume2 size={18} /> : <Headphones size={18} />}
                 </button>
@@ -292,6 +303,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                     onClick={() => handleSend()}
                     disabled={isLoading || !input.trim() || isVoiceMode}
                     className="rounded-lg bg-[#121212] hover:bg-[#E62329] w-9 h-9 p-0 transition-all duration-500 shadow-xl"
+                    aria-label="Send message"
                 >
                     {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 </Button>
