@@ -5,7 +5,7 @@ export type ServiceName = 'Firebase' | 'Gemini' | 'Redis' | 'Prisma' | 'Resend' 
 export interface TraceParams {
     service: ServiceName
     operation: string
-    metadata?: any
+    metadata?: Record<string, unknown>
 }
 
 /**
@@ -51,7 +51,7 @@ async function logTrace(data: {
     status: string
     duration: number
     error?: string
-    metadata?: any
+    metadata?: unknown
 }) {
     try {
         await prisma.integrationTrace.create({
@@ -64,7 +64,7 @@ async function logTrace(data: {
                 metadata: data.metadata ? JSON.stringify(data.metadata) : null,
             }
         })
-    } catch (dbError) {
+    } catch {
         console.warn(`[Trace Error] Could not log to DB: ${data.service}/${data.operation}`);
     }
 }
@@ -73,6 +73,7 @@ async function logTrace(data: {
  * Diagnostic check for major services
  */
 export async function runSystemDiagnostics() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const results: any[] = []
 
     // 1. Prisma Check
@@ -80,6 +81,7 @@ export async function runSystemDiagnostics() {
     try {
         await prisma.$queryRaw`SELECT 1`
         results.push({ service: 'Prisma', status: 'WORKING', duration: Date.now() - prismaStart })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
         results.push({ service: 'Prisma', status: 'FAILED', error: e.message })
     }
@@ -90,6 +92,7 @@ export async function runSystemDiagnostics() {
         const { default: redis } = await import('./redis')
         await redis.ping()
         results.push({ service: 'Redis', status: 'WORKING', duration: Date.now() - redisStart })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
         results.push({ service: 'Redis', status: 'FAILED', error: e.message })
     }
@@ -97,11 +100,11 @@ export async function runSystemDiagnostics() {
     // 3. Gemini Check
     const geminiStart = Date.now()
     try {
-        const { GoogleGenerativeAI } = await import('@google/generative-ai')
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+        const { getGeminiClient } = await import('@/lib/gemini')
+        const model = getGeminiClient().getGenerativeModel({ model: 'gemini-2.5-flash' })
         await model.generateContent('ping')
         results.push({ service: 'Gemini', status: 'WORKING', duration: Date.now() - geminiStart })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
         results.push({ service: 'Gemini', status: 'FAILED', error: e.message })
     }

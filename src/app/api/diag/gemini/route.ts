@@ -8,6 +8,7 @@ import redis from '@/lib/redis'
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const results: any = {
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV,
@@ -18,11 +19,13 @@ export async function GET() {
         services: []
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const test = async (name: string, fn: () => Promise<any>) => {
         const start = Date.now()
         try {
             const data = await fn()
             return { name, status: 'WORKING', duration: Date.now() - start, info: data }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (e: any) {
             return { name, status: 'FAILED', duration: Date.now() - start, error: e.message }
         }
@@ -42,9 +45,8 @@ export async function GET() {
 
     // 3. Test Gemini (Dedicated Key)
     results.services.push(await test('Gemini AI', async () => {
-        const key = process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk'
-        const genAI = new GoogleGenerativeAI(key)
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+        const { getGeminiClient } = await import('@/lib/gemini')
+        const model = getGeminiClient().getGenerativeModel({ model: 'gemini-2.5-flash' })
         const res = await model.generateContent('ping')
         return res.response.text().slice(0, 10)
     }))

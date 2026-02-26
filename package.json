@@ -75,7 +75,7 @@
     "@types/react-dom": "^19",
     "@types/speakeasy": "^2.0.10",
     "@vitest/coverage-v8": "^4.0.18",
-    "eslint": "^9",
+    "eslint": "^9.39.3",
     "eslint-config-next": "16.1.6",
     "jsdom": "^28.1.0",
     "prisma": "^6.0.0",

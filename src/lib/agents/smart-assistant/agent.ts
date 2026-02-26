@@ -1,9 +1,8 @@
-import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
-import { AgentConfig, Message, ToolDefinition } from '../core/types'
+import { GenerativeModel } from '@google/generative-ai'
+import { AgentConfig } from '../core/types'
 import { memoryManager } from '../core/memory'
 import { knowledgeBase } from '../core/knowledge'
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
+import { getGeminiClient } from '@/lib/gemini'
 
 export class SmartAssistant {
     private model: GenerativeModel
@@ -28,7 +27,7 @@ export class SmartAssistant {
             temperature: 0.7
         }
 
-        this.model = genAI.getGenerativeModel({
+        this.model = getGeminiClient().getGenerativeModel({
             model: this.config.model,
             systemInstruction: this.config.systemPrompt
         })
