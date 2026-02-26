@@ -104,6 +104,7 @@ import { NextAuthProvider } from "@/components/providers/NextAuthProvider";
 import { AdminToolbar } from "@/components/layout/admin-toolbar";
 import { SmartAssistantWithAudio } from "@/components/ui/smart-assistant-with-audio";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // ─── Schema.org — AutoRepair + LocalBusiness (SSOT from src/lib/constants.ts) ─────
 const jsonLd = {
@@ -213,6 +214,7 @@ export default function RootLayout({
                 <AdminToolbar />
                 {children}
                 <SmartAssistantWithAudio />
+                <SpeedInsights />
                 <Script id="audio-context-resume" strategy="afterInteractive">{`
                   document.addEventListener('click', function() {
                     if (typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext)) {
