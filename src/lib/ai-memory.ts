@@ -1,7 +1,5 @@
 import redis from './redis'
-import { GoogleGenerativeAI } from '@google/generative-ai'
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
+import { getGeminiClient } from '@/lib/gemini'
 
 // Types
 export interface Message {
@@ -14,7 +12,7 @@ export interface ConversationContext {
     userId: string
     conversationId: string
     messages: Message[]
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
     lastUpdated: number
 }
 
@@ -33,7 +31,7 @@ export class AIMemoryManager {
         conversationId: string,
         role: 'user' | 'assistant',
         content: string,
-        metadata?: Record<string, any>
+        metadata?: Record<string, unknown>
     ): Promise<void> {
         const message: Message = {
             role,
@@ -122,7 +120,7 @@ export class AIMemoryManager {
      */
     async generateEmbedding(text: string): Promise<number[]> {
         try {
-            const model = genAI.getGenerativeModel({ model: 'text-embedding-004' })
+            const model = getGeminiClient().getGenerativeModel({ model: 'text-embedding-004' })
             const result = await model.embedContent(text)
             return result.embedding.values
         } catch (error) {
@@ -155,7 +153,7 @@ export class AIMemoryManager {
         userId: string,
         contextId: string,
         text: string,
-        metadata?: Record<string, any>
+        metadata?: Record<string, unknown>
     ): Promise<void> {
         const embedding = await this.generateEmbedding(text)
 
@@ -342,9 +340,7 @@ Customer: ${userMessage}
 `
 
         try {
-            const { GoogleGenerativeAI } = await import('@google/generative-ai')
-            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
-            const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+            const model = getGeminiClient().getGenerativeModel({ model: 'gemini-2.5-flash' })
 
             const result = await model.generateContent(prompt)
             const response = result.response.text()
