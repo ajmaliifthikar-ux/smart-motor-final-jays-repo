@@ -193,6 +193,13 @@ const BRANDS = [
 // ─── HANDLER ─────────────────────────────────────────────────────────────────
 
 export async function GET(req: Request) {
+  if (process.env.NODE_ENV !== 'development') {
+    return NextResponse.json(
+      { error: 'This endpoint is only available in development' },
+      { status: 403 }
+    )
+  }
+
   const { searchParams } = new URL(req.url)
   const key = searchParams.get('key')
 
