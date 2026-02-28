@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2025-02-28: Authorization Bypass via Hardcoded Admin Setup Secret
+- **Vulnerability:** The API endpoint for sending bulk admin invitations (`/api/admin/invitations/send-bulk`) used a hardcoded fallback value (`'admin-setup-secret'`) if the `ADMIN_SETUP_SECRET` environment variable was not set. This created a backdoor allowing anyone knowing the fallback secret to bypass the super-admin authorization check simply by sending `Bearer admin-setup-secret` if the env var was missing in any deployed environment.
+- **Learning:** Hardcoded secrets, even as fallbacks for missing environment variables, pose a severe risk of creating undocumented backdoors. If an environment is misconfigured, it should fail securely rather than degrade to a known, insecure default.
+- **Prevention:** Remove fallback values for sensitive secrets (`process.env.SECRET || 'fallback'`). Instead, explicitly check if the environment variable is truthy (`process.env.SECRET && authHeader === \`Bearer \${process.env.SECRET}\``) or throw an error on startup if required secrets are missing.
