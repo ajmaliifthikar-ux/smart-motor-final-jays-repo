@@ -64,6 +64,9 @@ export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDev
     }
   }
 
+// ⚡ Bolt: Hoist expensive Intl call out of the render loop
+const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -109,7 +112,7 @@ export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDev
                     <p className="text-xs text-gray-400">
                       Last used{' '}
                       {new Date(device.lastUsedAt).toLocaleDateString(undefined, {
-                        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        timeZone: userTimeZone,
                       })}
                     </p>
                   </div>
