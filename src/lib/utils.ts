@@ -6,19 +6,23 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+const PRICE_FORMATTER = new Intl.NumberFormat('en-AE', {
+  style: 'currency',
+  currency: 'AED',
+  minimumFractionDigits: 0,
+})
+
 export function formatPrice(price: number): string {
-  return new Intl.NumberFormat('en-AE', {
-    style: 'currency',
-    currency: 'AED',
-    minimumFractionDigits: 0,
-  }).format(price)
+  return PRICE_FORMATTER.format(price)
 }
 
+const DATE_FORMATTER = new Intl.DateTimeFormat('en-AE', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+})
+
 export function formatDate(date: Date | string): string {
-  return new Intl.DateTimeFormat('en-AE', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(date))
+  return DATE_FORMATTER.format(new Date(date))
 }
 
 export function publicPath(path: string) {
@@ -32,6 +36,22 @@ export function publicPath(path: string) {
 // AUTO CONTRAST SYSTEM (WCAG 2.1 AA compliant)
 // ─────────────────────────────────────────────────────────────
 
+const TW_HEX_REGEX = /\[#([0-9a-fA-F]{3,8})\]/
+const HEX_3_REGEX = /^[0-9a-fA-F]{3}$/
+const HEX_6_8_REGEX = /^[0-9a-fA-F]{6,8}$/
+const RGB_REGEX = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/
+
+const NAMED_COLORS: Record<string, [number, number, number]> = {
+  black: [0, 0, 0],
+  white: [255, 255, 255],
+  transparent: [255, 255, 255],
+  red: [255, 0, 0],
+  green: [0, 128, 0],
+  blue: [0, 0, 255],
+  gray: [128, 128, 128],
+  grey: [128, 128, 128],
+}
+
 /**
  * Parse any CSS color string into [r, g, b] 0-255 values.
  * Supports: #RGB, #RRGGBB, #RRGGBBAA, rgb(...), rgba(...),
@@ -44,11 +64,11 @@ export function parseColorToRGB(color: string): [number, number, number] | null 
   const c = color.trim()
 
   // Extract bare hex from Tailwind-style bg-[#xxx]
-  const twMatch = c.match(/\[#([0-9a-fA-F]{3,8})\]/)
+  const twMatch = c.match(TW_HEX_REGEX)
   const hex = twMatch ? twMatch[1] : c.replace(/^#/, '')
 
   // 3-digit hex (#RGB)
-  if (/^[0-9a-fA-F]{3}$/.test(hex)) {
+  if (HEX_3_REGEX.test(hex)) {
     const r = parseInt(hex[0] + hex[0], 16)
     const g = parseInt(hex[1] + hex[1], 16)
     const b = parseInt(hex[2] + hex[2], 16)
@@ -56,7 +76,7 @@ export function parseColorToRGB(color: string): [number, number, number] | null 
   }
 
   // 6 or 8-digit hex (#RRGGBB / #RRGGBBAA)
-  if (/^[0-9a-fA-F]{6,8}$/.test(hex)) {
+  if (HEX_6_8_REGEX.test(hex)) {
     const r = parseInt(hex.substring(0, 2), 16)
     const g = parseInt(hex.substring(2, 4), 16)
     const b = parseInt(hex.substring(4, 6), 16)
@@ -64,23 +84,14 @@ export function parseColorToRGB(color: string): [number, number, number] | null 
   }
 
   // rgb / rgba
-  const rgbMatch = c.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/)
+  const rgbMatch = c.match(RGB_REGEX)
   if (rgbMatch) {
     return [parseInt(rgbMatch[1]), parseInt(rgbMatch[2]), parseInt(rgbMatch[3])]
   }
 
   // Named colors
-  const named: Record<string, [number, number, number]> = {
-    black: [0, 0, 0],
-    white: [255, 255, 255],
-    transparent: [255, 255, 255],
-    red: [255, 0, 0],
-    green: [0, 128, 0],
-    blue: [0, 0, 255],
-    gray: [128, 128, 128],
-    grey: [128, 128, 128],
-  }
-  if (named[c.toLowerCase()]) return named[c.toLowerCase()]
+  const lowerC = c.toLowerCase()
+  if (NAMED_COLORS[lowerC]) return NAMED_COLORS[lowerC]
 
   return null
 }
