@@ -78,6 +78,7 @@ export function EmergencyFAB() {
                     >
                         <Tooltip content={fab.label} position="left">
                             <button
+                                aria-label={fab.id === 'ai' && isChatOpen ? "Close AI Assistant" : fab.label}
                                 onClick={fab.onClick}
                                 className={cn(
                                     "w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 relative overflow-hidden",
@@ -88,7 +89,7 @@ export function EmergencyFAB() {
                                 )}
                             >
                                 <div className="relative z-10">
-                                    {fab.id === 'ai' && isChatOpen ? <X size={24} /> : fab.icon}
+                                    {fab.id === 'ai' && isChatOpen ? <X size={24} aria-hidden="true" /> : fab.icon}
                                 </div>
 
                                 {/* Shine Effect for main button */}
@@ -119,8 +120,8 @@ export function EmergencyFAB() {
                             exit={{ scale: 0.9, y: 40 }}
                             className="bg-white w-full max-w-4xl h-[80vh] rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row relative"
                         >
-                            <button onClick={() => setShowTowFlow(false)} className="absolute top-6 right-6 z-50 p-2 bg-white rounded-full hover:bg-gray-100 transition-colors shadow-md">
-                                <X size={20} />
+                            <button aria-label="Close towing modal" onClick={() => setShowTowFlow(false)} className="absolute top-6 right-6 z-50 p-2 bg-white rounded-full hover:bg-gray-100 transition-colors shadow-md">
+                                <X size={20} aria-hidden="true" />
                             </button>
                             {/* ... (Existing Tow UI Logic simplified/preserved if needed, creating a placeholder for now to save space as user focused on FAB redesign. 
                                  Actually I should preserve the Tow Logic fully if possible, but the original code was huge.

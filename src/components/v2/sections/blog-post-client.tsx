@@ -92,16 +92,16 @@ export function BlogPostClient({ post, relatedPosts }: BlogPostClientProps) {
                     <div className="mt-16 pt-8 border-t border-gray-100 flex items-center justify-between">
                         <span className="font-black text-xs uppercase tracking-widest text-[#121212]">Share Article</span>
                         <div className="flex gap-4">
-                            <button className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#121212] hover:bg-[#1877F2] hover:text-white transition-all">
+                            <button aria-label="Share on Facebook" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#121212] hover:bg-[#1877F2] hover:text-white transition-all">
                                 <Facebook size={18} />
                             </button>
-                            <button className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#121212] hover:bg-[#1DA1F2] hover:text-white transition-all">
+                            <button aria-label="Share on Twitter" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#121212] hover:bg-[#1DA1F2] hover:text-white transition-all">
                                 <Twitter size={18} />
                             </button>
-                            <button className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#121212] hover:bg-[#0A66C2] hover:text-white transition-all">
+                            <button aria-label="Share on LinkedIn" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#121212] hover:bg-[#0A66C2] hover:text-white transition-all">
                                 <Linkedin size={18} />
                             </button>
-                            <button className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#121212] hover:bg-gray-800 hover:text-white transition-all">
+                            <button aria-label="Share link" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#121212] hover:bg-gray-800 hover:text-white transition-all">
                                 <Share2 size={18} />
                             </button>
                         </div>
