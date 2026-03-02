@@ -79,12 +79,14 @@ export function EmergencyFAB() {
                         <Tooltip content={fab.label} position="left">
                             <button
                                 onClick={fab.onClick}
+                                aria-label={fab.label}
                                 className={cn(
                                     "w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 relative overflow-hidden",
                                     fab.color,
                                     fab.textColor,
                                     fab.borderColor && `border ${fab.borderColor}`,
-                                    fab.main && "w-16 h-16 shadow-2xl z-10"
+                                    fab.main && "w-16 h-16 shadow-2xl z-10",
+                                    fab.main && !isChatOpen && "animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite]"
                                 )}
                             >
                                 <div className="relative z-10">
