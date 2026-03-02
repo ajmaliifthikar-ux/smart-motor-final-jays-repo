@@ -14,3 +14,7 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+## 2024-03-02 - [Remove Hardcoded Gemini API Key]
+**Vulnerability:** A hardcoded Gemini API key (`AIzaSy...`) was found directly in the source code in multiple files (`src/lib/gemini-live.ts`, `src/lib/diagnostics.ts`, `src/lib/agents/smart-assistant/agent.ts`, `src/lib/agents/strategy/research-agent.ts`, `src/lib/ai-memory.ts`, `src/app/api/diag/gemini/route.ts`, `src/app/api/admin/seo/analyze/route.ts`).
+**Learning:** Hardcoded API keys bypass environment-based configuration and can lead to immediate compromise if the source code is exposed. The fallback string was being used instead of proper error handling for missing configuration. Also, the GoogleGenerativeAI SDK should be initialized inside functions to prevent crashes when the API key is missing.
+**Prevention:** Never hardcode secrets in source code. Always use environment variables (`process.env`). If an environment variable is missing, throw a clear error or fail gracefully instead of falling back to a hardcoded string.
