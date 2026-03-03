@@ -1,7 +1,7 @@
 import redis from './redis'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
+// genAI initialization removed from top-level to prevent crash without key
 
 // Types
 export interface Message {
@@ -122,6 +122,8 @@ export class AIMemoryManager {
      */
     async generateEmbedding(text: string): Promise<number[]> {
         try {
+            if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured");
+            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
             const model = genAI.getGenerativeModel({ model: 'text-embedding-004' })
             const result = await model.embedContent(text)
             return result.embedding.values
@@ -343,7 +345,8 @@ Customer: ${userMessage}
 
         try {
             const { GoogleGenerativeAI } = await import('@google/generative-ai')
-            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
+            if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured");
+            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
             const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
             const result = await model.generateContent(prompt)
