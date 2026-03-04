@@ -1,5 +1,6 @@
 import speakeasy from 'speakeasy'
 import QRCode from 'qrcode'
+import crypto from 'crypto'
 import { TOTPSecretResponse } from './types/admin'
 
 /**
@@ -89,8 +90,8 @@ export function generateBackupCodes(count: number = TOTP_CONFIG.backupCodesCount
   const codes: string[] = []
 
   for (let i = 0; i < count; i++) {
-    // Generate 8-character backup code (alphanumeric, no ambiguous chars)
-    const code = Math.random().toString(36).substring(2, 10).toUpperCase()
+    // Generate 8-character backup code (hexadecimal)
+    const code = crypto.randomBytes(4).toString('hex').toUpperCase()
     codes.push(code)
   }
 
@@ -168,12 +169,7 @@ export function validateTOTPSecret(secret: string): boolean {
  * @returns Random device ID string
  */
 export function generateDeviceId(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  let result = ''
-  for (let i = 0; i < 32; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length))
-  }
-  return result
+  return crypto.randomBytes(16).toString('hex')
 }
 
 /**
