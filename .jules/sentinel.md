@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2024-05-24 - Weak Randomness in Security Functions
+**Vulnerability:** The application uses `Math.random()` to generate TOTP backup codes and device IDs in `src/lib/totp.ts`.
+**Learning:** `Math.random()` is not a cryptographically secure pseudo-random number generator (CSPRNG). This makes backup codes and device IDs predictable, which is a critical security risk for an authentication system. Node.js `crypto` module should always be used for security-sensitive randomness.
+**Prevention:** Always use `crypto.randomBytes()`, `crypto.randomInt()`, or `crypto.randomUUID()` for generating sensitive values like tokens, passwords, and backup codes.
