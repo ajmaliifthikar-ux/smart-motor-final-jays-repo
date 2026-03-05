@@ -14,3 +14,13 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## YYYY-MM-DD - [Hardcoded Secrets and Insecure Environment Variable Fallbacks]
+**Vulnerability:** Several API endpoints use hardcoded string fallbacks for secrets (e.g., `process.env.ADMIN_SETUP_SECRET || 'admin-setup-secret'`).
+**Learning:** This exposes a critical vulnerability. If an environment variable is not configured, the application falls back to a publicly known (and easily guessable) hardcoded string, allowing attackers to bypass authentication and authorization checks and run administrative functionality.
+**Prevention:** Avoid fallback strings for secrets. Always require the environment variable to be explicitly set. For development/testing environments, local `.env.local` files should be used to provide safe dummy values, instead of embedding them into the code.
+
+## YYYY-MM-DD - [Hardcoded Secrets and Insecure Environment Variable Fallbacks]
+**Vulnerability:** Several API endpoints use hardcoded string fallbacks for secrets (e.g., `process.env.ADMIN_SETUP_SECRET || 'admin-setup-secret'`).
+**Learning:** This exposes a critical vulnerability. If an environment variable is not configured, the application falls back to a publicly known (and easily guessable) hardcoded string, allowing attackers to bypass authentication and authorization checks and run administrative functionality.
+**Prevention:** Avoid fallback strings for secrets. Always require the environment variable to be explicitly set. For development/testing environments, local `.env.local` files should be used to provide safe dummy values, instead of embedding them into the code.

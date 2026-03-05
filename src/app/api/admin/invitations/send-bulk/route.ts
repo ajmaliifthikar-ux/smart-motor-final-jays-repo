@@ -25,11 +25,13 @@ export async function POST(request: NextRequest) {
     try {
         // Check for authorization header or environment variable
         const authHeader = request.headers.get('authorization')
-        const secretKey = process.env.ADMIN_SETUP_SECRET || 'admin-setup-secret'
+        const secretKey = process.env.ADMIN_SETUP_SECRET
 
         // Allow with proper secret or admin session
         const session = await auth()
-        const isAuthorized = authHeader === `Bearer ${secretKey}` || session?.user?.id
+
+        // Ensure secretKey is defined to prevent unauthorized bypass
+        const isAuthorized = (secretKey && authHeader === `Bearer ${secretKey}`) || session?.user?.id
 
         if (!isAuthorized) {
             return NextResponse.json(
