@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
       : new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000)
 
     // Fetch analytics based on type
-    let analytics: any = {}
+    const analytics: any = {}
 
     if (query.type === 'summary' || query.type === 'all') {
       // Get summary data

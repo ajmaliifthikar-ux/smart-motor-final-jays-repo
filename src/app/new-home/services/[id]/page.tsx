@@ -71,8 +71,8 @@ export default async function ServiceDetailPage(props: Props) {
     }
 
     // Safely parse subServices (not available in Firebase)
-    let subServicesList: any[] = []
-    let processList: any[] = []
+    const subServicesList: any[] = []
+    const processList: any[] = []
 
     // Cast Firestore result to Service type
     const service: Service = {
