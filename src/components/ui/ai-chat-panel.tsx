@@ -39,11 +39,12 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isVoiceMode, setIsVoiceMode] = useState(false)
+  const [conversationId] = useState(`conv_${Date.now()}_${Math.random().toString(36).substring(7)}`)
   
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { connect, disconnect, isConnected, isSpeaking } = useGeminiLive((toolMsg: any) => {
+  const { connect, disconnect, isSpeaking } = useGeminiLive((toolMsg: Record<string, unknown>) => {
       // Callback from hook to inject widget messages
       setMessages(prev => [...prev, {
           id: `widget_${Date.now()}`,
@@ -86,7 +87,6 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
     if (!overrideText) setInput('')
     setIsLoading(true)
     
-    const [conversationId] = useState(`conv_${Date.now()}_${Math.random().toString(36).substring(7)}`)
 // ...
     try {
         const response = await fetch('/api/ai/chat', {
@@ -144,13 +144,13 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
+            <button aria-label="Close Chat" onClick={onClose} className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar" role="log" aria-live="polite">
             {messages.map((msg) => (
               <div key={msg.id} className="space-y-3">
                 <motion.div
@@ -197,6 +197,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                         ) : (
                             <div className="relative flex items-center">
                                 <input 
+                                    aria-label="Widget Input"
                                     autoFocus
                                     placeholder={msg.widget.placeholder || `Enter ${msg.widget.type}...`}
                                     className="w-full bg-white border-gray-200 rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-[#E62329] transition-all"
@@ -205,6 +206,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                                     }}
                                 />
                                 <button 
+                                    aria-label="Submit widget input"
                                     className="absolute right-2 w-8 h-8 bg-[#121212] text-white rounded-lg flex items-center justify-center hover:bg-[#E62329] transition-colors"
                                     onClick={(e) => {
                                         const val = (e.currentTarget.previousSibling as HTMLInputElement).value
@@ -251,6 +253,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                   {isSpeaking ? "Agent Speaking" : "Listening..."}
                 </p>
                 <button 
+                  aria-label="Stop Voice Mode"
                   onClick={stopVoiceMode}
                   className="mt-6 px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-[7px] font-black uppercase tracking-widest text-white/60 transition-all border border-white/5 relative z-10"
                 >
@@ -264,6 +267,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
           <div className="bg-white p-6 pb-10 md:pb-6 border-t border-gray-50 relative z-30">
             <div className="flex gap-2 items-center bg-gray-50 rounded-2xl px-4 py-2 border border-gray-100 shadow-inner">
               <input
+                aria-label="Chat Message Input"
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -277,6 +281,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
               
               <div className="flex items-center gap-1">
                 <button
+                    aria-label={isVoiceMode ? "Stop Voice Mode" : "Start Voice Mode"}
                     onClick={isVoiceMode ? stopVoiceMode : startVoiceMode}
                     className={cn(
                     "w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-500 group",
@@ -289,6 +294,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 </button>
                 
                 <Button
+                    aria-label="Send Message"
                     onClick={() => handleSend()}
                     disabled={isLoading || !input.trim() || isVoiceMode}
                     className="rounded-lg bg-[#121212] hover:bg-[#E62329] w-9 h-9 p-0 transition-all duration-500 shadow-xl"
