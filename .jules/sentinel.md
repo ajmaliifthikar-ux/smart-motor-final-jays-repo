@@ -14,3 +14,7 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+## 2025-02-23 - DOMPurify SSR Crash with dangerouslySetInnerHTML
+**Vulnerability:** XSS vulnerability from blindly using dangerouslySetInnerHTML.
+**Learning:** Fixing XSS with `dompurify` in Next.js causes a server-side crash ('DOMPurify.sanitize is not a function') because standard dompurify requires a browser DOM environment.
+**Prevention:** Always use `isomorphic-dompurify` in React/Next.js to ensure Server-Side Rendering (SSR) compatibility when sanitizing HTML.

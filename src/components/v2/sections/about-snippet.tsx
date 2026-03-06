@@ -1,8 +1,8 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { ArrowRightIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import DOMPurify from 'isomorphic-dompurify'
 
 interface AboutSnippetProps {
     cmsData?: {
@@ -43,7 +43,7 @@ export function AboutSnippet({ cmsData }: AboutSnippetProps) {
                             "text-4xl font-black tracking-tighter uppercase leading-[0.9] mb-8",
                             theme === 'dark' ? "text-white" : "text-[#121212]"
                         )}
-                        dangerouslySetInnerHTML={{ __html: title }}
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(title) }}
                     />
 
                     <div className={cn(
