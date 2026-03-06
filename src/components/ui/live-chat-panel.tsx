@@ -372,6 +372,8 @@ export function LiveChatPanel({
             <div className="flex gap-2">
               <button
                 onClick={() => setLiveMode(true)}
+                aria-label="Switch to Live mode"
+                aria-pressed={liveMode}
                 className={cn(
                   'flex-1 py-2 px-3 rounded-full text-xs font-black uppercase tracking-widest transition-all',
                   liveMode
@@ -384,6 +386,8 @@ export function LiveChatPanel({
               </button>
               <button
                 onClick={() => setLiveMode(false)}
+                aria-label="Switch to Sandbox mode"
+                aria-pressed={!liveMode}
                 className={cn(
                   'flex-1 py-2 px-3 rounded-full text-xs font-black uppercase tracking-widest transition-all',
                   !liveMode
