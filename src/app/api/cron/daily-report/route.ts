@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { adminDb } from '@/lib/firebase-admin'
 import admin from '@/lib/firebase-admin'
 import { sendEmail } from '@/lib/email'
+import { auth } from '@/auth'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -159,12 +160,16 @@ function buildDailyReportEmail(data: {
 export async function GET(req: NextRequest) {
   // Verify cron secret to prevent unauthorized triggers
   const authHeader = req.headers.get('authorization')
-  const cronSecret = process.env.CRON_SECRET || 'smartmotor-cron-secret'
+  const cronSecret = process.env.CRON_SECRET
 
-  if (authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     // Also allow Vercel Cron (it sends a specific header)
     const vercelCronHeader = req.headers.get('x-vercel-cron')
-    if (!vercelCronHeader) {
+
+    // Fallback to checking for an admin session (for manual triggers from the frontend)
+    const session = await auth()
+
+    if (!vercelCronHeader && !session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
   }

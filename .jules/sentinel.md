@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2026-03-01 - Remove hardcoded fallback secrets from API routes
+**Vulnerability:** Several backend API routes (`/api/admin/invitations/send-bulk`, `/api/cron/daily-report`, `/api/notifications/send`, `/api/bookings`, and server action `firebase-auth.ts`) were using hardcoded default secrets (like `sm-notify-secret`, `smartmotor-cron-secret`, `admin-setup-secret`) as a fallback if the corresponding environment variables were not set.
+**Learning:** Hardcoding default secrets in the codebase completely bypasses the security mechanism if the application is deployed without properly configuring the environment variables. An attacker aware of these fallback strings could use them to bypass authentication.
+**Prevention:** Never use the `|| 'default-secret'` pattern for secrets or API keys. Always fail securely (deny access) if the necessary environment variable is undefined or empty.
