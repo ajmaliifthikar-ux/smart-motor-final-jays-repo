@@ -1,0 +1,3 @@
+## 2025-02-21 - Intl Instantiation Performance Bottleneck
+**Learning:** Instantiating `Intl` objects (e.g., `new Intl.NumberFormat`, `new Intl.DateTimeFormat`) on every function call or render loop is highly expensive (~60-100x overhead) compared to reusing existing instances.
+**Action:** Always hoist `Intl` object instantiations to the module level and reuse the instances across function calls and component renders to save CPU cycles and reduce memory allocation overhead.
