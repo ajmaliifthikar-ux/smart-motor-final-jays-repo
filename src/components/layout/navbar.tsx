@@ -102,6 +102,8 @@ export function Navbar() {
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className={cn('lg:hidden p-2 rounded-lg text-[#121212]')}
+            aria-expanded={isMobileMenuOpen}
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
           >
             {isMobileMenuOpen ? <XIcon size={24} /> : <MenuIcon size={24} />}
           </button>
