@@ -193,6 +193,10 @@ const BRANDS = [
 // ─── HANDLER ─────────────────────────────────────────────────────────────────
 
 export async function GET(req: Request) {
+  if (process.env.NODE_ENV !== 'development') {
+    return NextResponse.json({ error: 'Forbidden in production environments' }, { status: 403 })
+  }
+
   const { searchParams } = new URL(req.url)
   const key = searchParams.get('key')
 
