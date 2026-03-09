@@ -369,9 +369,10 @@ export function LiveChatPanel({
           {/* Input Area */}
           <div className="bg-white border-t border-gray-200 p-4 space-y-3">
             {/* Mode Toggle */}
-            <div className="flex gap-2">
+            <div className="flex gap-2" role="group" aria-label="Chat Mode">
               <button
                 onClick={() => setLiveMode(true)}
+                aria-pressed={liveMode}
                 className={cn(
                   'flex-1 py-2 px-3 rounded-full text-xs font-black uppercase tracking-widest transition-all',
                   liveMode
@@ -379,11 +380,12 @@ export function LiveChatPanel({
                     : 'bg-gray-100 text-[#121212] hover:bg-gray-200'
                 )}
               >
-                <Zap className="inline w-3 h-3 mr-1" />
+                <Zap className="inline w-3 h-3 mr-1" aria-hidden="true" />
                 Live
               </button>
               <button
                 onClick={() => setLiveMode(false)}
+                aria-pressed={!liveMode}
                 className={cn(
                   'flex-1 py-2 px-3 rounded-full text-xs font-black uppercase tracking-widest transition-all',
                   !liveMode
@@ -391,7 +393,7 @@ export function LiveChatPanel({
                     : 'bg-gray-100 text-[#121212] hover:bg-gray-200'
                 )}
               >
-                <Sparkles className="inline w-3 h-3 mr-1" />
+                <Sparkles className="inline w-3 h-3 mr-1" aria-hidden="true" />
                 Normal
               </button>
             </div>
@@ -410,12 +412,13 @@ export function LiveChatPanel({
               <Button
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
+                aria-label="Send message"
                 className="rounded-full bg-[#E62329] hover:bg-[#121212] text-white p-0 w-10 h-10 flex items-center justify-center"
               >
                 {isLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                 ) : (
-                  <Send className="w-4 h-4" />
+                  <Send className="w-4 h-4" aria-hidden="true" />
                 )}
               </Button>
             </div>
