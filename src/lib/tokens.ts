@@ -1,3 +1,4 @@
+import { randomInt } from 'crypto'
 import { nanoid } from 'nanoid'
 
 /**
@@ -101,7 +102,7 @@ export function generateShortCode(
   for (let i = 0; i < segments; i++) {
     let segment = ''
     for (let j = 0; j < charactersPerSegment; j++) {
-      segment += chars.charAt(Math.floor(Math.random() * chars.length))
+      segment += chars.charAt(randomInt(chars.length))
     }
     codes.push(segment)
   }
@@ -164,7 +165,7 @@ export function generateBackupCodeId(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   let code = ''
   for (let i = 0; i < 8; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length))
+    code += chars.charAt(randomInt(chars.length))
   }
   return code
 }
