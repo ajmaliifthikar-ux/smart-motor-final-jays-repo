@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+## 2025-02-28 - Insecure Random Number Generation
+
+**Vulnerability:** Found `Math.random()` being used to generate passwords, device IDs, short codes, and backup codes across `src/lib/password.ts`, `src/lib/totp.ts`, and `src/lib/tokens.ts`. Additionally, array shuffling in `password.ts` used `.sort(() => Math.random() - 0.5)` which is cryptographically biased.
+**Learning:** `Math.random()` is not a CSPRNG (Cryptographically Secure Pseudo-Random Number Generator) and its state can be predicted, compromising generated secret tokens and passwords. The array sort method bias can drastically reduce the entropy of a password.
+**Prevention:** Always use Node.js's built-in `crypto.randomInt` (or equivalent CSPRNG) for generating security-sensitive materials. Ensure unbiased shuffling using standard algorithms like Fisher-Yates powered by `crypto`.
