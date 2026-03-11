@@ -193,6 +193,11 @@ const BRANDS = [
 // ─── HANDLER ─────────────────────────────────────────────────────────────────
 
 export async function GET(req: Request) {
+  // Security Enhancement: Ensure this endpoint only runs in development
+  if (process.env.NODE_ENV !== 'development') {
+    return NextResponse.json({ error: 'Not Found' }, { status: 404 })
+  }
+
   const { searchParams } = new URL(req.url)
   const key = searchParams.get('key')
 
