@@ -76,6 +76,7 @@ export function AdminToolbar() {
           <div className="flex items-center gap-2 pl-4 border-l border-white/10">
             <button
               onClick={() => window.location.href = '/admin/dashboard'}
+              aria-label="Admin Dashboard"
               className="p-1.5 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-all active:scale-90"
               title="Admin Dashboard"
             >
@@ -83,6 +84,7 @@ export function AdminToolbar() {
             </button>
             <button
               onClick={handleSignOut}
+              aria-label="Sign Out"
               className="p-1.5 rounded-full hover:bg-white/10 text-white/60 hover:text-[#E62329] transition-all active:scale-90"
               title="Sign Out"
             >
