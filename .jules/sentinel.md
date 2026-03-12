@@ -14,3 +14,7 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+### 2026-03-12: Insecure Randomness in Password Generation
+- **Vulnerability:** `Math.random()` was used to generate random passwords and shuffle characters in `src/lib/password.ts`. `Math.random()` is predictable and not cryptographically secure, and the `sort(() => Math.random() - 0.5)` shuffle introduces a statistical bias, potentially allowing attackers to guess generated passwords more easily.
+- **Learning:** Standard built-in JavaScript Math functions must not be used for security-sensitive logic like tokens or passwords. Furthermore, the biased shuffle pattern is fundamentally flawed for uniformly distributing characters.
+- **Prevention:** Always use the Node.js `crypto` module (e.g., `crypto.randomInt`) or equivalent cryptographic APIs for generating secure random values. For shuffling, implement a proper Fisher-Yates algorithm utilizing secure randomness.
