@@ -47,7 +47,7 @@ export function generateSlotsForDate(
   const [startHour, startMin] = config.startTime.split(':').map(Number)
   const [endHour, endMin] = config.endTime.split(':').map(Number)
 
-  let currentTime = new Date()
+  const currentTime = new Date()
   currentTime.setHours(startHour, startMin, 0, 0)
 
   const endTime = new Date()
