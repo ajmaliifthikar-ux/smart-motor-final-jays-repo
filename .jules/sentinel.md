@@ -14,3 +14,7 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+## 2024-05-20 - DEV-ONLY Endpoint Authorization Bypass
+**Vulnerability:** A development-only database seeding endpoint (`src/app/api/dev/seed/route.ts`) was relying solely on a hardcoded query string key (`key=sm-seed-2026`) for authorization, meaning it could be executed in production if the key was known or guessed, leading to unauthorized database mutations.
+**Learning:** Hardcoded keys are insufficient for protecting development/administrative endpoints. Relying on them creates a severe risk of unauthorized access in production environments.
+**Prevention:** Development-only API routes and scripts must always explicitly check that `process.env.NODE_ENV === 'development'` and immediately return a `404 Not Found` if the condition is not met, ensuring they cannot be accessed in production or staging.
