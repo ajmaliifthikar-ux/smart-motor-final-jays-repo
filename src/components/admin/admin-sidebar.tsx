@@ -287,7 +287,11 @@ export function AdminSidebar() {
 
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
-            <button className="p-2 rounded-xl hover:bg-white/10 transition-colors text-white/60 hover:text-white">
+            <button
+              className="p-2 rounded-xl hover:bg-white/10 transition-colors text-white/60 hover:text-white"
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileOpen}
+            >
               {mobileOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </SheetTrigger>
