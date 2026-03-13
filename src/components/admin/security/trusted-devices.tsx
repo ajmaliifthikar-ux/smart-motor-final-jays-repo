@@ -23,6 +23,9 @@ interface TrustedDevicesProps {
 export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDevicesProps) {
   const [isLoading, setIsLoading] = useState(false)
 
+  // ⚡ Bolt: Cache timezone string instead of instantiating Intl.DateTimeFormat in render loop
+  const [timeZone] = useState(() => Intl.DateTimeFormat().resolvedOptions().timeZone)
+
   const getDeviceIcon = (name: string) => {
     if (name.toLowerCase().includes('mobile') || name.toLowerCase().includes('phone')) {
       return <Smartphone className="w-5 h-5" />
@@ -109,7 +112,7 @@ export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDev
                     <p className="text-xs text-gray-400">
                       Last used{' '}
                       {new Date(device.lastUsedAt).toLocaleDateString(undefined, {
-                        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        timeZone: timeZone,
                       })}
                     </p>
                   </div>
