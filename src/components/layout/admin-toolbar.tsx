@@ -49,6 +49,8 @@ export function AdminToolbar() {
             <button
               onClick={toggleAdminMode}
               data-testid="admin-mode-toggle"
+              aria-label="Toggle Admin View"
+              aria-pressed={isAdminMode}
               className={cn(
                 "relative w-10 h-5 rounded-full transition-colors duration-300 flex items-center px-0.5",
                 isAdminMode ? "bg-[#E62329]" : "bg-white/20"
@@ -78,6 +80,7 @@ export function AdminToolbar() {
               onClick={() => window.location.href = '/admin/dashboard'}
               className="p-1.5 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-all active:scale-90"
               title="Admin Dashboard"
+              aria-label="Admin Dashboard"
             >
               <Settings size={14} />
             </button>
@@ -85,6 +88,7 @@ export function AdminToolbar() {
               onClick={handleSignOut}
               className="p-1.5 rounded-full hover:bg-white/10 text-white/60 hover:text-[#E62329] transition-all active:scale-90"
               title="Sign Out"
+              aria-label="Sign Out"
             >
               <LogOut size={14} />
             </button>
