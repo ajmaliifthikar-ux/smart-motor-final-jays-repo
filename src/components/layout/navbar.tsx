@@ -84,6 +84,7 @@ export function Navbar() {
 
             <button
               onClick={handleLangSwitch}
+              aria-label="Switch language"
               className={cn(
                 "flex items-center gap-2 px-4 py-2 rounded-full border transition-all text-[10px] font-black uppercase tracking-widest",
                 isScrolled
@@ -101,6 +102,8 @@ export function Navbar() {
           {/* Mobile hamburger */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
             className={cn('lg:hidden p-2 rounded-lg text-[#121212]')}
           >
             {isMobileMenuOpen ? <XIcon size={24} /> : <MenuIcon size={24} />}
@@ -128,12 +131,14 @@ export function Navbar() {
               </a>
               <button
                 onClick={() => { document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' }); setIsMobileMenuOpen(false) }}
+                aria-label="Book Now"
                 className="mt-1"
               >
                 <div className="w-full bg-[#E62329] text-white rounded-full py-3 text-xs font-extrabold tracking-widest uppercase text-center">Book Now</div>
               </button>
               <button
                 onClick={handleLangSwitch}
+                aria-label="Switch language"
                 className="mt-2 flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-white/30 text-white hover:border-white text-[10px] font-black uppercase tracking-widest"
               >
                 <GlobeIcon size={12} />
