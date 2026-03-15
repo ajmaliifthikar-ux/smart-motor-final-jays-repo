@@ -42,7 +42,7 @@ export async function GET() {
 
     // 3. Test Gemini (Dedicated Key)
     results.services.push(await test('Gemini AI', async () => {
-        const key = process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk'
+        const key = process.env.GEMINI_API_KEY as string
         const genAI = new GoogleGenerativeAI(key)
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
         const res = await model.generateContent('ping')

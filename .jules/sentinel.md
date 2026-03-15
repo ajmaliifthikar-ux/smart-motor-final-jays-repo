@@ -1,16 +1,4 @@
-# Sentinel - Security Learnings and Vulnerability Log
-
-## Security Principles
-
-- **Sensitive Data in URLs**: Never send secret keys in URL query parameters, as they can be logged by proxies and servers. Always use the request body (e.g., `application/x-www-form-urlencoded` or `application/json`) for sensitive data.
-- **Logging**: Avoid logging full error objects or raw request/response data in production logs (`console.error`), as they may contain PII or secrets. Log safe, high-level error messages instead.
-- **Refactoring - Utility Functions**: Extract repeated sensitive logic (like third-party API verification) into a single utility function to ensure consistency and easier security auditing.
-- **Testing - Mocking Fetch**: When testing code that makes external API calls (like `fetch`), use `global.fetch` mocking to inspect the request URL and body without making actual network requests. This allows verifying security properties (e.g., "secret is not in URL").
-
-## Fixed Vulnerabilities
-
-### 2026-02-15: Implicit User Enumeration & IDOR in Booking API
-- **Vulnerability:** Unauthenticated users could associate bookings with any existing user account by simply providing their email address in the request body.
-- **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
-- **File:** `src/app/api/bookings/route.ts`
-- **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+## 2025-03-15 - Hardcoded Gemini API Key Removal
+**Vulnerability:** A hardcoded Google Gemini API key (`AIzaSy...`) was present in multiple files as a fallback if `process.env.GEMINI_API_KEY` was undefined. Additionally, some files used `|| ''` which still allows bypass of undefined checks down the line, although less critical than the hardcoded key itself.
+**Learning:** Hardcoded secrets as fallbacks present a severe security risk, allowing unauthorized access to services if environment variables fail to load or aren't properly configured. The fallback logic subverted the need for strict environment configuration.
+**Prevention:** Always rely strictly on environment variables for API keys and secrets. Never include hardcoded fallback values for secrets in code. Use `process.env.VARIABLE as string` and let the application fail securely if the environment is misconfigured. Ensure initialization happens in scopes where failure can be caught.

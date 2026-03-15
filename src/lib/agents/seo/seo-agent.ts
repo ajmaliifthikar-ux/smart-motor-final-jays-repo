@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
 
 // Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string)
 
 export interface SEOAgentConfig {
     tone: 'professional' | 'engaging' | 'technical'

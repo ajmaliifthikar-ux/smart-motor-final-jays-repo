@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
 import { prisma } from '@/lib/prisma'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string)
 
 export class SEOMasterAgent {
     private model: GenerativeModel
