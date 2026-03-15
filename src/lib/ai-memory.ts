@@ -1,7 +1,7 @@
 import redis from './redis'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string)
 
 // Types
 export interface Message {
@@ -343,7 +343,7 @@ Customer: ${userMessage}
 
         try {
             const { GoogleGenerativeAI } = await import('@google/generative-ai')
-            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
+            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string)
             const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
             const result = await model.generateContent(prompt)
