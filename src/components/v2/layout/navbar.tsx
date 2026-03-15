@@ -173,6 +173,8 @@ export function Navbar() {
           <Tooltip content={isMobileMenuOpen ? "Close menu" : "Open menu"} position="bottom">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMobileMenuOpen}
               className={cn(
                 'lg:hidden p-3 rounded-full transition-colors relative z-50',
                 isScrolled || isMobileMenuOpen ? 'bg-gray-100 text-[#121212]' : 'bg-white/20 backdrop-blur-md text-[#121212]'
