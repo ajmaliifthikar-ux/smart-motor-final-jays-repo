@@ -43,6 +43,8 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const [conversationId] = useState(() => `conv_${Date.now()}_${Math.random().toString(36).substring(7)}`)
+
   const { connect, disconnect, isConnected, isSpeaking } = useGeminiLive((toolMsg: any) => {
       // Callback from hook to inject widget messages
       setMessages(prev => [...prev, {
@@ -86,7 +88,6 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
     if (!overrideText) setInput('')
     setIsLoading(true)
     
-    const [conversationId] = useState(`conv_${Date.now()}_${Math.random().toString(36).substring(7)}`)
 // ...
     try {
         const response = await fetch('/api/ai/chat', {
