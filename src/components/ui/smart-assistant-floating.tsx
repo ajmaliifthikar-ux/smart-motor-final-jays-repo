@@ -241,13 +241,14 @@ export function SmartAssistantFloating() {
                 <button
                   onClick={() => setIsOpen(false)}
                   className="p-3 hover:bg-white/10 rounded-full transition-colors text-white relative z-10"
+                  aria-label="Close Smart Assistant"
                 >
                   <X className="w-6 h-6" />
                 </button>
               </div>
 
               {/* Messages Area */}
-              <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 space-y-6 bg-[#FAFAF9] subtle-scrollbar">
+              <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 space-y-6 bg-[#FAFAF9] subtle-scrollbar" role="log" aria-live="polite" aria-relevant="additions">
                 {messages.map((msg) => (
                   <motion.div
                     key={msg.id}
@@ -294,6 +295,7 @@ export function SmartAssistantFloating() {
                 <div className="flex p-1.5 bg-gray-50 rounded-2xl border border-gray-100 gap-1.5">
                   <button
                     onClick={() => setLiveMode(true)}
+                    aria-pressed={liveMode}
                     className={cn(
                       'flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2',
                       liveMode
@@ -306,6 +308,7 @@ export function SmartAssistantFloating() {
                   </button>
                   <button
                     onClick={() => setLiveMode(false)}
+                    aria-pressed={!liveMode}
                     className={cn(
                       'flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2',
                       !liveMode
@@ -333,12 +336,14 @@ export function SmartAssistantFloating() {
                       placeholder="Type your message..."
                       className="text-sm bg-gray-50 border-0 rounded-[1.5rem] py-6 px-6 focus:ring-2 focus:ring-[#121212] transition-all pr-12 min-h-[60px]"
                       disabled={isLoading}
+                      aria-label="Type your message"
                     />
                   </div>
                   <Button
                     onClick={handleSend}
                     disabled={isLoading || !input.trim()}
                     className="rounded-[1.2rem] bg-[#121212] hover:bg-[#E62329] w-14 h-14 p-0 shadow-xl transition-all active:scale-95 flex-shrink-0"
+                    aria-label="Send message"
                   >
                     {isLoading ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -362,6 +367,8 @@ export function SmartAssistantFloating() {
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-12 right-6 z-40 w-16 h-16 rounded-full bg-[#121212] text-white shadow-2xl flex items-center justify-center hover:bg-[#E62329] transition-all border border-white/10"
+        aria-expanded={isOpen}
+        aria-label={isOpen ? "Close Smart Assistant" : "Open Smart Assistant"}
       >
         <AnimatePresence mode="wait">
           {isOpen ? (
