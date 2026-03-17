@@ -246,6 +246,15 @@ export function getPasswordStrengthClasses(
  *
  * @returns Random password string
  */
+/**
+ * Generate a cryptographically secure random index
+ */
+const getSecureRandomIndex = (max: number): number => {
+  const array = new Uint32Array(1)
+  globalThis.crypto.getRandomValues(array)
+  return array[0] % max
+}
+
 export function generateRandomPassword(): string {
   const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
   const lowercase = 'abcdefghijklmnopqrstuvwxyz'
@@ -255,20 +264,24 @@ export function generateRandomPassword(): string {
   let password = ''
 
   // Ensure all character types are included
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length))
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length))
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  password += special.charAt(Math.floor(Math.random() * special.length))
+  password += uppercase.charAt(getSecureRandomIndex(uppercase.length))
+  password += lowercase.charAt(getSecureRandomIndex(lowercase.length))
+  password += numbers.charAt(getSecureRandomIndex(numbers.length))
+  password += special.charAt(getSecureRandomIndex(special.length))
 
   // Fill rest with random characters from all types
   const allChars = uppercase + lowercase + numbers + special
   for (let i = password.length; i < 12; i++) {
-    password += allChars.charAt(Math.floor(Math.random() * allChars.length))
+    password += allChars.charAt(getSecureRandomIndex(allChars.length))
   }
 
-  // Shuffle password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
+  // Shuffle password securely
+  const chars = password.split('')
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = getSecureRandomIndex(i + 1)
+    const temp = chars[i]
+    chars[i] = chars[j]
+    chars[j] = temp
+  }
+  return chars.join('')
 }

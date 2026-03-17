@@ -91,6 +91,15 @@ export function generateUrlSafeToken(length: number = 32): string {
  * @param charactersPerSegment - Characters per segment (default 4)
  * @returns Short code string
  */
+/**
+ * Generate a cryptographically secure random index
+ */
+const getSecureRandomIndex = (max: number): number => {
+  const array = new Uint32Array(1)
+  globalThis.crypto.getRandomValues(array)
+  return array[0] % max
+}
+
 export function generateShortCode(
   segments: number = 2,
   charactersPerSegment: number = 4
@@ -101,7 +110,7 @@ export function generateShortCode(
   for (let i = 0; i < segments; i++) {
     let segment = ''
     for (let j = 0; j < charactersPerSegment; j++) {
-      segment += chars.charAt(Math.floor(Math.random() * chars.length))
+      segment += chars.charAt(getSecureRandomIndex(chars.length))
     }
     codes.push(segment)
   }
@@ -164,7 +173,7 @@ export function generateBackupCodeId(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   let code = ''
   for (let i = 0; i < 8; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length))
+    code += chars.charAt(getSecureRandomIndex(chars.length))
   }
   return code
 }
