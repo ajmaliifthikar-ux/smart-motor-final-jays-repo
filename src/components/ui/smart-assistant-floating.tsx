@@ -238,7 +238,7 @@ export function SmartAssistantFloating() {
                     </div>
                   </div>
                 </div>
-                <button
+                <button aria-label="Close chat"
                   onClick={() => setIsOpen(false)}
                   className="p-3 hover:bg-white/10 rounded-full transition-colors text-white relative z-10"
                 >
@@ -292,7 +292,7 @@ export function SmartAssistantFloating() {
               <div className="bg-white border-t border-gray-100 p-8 space-y-6 shadow-[0_-10px_40px_rgba(0,0,0,0.02)]">
                 {/* Mode Switcher */}
                 <div className="flex p-1.5 bg-gray-50 rounded-2xl border border-gray-100 gap-1.5">
-                  <button
+                  <button aria-label="Toggle live mode"
                     onClick={() => setLiveMode(true)}
                     className={cn(
                       'flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2',
@@ -304,7 +304,7 @@ export function SmartAssistantFloating() {
                     <Zap className={cn("w-3 h-3", liveMode ? "fill-white" : "")} />
                     Live Mode
                   </button>
-                  <button
+                  <button aria-label="Toggle normal mode"
                     onClick={() => setLiveMode(false)}
                     className={cn(
                       'flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2',
@@ -335,7 +335,7 @@ export function SmartAssistantFloating() {
                       disabled={isLoading}
                     />
                   </div>
-                  <Button
+                  <Button aria-label="Send message"
                     onClick={handleSend}
                     disabled={isLoading || !input.trim()}
                     className="rounded-[1.2rem] bg-[#121212] hover:bg-[#E62329] w-14 h-14 p-0 shadow-xl transition-all active:scale-95 flex-shrink-0"
