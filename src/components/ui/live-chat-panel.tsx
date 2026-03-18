@@ -285,7 +285,7 @@ export function LiveChatPanel({
                 </p>
               </div>
             </div>
-            <button
+            <button aria-label="Toggle live mode"
               onClick={onClose}
               className="p-1 hover:bg-white/10 rounded-full transition-colors"
               aria-label="Close chat"
@@ -370,7 +370,7 @@ export function LiveChatPanel({
           <div className="bg-white border-t border-gray-200 p-4 space-y-3">
             {/* Mode Toggle */}
             <div className="flex gap-2">
-              <button
+              <button aria-label="Toggle live mode"
                 onClick={() => setLiveMode(true)}
                 className={cn(
                   'flex-1 py-2 px-3 rounded-full text-xs font-black uppercase tracking-widest transition-all',
@@ -382,7 +382,7 @@ export function LiveChatPanel({
                 <Zap className="inline w-3 h-3 mr-1" />
                 Live
               </button>
-              <button
+              <button aria-label="Toggle normal mode"
                 onClick={() => setLiveMode(false)}
                 className={cn(
                   'flex-1 py-2 px-3 rounded-full text-xs font-black uppercase tracking-widest transition-all',
@@ -407,7 +407,7 @@ export function LiveChatPanel({
                 className="flex-1 rounded-full border-gray-300 bg-gray-50 placeholder-gray-500 focus:bg-white focus:border-[#E62329]"
                 disabled={isLoading}
               />
-              <Button
+              <Button aria-label="Send message"
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
                 className="rounded-full bg-[#E62329] hover:bg-[#121212] text-white p-0 w-10 h-10 flex items-center justify-center"
