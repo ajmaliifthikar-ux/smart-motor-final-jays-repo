@@ -14,3 +14,7 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+## 2024-03-18 - [Development Endpoints Exposed in Production]
+**Vulnerability:** Development tools (`/dev/*` UI and `/api/dev/*` database seed scripts) lacked environment checks and were accessible in production environments.
+**Learning:** Even if "secret keys" are used (e.g., `?key=sm-seed-2026`), relying solely on them for development endpoints is risky if leaked. Development-only boundaries must explicitly check `process.env.NODE_ENV === 'development'`.
+**Prevention:** Always add `process.env.NODE_ENV !== 'development'` checks with a 403 or redirect (`redirect('/')`) for any tools, scripts, or layouts strictly intended for local dev use.
