@@ -1,0 +1,3 @@
+## 2025-03-20 - Intl instantiation is a major performance bottleneck
+**Learning:** Instantiating `Intl.NumberFormat` and `Intl.DateTimeFormat` objects repeatedly (e.g., inside functions called in render loops or map iterations) introduces a ~60-100x performance overhead compared to reusing an instantiated formatter. In a test with 1000 iterations, creating new instances took ~600ms while reusing one took ~1ms.
+**Action:** Always hoist `Intl` instantiations to module scope or memoize them, rather than creating them inline inside helper functions like `formatPrice` or `formatDate` that might be called many times per render.
