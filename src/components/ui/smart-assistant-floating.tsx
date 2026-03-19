@@ -240,6 +240,7 @@ export function SmartAssistantFloating() {
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
+                  aria-label="Close assistant"
                   className="p-3 hover:bg-white/10 rounded-full transition-colors text-white relative z-10"
                 >
                   <X className="w-6 h-6" />

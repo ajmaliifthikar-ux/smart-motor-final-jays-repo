@@ -119,7 +119,7 @@ export function EmergencyFAB() {
                             exit={{ scale: 0.9, y: 40 }}
                             className="bg-white w-full max-w-4xl h-[80vh] rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row relative"
                         >
-                            <button onClick={() => setShowTowFlow(false)} className="absolute top-6 right-6 z-50 p-2 bg-white rounded-full hover:bg-gray-100 transition-colors shadow-md">
+                            <button onClick={() => setShowTowFlow(false)} aria-label="Close towing request" className="absolute top-6 right-6 z-50 p-2 bg-white rounded-full hover:bg-gray-100 transition-colors shadow-md">
                                 <X size={20} />
                             </button>
                             {/* ... (Existing Tow UI Logic simplified/preserved if needed, creating a placeholder for now to save space as user focused on FAB redesign. 
