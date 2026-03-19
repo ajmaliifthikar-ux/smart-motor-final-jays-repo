@@ -144,7 +144,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
+            <button onClick={onClose} aria-label="Close chat panel" className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
               <X className="w-4 h-4" />
             </button>
           </div>
