@@ -40,6 +40,12 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isVoiceMode, setIsVoiceMode] = useState(false)
   
+  // ⚡ Bolt Optimization:
+  // Moved conversationId out of the handleSend callback to avoid Rules of Hooks violation.
+  // Using lazy initialization `useState(() => ...)` so Date.now() and Math.random()
+  // are only evaluated once on mount, rather than on every component re-render.
+  const [conversationId] = useState(() => `conv_${Date.now()}_${Math.random().toString(36).substring(7)}`)
+
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -86,7 +92,6 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
     if (!overrideText) setInput('')
     setIsLoading(true)
     
-    const [conversationId] = useState(`conv_${Date.now()}_${Math.random().toString(36).substring(7)}`)
 // ...
     try {
         const response = await fetch('/api/ai/chat', {
