@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2025-02-18: Insecure Randomness in Token and Device ID Generation
+- **Vulnerability:** `Math.random()` was used for generating security-sensitive values, including device IDs, backup recovery codes, and short codes (`generateBackupCodes`, `generateDeviceId`, `generateShortCode`, `generateBackupCodeId`). `Math.random()` is not cryptographically secure, making these values predictable.
+- **Learning:** Relying on `Math.random()` for any form of unique identifier or token meant to provide security or collision resistance is dangerous because V8's PRNG is predictable.
+- **Prevention:** Always use `globalThis.crypto.getRandomValues()` or a proven secure crypto library (like `nanoid` or `crypto.randomBytes()`) when generating sensitive tokens, backup codes, or identifiers.
