@@ -87,10 +87,16 @@ export function verifyTOTPCode(secret: string, code: string): boolean {
  */
 export function generateBackupCodes(count: number = TOTP_CONFIG.backupCodesCount): string[] {
   const codes: string[] = []
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 
   for (let i = 0; i < count; i++) {
     // Generate 8-character backup code (alphanumeric, no ambiguous chars)
-    const code = Math.random().toString(36).substring(2, 10).toUpperCase()
+    let code = ''
+    for (let j = 0; j < 8; j++) {
+      const array = new Uint32Array(1)
+      globalThis.crypto.getRandomValues(array)
+      code += chars.charAt(array[0] % chars.length)
+    }
     codes.push(code)
   }
 
@@ -171,7 +177,9 @@ export function generateDeviceId(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   let result = ''
   for (let i = 0; i < 32; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length))
+    const array = new Uint32Array(1)
+    globalThis.crypto.getRandomValues(array)
+    result += chars.charAt(array[0] % chars.length)
   }
   return result
 }
