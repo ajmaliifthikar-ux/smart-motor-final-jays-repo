@@ -101,7 +101,9 @@ export function generateShortCode(
   for (let i = 0; i < segments; i++) {
     let segment = ''
     for (let j = 0; j < charactersPerSegment; j++) {
-      segment += chars.charAt(Math.floor(Math.random() * chars.length))
+      const array = new Uint32Array(1)
+      globalThis.crypto.getRandomValues(array)
+      segment += chars.charAt(array[0] % chars.length)
     }
     codes.push(segment)
   }
@@ -164,7 +166,9 @@ export function generateBackupCodeId(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   let code = ''
   for (let i = 0; i < 8; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length))
+    const array = new Uint32Array(1)
+    globalThis.crypto.getRandomValues(array)
+    code += chars.charAt(array[0] % chars.length)
   }
   return code
 }

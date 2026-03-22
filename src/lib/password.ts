@@ -254,21 +254,33 @@ export function generateRandomPassword(): string {
 
   let password = ''
 
+  const getRandomChar = (chars: string) => {
+    const array = new Uint32Array(1)
+    globalThis.crypto.getRandomValues(array)
+    return chars.charAt(array[0] % chars.length)
+  }
+
   // Ensure all character types are included
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length))
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length))
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  password += special.charAt(Math.floor(Math.random() * special.length))
+  password += getRandomChar(uppercase)
+  password += getRandomChar(lowercase)
+  password += getRandomChar(numbers)
+  password += getRandomChar(special)
 
   // Fill rest with random characters from all types
   const allChars = uppercase + lowercase + numbers + special
   for (let i = password.length; i < 12; i++) {
-    password += allChars.charAt(Math.floor(Math.random() * allChars.length))
+    password += getRandomChar(allChars)
   }
 
   // Shuffle password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
+  const charsArr = password.split('')
+  for (let i = charsArr.length - 1; i > 0; i--) {
+    const array = new Uint32Array(1)
+    globalThis.crypto.getRandomValues(array)
+    const j = array[0] % (i + 1)
+    const temp = charsArr[i]
+    charsArr[i] = charsArr[j]
+    charsArr[j] = temp
+  }
+  return charsArr.join('')
 }
