@@ -177,6 +177,9 @@ export function Navbar() {
                 'lg:hidden p-3 rounded-full transition-colors relative z-50',
                 isScrolled || isMobileMenuOpen ? 'bg-gray-100 text-[#121212]' : 'bg-white/20 backdrop-blur-md text-[#121212]'
               )}
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-menu-v2"
             >
               {isMobileMenuOpen ? <XIcon size={24} /> : <MenuIcon size={24} />}
             </button>
@@ -184,10 +187,13 @@ export function Navbar() {
         </nav>
 
         {/* Mobile Menu Overlay */}
-        <div className={cn(
-          "fixed inset-0 bg-white/95 backdrop-blur-3xl z-40 lg:hidden transition-all duration-500 flex flex-col pt-32 px-8",
-          isMobileMenuOpen ? "opacity-100 pointer-events-auto translate-y-0" : "opacity-0 pointer-events-none -translate-y-10"
-        )}>
+        <div
+          id="mobile-menu-v2"
+          className={cn(
+            "fixed inset-0 bg-white/95 backdrop-blur-3xl z-40 lg:hidden transition-all duration-500 flex flex-col pt-32 px-8",
+            isMobileMenuOpen ? "opacity-100 pointer-events-auto translate-y-0" : "opacity-0 pointer-events-none -translate-y-10"
+          )}
+        >
           <div className="flex flex-col gap-6">
             {navLinks.map((link, i) => (
               <a
