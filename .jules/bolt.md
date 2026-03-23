@@ -1,0 +1,3 @@
+## 2024-05-24 - Hoist expensive `Intl` formatter initializations
+**Learning:** Instantiating `Intl` objects like `Intl.NumberFormat` and `Intl.DateTimeFormat` within frequently called functions (e.g., render loops, utility formatters like `formatPrice` or `formatDate`) introduces massive overhead (~60-100x slower) compared to reusing a single instance.
+**Action:** Always extract `new Intl.*` instances to module-level constants and reuse their `.format()` methods inside utility functions to dramatically improve performance, especially in list rendering or data-heavy UI components.
