@@ -1,4 +1,4 @@
-import { nanoid } from 'nanoid'
+import { nanoid, customAlphabet } from 'nanoid'
 
 /**
  * Generate a cryptographically secure random token
@@ -96,14 +96,11 @@ export function generateShortCode(
   charactersPerSegment: number = 4
 ): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  const nanoidCustom = customAlphabet(chars, charactersPerSegment)
   const codes: string[] = []
 
   for (let i = 0; i < segments; i++) {
-    let segment = ''
-    for (let j = 0; j < charactersPerSegment; j++) {
-      segment += chars.charAt(Math.floor(Math.random() * chars.length))
-    }
-    codes.push(segment)
+    codes.push(nanoidCustom())
   }
 
   return codes.join('-')
@@ -162,11 +159,8 @@ export function generateAPIToken(): string {
  */
 export function generateBackupCodeId(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  let code = ''
-  for (let i = 0; i < 8; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length))
-  }
-  return code
+  const nanoidCustom = customAlphabet(chars, 8)
+  return nanoidCustom()
 }
 
 /**
