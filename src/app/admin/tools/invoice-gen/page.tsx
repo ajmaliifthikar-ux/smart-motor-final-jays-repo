@@ -99,13 +99,17 @@ function dueDateISO(days = 30) {
   return d.toISOString().split('T')[0]
 }
 
+// Hoist expensive Intl objects to module scope for performance
+const aedFormatter = new Intl.NumberFormat('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const dateFormatter = new Intl.DateTimeFormat('en-AE', { day: '2-digit', month: 'short', year: 'numeric' })
+
 function formatAED(n: number) {
-  return new Intl.NumberFormat('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n)
+  return aedFormatter.format(n)
 }
 
 function formatDate(iso: string) {
   if (!iso) return '—'
-  return new Intl.DateTimeFormat('en-AE', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(iso + 'T00:00:00'))
+  return dateFormatter.format(new Date(iso + 'T00:00:00'))
 }
 
 function defaultItem(): LineItem {
@@ -369,7 +373,7 @@ function PrintModal({ invoice, totals, onClose }: {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function InvoiceGenPage() {
-  const [invoice, setInvoice] = useState<InvoiceData>({
+  const [invoice, setInvoice] = useState<InvoiceData>(() => ({
     invoiceNo: `SM-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
     date: todayISO(),
     dueDate: dueDateISO(30),
@@ -383,7 +387,7 @@ export default function InvoiceGenPage() {
     notes: '',
     status: 'draft',
     items: [defaultItem()],
-  })
+  }))
 
   const [showPreview, setShowPreview] = useState(false)
   const [showPresets, setShowPresets] = useState(false)
