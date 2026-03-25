@@ -58,6 +58,8 @@ export function FAQ({ initialFaqs }: { initialFaqs?: FAQType[] }) {
               >
                 <button
                   onClick={() => toggleFaq(index)}
+                  aria-expanded={openIndex === index}
+                  aria-controls={`faq-answer-${index}`}
                   className="w-full flex items-center justify-between p-8 text-left bg-transparent hover:bg-white transition-colors"
                 >
                   <span className="font-black text-black text-xl uppercase tracking-tighter pr-4">
@@ -75,6 +77,7 @@ export function FAQ({ initialFaqs }: { initialFaqs?: FAQType[] }) {
                 <AnimatePresence initial={false}>
                   {openIndex === index && (
                     <motion.div
+                      id={`faq-answer-${index}`}
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
