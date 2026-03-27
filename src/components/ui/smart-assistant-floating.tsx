@@ -240,6 +240,7 @@ export function SmartAssistantFloating() {
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
+                  aria-label="Close AI Chat"
                   className="p-3 hover:bg-white/10 rounded-full transition-colors text-white relative z-10"
                 >
                   <X className="w-6 h-6" />
@@ -338,6 +339,7 @@ export function SmartAssistantFloating() {
                   <Button
                     onClick={handleSend}
                     disabled={isLoading || !input.trim()}
+                    aria-label="Send message"
                     className="rounded-[1.2rem] bg-[#121212] hover:bg-[#E62329] w-14 h-14 p-0 shadow-xl transition-all active:scale-95 flex-shrink-0"
                   >
                     {isLoading ? (
@@ -361,6 +363,7 @@ export function SmartAssistantFloating() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? "Close AI Chat" : "Open AI Chat"}
         className="fixed bottom-12 right-6 z-40 w-16 h-16 rounded-full bg-[#121212] text-white shadow-2xl flex items-center justify-center hover:bg-[#E62329] transition-all border border-white/10"
       >
         <AnimatePresence mode="wait">
