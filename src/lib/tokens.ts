@@ -98,10 +98,17 @@ export function generateShortCode(
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   const codes: string[] = []
 
+  // Helper to get a secure random integer between 0 and max-1
+  const getRandomInt = (max: number) => {
+    const randomArray = new Uint32Array(1)
+    globalThis.crypto.getRandomValues(randomArray)
+    return randomArray[0] % max
+  }
+
   for (let i = 0; i < segments; i++) {
     let segment = ''
     for (let j = 0; j < charactersPerSegment; j++) {
-      segment += chars.charAt(Math.floor(Math.random() * chars.length))
+      segment += chars.charAt(getRandomInt(chars.length))
     }
     codes.push(segment)
   }
@@ -163,8 +170,16 @@ export function generateAPIToken(): string {
 export function generateBackupCodeId(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   let code = ''
+
+  // Helper to get a secure random integer between 0 and max-1
+  const getRandomInt = (max: number) => {
+    const randomArray = new Uint32Array(1)
+    globalThis.crypto.getRandomValues(randomArray)
+    return randomArray[0] % max
+  }
+
   for (let i = 0; i < 8; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length))
+    code += chars.charAt(getRandomInt(chars.length))
   }
   return code
 }
