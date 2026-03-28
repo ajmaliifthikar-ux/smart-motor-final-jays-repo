@@ -252,23 +252,36 @@ export function generateRandomPassword(): string {
   const numbers = '0123456789'
   const special = '!@#$%^&*()_+-=[]{}|,.<>?'
 
-  let password = ''
+  const allChars = uppercase + lowercase + numbers + special
+  const targetLength = 12
+
+  // Pre-allocate a buffer for random values.
+  // We need values for initial chars (4), filling the rest (8), and then shuffling (12).
+  // Total = 4 + 8 + 12 = 24. We allocate 32 just to be safe.
+  const randomBuffer = new Uint32Array(32)
+  globalThis.crypto.getRandomValues(randomBuffer)
+  let randomIdx = 0
+
+  const passwordArr: string[] = []
 
   // Ensure all character types are included
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length))
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length))
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  password += special.charAt(Math.floor(Math.random() * special.length))
+  passwordArr.push(uppercase.charAt(randomBuffer[randomIdx++] % uppercase.length))
+  passwordArr.push(lowercase.charAt(randomBuffer[randomIdx++] % lowercase.length))
+  passwordArr.push(numbers.charAt(randomBuffer[randomIdx++] % numbers.length))
+  passwordArr.push(special.charAt(randomBuffer[randomIdx++] % special.length))
 
   // Fill rest with random characters from all types
-  const allChars = uppercase + lowercase + numbers + special
-  for (let i = password.length; i < 12; i++) {
-    password += allChars.charAt(Math.floor(Math.random() * allChars.length))
+  for (let i = passwordArr.length; i < targetLength; i++) {
+    passwordArr.push(allChars.charAt(randomBuffer[randomIdx++] % allChars.length))
   }
 
-  // Shuffle password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
+  // Secure Fisher-Yates shuffle
+  for (let i = passwordArr.length - 1; i > 0; i--) {
+    const j = randomBuffer[randomIdx++] % (i + 1)
+    const temp = passwordArr[i]
+    passwordArr[i] = passwordArr[j]
+    passwordArr[j] = temp
+  }
+
+  return passwordArr.join('')
 }
