@@ -1,0 +1,3 @@
+## 2024-05-25 - React Performance Optimization: Hoist Intl Formatter
+**Learning:** Repeatedly instantiating `Intl` objects (like `Intl.NumberFormat` or `Intl.DateTimeFormat`) inside formatting functions or React components introduces a measurable performance bottleneck, especially when called inside rendering loops (e.g., rendering lists of formatted prices/dates) or frequently during calculations. Creating a single instance is significantly faster than creating a new instance per call.
+**Action:** Always hoist `Intl` formatters to the module scope (or cache them) when their configuration (locale and options) is static, avoiding redundant object creation and initialization during render cycles or loop iterations.
