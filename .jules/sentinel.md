@@ -14,3 +14,7 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+## 2025-02-14 - Replace Weak Math.random() with Crypto.getRandomValues()
+**Vulnerability:** Weak random number generation using `Math.random()` was employed to generate sensitive values like backup codes and device IDs in `src/lib/totp.ts`.
+**Learning:** Functions generating security-sensitive, cryptographic, or pseudo-cryptographic keys shouldn't rely on pseudo-random generators.
+**Prevention:** Implement `globalThis.crypto.getRandomValues()` along with `Uint32Array` buffers to ensure cryptographically secure, uniformly distributed character selections.
