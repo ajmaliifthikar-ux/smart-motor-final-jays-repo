@@ -240,6 +240,7 @@ export function SmartAssistantFloating() {
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
+                  aria-label="Close assistant"
                   className="p-3 hover:bg-white/10 rounded-full transition-colors text-white relative z-10"
                 >
                   <X className="w-6 h-6" />
@@ -247,7 +248,7 @@ export function SmartAssistantFloating() {
               </div>
 
               {/* Messages Area */}
-              <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 space-y-6 bg-[#FAFAF9] subtle-scrollbar">
+              <div ref={scrollRef} role="log" aria-live="polite" aria-relevant="additions" className="flex-1 overflow-y-auto p-8 space-y-6 bg-[#FAFAF9] subtle-scrollbar">
                 {messages.map((msg) => (
                   <motion.div
                     key={msg.id}
@@ -294,6 +295,7 @@ export function SmartAssistantFloating() {
                 <div className="flex p-1.5 bg-gray-50 rounded-2xl border border-gray-100 gap-1.5">
                   <button
                     onClick={() => setLiveMode(true)}
+                    aria-pressed={liveMode}
                     className={cn(
                       'flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2',
                       liveMode
@@ -306,6 +308,7 @@ export function SmartAssistantFloating() {
                   </button>
                   <button
                     onClick={() => setLiveMode(false)}
+                    aria-pressed={!liveMode}
                     className={cn(
                       'flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2',
                       !liveMode
@@ -323,6 +326,7 @@ export function SmartAssistantFloating() {
                     <Input
                       ref={inputRef}
                       value={input}
+                      aria-label="Message input"
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && !e.shiftKey) {
@@ -337,6 +341,7 @@ export function SmartAssistantFloating() {
                   </div>
                   <Button
                     onClick={handleSend}
+                    aria-label="Send message"
                     disabled={isLoading || !input.trim()}
                     className="rounded-[1.2rem] bg-[#121212] hover:bg-[#E62329] w-14 h-14 p-0 shadow-xl transition-all active:scale-95 flex-shrink-0"
                   >
@@ -361,6 +366,8 @@ export function SmartAssistantFloating() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
+        aria-label="Toggle smart assistant"
+        aria-expanded={isOpen}
         className="fixed bottom-12 right-6 z-40 w-16 h-16 rounded-full bg-[#121212] text-white shadow-2xl flex items-center justify-center hover:bg-[#E62329] transition-all border border-white/10"
       >
         <AnimatePresence mode="wait">

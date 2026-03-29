@@ -144,13 +144,13 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
+            <button onClick={onClose} aria-label="Close chat" className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar">
+          <div ref={scrollRef} role="log" aria-live="polite" aria-relevant="additions" className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar">
             {messages.map((msg) => (
               <div key={msg.id} className="space-y-3">
                 <motion.div
@@ -198,6 +198,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                             <div className="relative flex items-center">
                                 <input 
                                     autoFocus
+                                    aria-label={`Enter ${msg.widget.type}`}
                                     placeholder={msg.widget.placeholder || `Enter ${msg.widget.type}...`}
                                     className="w-full bg-white border-gray-200 rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-[#E62329] transition-all"
                                     onKeyDown={(e) => {
@@ -205,6 +206,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                                     }}
                                 />
                                 <button 
+                                    aria-label="Confirm input"
                                     className="absolute right-2 w-8 h-8 bg-[#121212] text-white rounded-lg flex items-center justify-center hover:bg-[#E62329] transition-colors"
                                     onClick={(e) => {
                                         const val = (e.currentTarget.previousSibling as HTMLInputElement).value
@@ -266,6 +268,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
               <input
                 ref={inputRef}
                 value={input}
+                aria-label="Message input"
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleSend()
@@ -278,6 +281,8 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
               <div className="flex items-center gap-1">
                 <button
                     onClick={isVoiceMode ? stopVoiceMode : startVoiceMode}
+                    aria-label="Toggle voice mode"
+                    aria-pressed={isVoiceMode}
                     className={cn(
                     "w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-500 group",
                     isVoiceMode 
@@ -290,6 +295,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 
                 <Button
                     onClick={() => handleSend()}
+                    aria-label="Send message"
                     disabled={isLoading || !input.trim() || isVoiceMode}
                     className="rounded-lg bg-[#121212] hover:bg-[#E62329] w-9 h-9 p-0 transition-all duration-500 shadow-xl"
                 >
