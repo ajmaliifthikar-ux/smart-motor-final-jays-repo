@@ -410,6 +410,7 @@ export function LiveChatPanel({
               <Button
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
+                aria-label="Send message"
                 className="rounded-full bg-[#E62329] hover:bg-[#121212] text-white p-0 w-10 h-10 flex items-center justify-center"
               >
                 {isLoading ? (
