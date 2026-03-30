@@ -98,10 +98,16 @@ export function generateShortCode(
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   const codes: string[] = []
 
+  if (typeof globalThis.crypto === 'undefined') {
+    throw new Error('crypto API not available')
+  }
+
   for (let i = 0; i < segments; i++) {
     let segment = ''
+    const randomArray = new Uint32Array(charactersPerSegment)
+    globalThis.crypto.getRandomValues(randomArray)
     for (let j = 0; j < charactersPerSegment; j++) {
-      segment += chars.charAt(Math.floor(Math.random() * chars.length))
+      segment += chars.charAt(randomArray[j] % chars.length)
     }
     codes.push(segment)
   }
@@ -163,8 +169,16 @@ export function generateAPIToken(): string {
 export function generateBackupCodeId(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   let code = ''
+
+  if (typeof globalThis.crypto === 'undefined') {
+    throw new Error('crypto API not available')
+  }
+
+  const randomArray = new Uint32Array(8)
+  globalThis.crypto.getRandomValues(randomArray)
+
   for (let i = 0; i < 8; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length))
+    code += chars.charAt(randomArray[i] % chars.length)
   }
   return code
 }
