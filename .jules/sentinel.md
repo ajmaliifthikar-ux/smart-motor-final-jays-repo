@@ -14,3 +14,7 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+## 2024-05-24 - [Insecure Random Number Generation]
+**Vulnerability:** Use of `Math.random()` for generating security-sensitive values like backup codes, device IDs, short codes, and random passwords in `src/lib/totp.ts`, `src/lib/tokens.ts`, and `src/lib/password.ts`. `Math.random()` is not cryptographically secure and can be predicted, leading to potential account takeover or unauthorized access.
+**Learning:** Developers often default to `Math.random()` for its simplicity, unaware of the security implications when generating values that require high entropy.
+**Prevention:** Use `globalThis.crypto.getRandomValues()` or a secure library like `nanoid` (with custom alphabets if needed) for all random number generation involving security, secrets, or authentication tokens.

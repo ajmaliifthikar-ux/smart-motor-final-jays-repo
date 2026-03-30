@@ -252,23 +252,39 @@ export function generateRandomPassword(): string {
   const numbers = '0123456789'
   const special = '!@#$%^&*()_+-=[]{}|,.<>?'
 
+  if (typeof globalThis.crypto === 'undefined') {
+    throw new Error('crypto API not available')
+  }
+
   let password = ''
 
+  const randomArray = new Uint32Array(12)
+  globalThis.crypto.getRandomValues(randomArray)
+  let randomIndex = 0
+
   // Ensure all character types are included
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length))
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length))
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  password += special.charAt(Math.floor(Math.random() * special.length))
+  password += uppercase.charAt(randomArray[randomIndex++] % uppercase.length)
+  password += lowercase.charAt(randomArray[randomIndex++] % lowercase.length)
+  password += numbers.charAt(randomArray[randomIndex++] % numbers.length)
+  password += special.charAt(randomArray[randomIndex++] % special.length)
 
   // Fill rest with random characters from all types
   const allChars = uppercase + lowercase + numbers + special
   for (let i = password.length; i < 12; i++) {
-    password += allChars.charAt(Math.floor(Math.random() * allChars.length))
+    password += allChars.charAt(randomArray[randomIndex++] % allChars.length)
   }
 
-  // Shuffle password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
+  // Fisher-Yates shuffle
+  const passwordArray = password.split('')
+  const shuffleArray = new Uint32Array(passwordArray.length)
+  globalThis.crypto.getRandomValues(shuffleArray)
+
+  for (let i = passwordArray.length - 1; i > 0; i--) {
+    const j = shuffleArray[i] % (i + 1)
+    const temp = passwordArray[i]
+    passwordArray[i] = passwordArray[j]
+    passwordArray[j] = temp
+  }
+
+  return passwordArray.join('')
 }
