@@ -189,20 +189,24 @@ export class AIMemoryManager {
 
             const results: Array<{ contextId: string; text: string; score: number }> = []
 
-            for (const contextId of contextIds) {
-                const key = `context:${userId}:${contextId}`
-                const data = await redis.get(key).catch(() => null)
+            if (contextIds.length > 0) {
+                // Bolt: Optimize N+1 Redis gets by fetching all contexts in a single mget
+                const keys = contextIds.map((id) => `context:${userId}:${id}`)
+                const dataArray = await redis.mget(keys).catch(() => [])
 
-                if (!data) continue
+                for (let i = 0; i < contextIds.length; i++) {
+                    const data = dataArray[i]
+                    if (!data) continue
 
-                const context = JSON.parse(data)
-                const score = this.cosineSimilarity(queryEmbedding, context.embedding)
+                    const context = JSON.parse(data)
+                    const score = this.cosineSimilarity(queryEmbedding, context.embedding)
 
-                results.push({
-                    contextId,
-                    text: context.text,
-                    score,
-                })
+                    results.push({
+                        contextId: contextIds[i],
+                        text: context.text,
+                        score,
+                    })
+                }
             }
 
             return results.sort((a, b) => b.score - a.score).slice(0, limit)
