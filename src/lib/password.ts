@@ -254,21 +254,34 @@ export function generateRandomPassword(): string {
 
   let password = ''
 
+  // We need 4 required chars + 8 random chars = 12 total
+  const randomValues = new Uint32Array(12)
+  globalThis.crypto.getRandomValues(randomValues)
+  let k = 0
+
   // Ensure all character types are included
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length))
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length))
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  password += special.charAt(Math.floor(Math.random() * special.length))
+  password += uppercase.charAt(randomValues[k++] % uppercase.length)
+  password += lowercase.charAt(randomValues[k++] % lowercase.length)
+  password += numbers.charAt(randomValues[k++] % numbers.length)
+  password += special.charAt(randomValues[k++] % special.length)
 
   // Fill rest with random characters from all types
   const allChars = uppercase + lowercase + numbers + special
   for (let i = password.length; i < 12; i++) {
-    password += allChars.charAt(Math.floor(Math.random() * allChars.length))
+    password += allChars.charAt(randomValues[k++] % allChars.length)
   }
 
-  // Shuffle password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
+  // Shuffle password using Fisher-Yates
+  const pwdArray = password.split('')
+  const shuffleRandom = new Uint32Array(pwdArray.length)
+  globalThis.crypto.getRandomValues(shuffleRandom)
+
+  for (let i = pwdArray.length - 1; i > 0; i--) {
+    const j = shuffleRandom[i] % (i + 1)
+    const temp = pwdArray[i]
+    pwdArray[i] = pwdArray[j]
+    pwdArray[j] = temp
+  }
+
+  return pwdArray.join('')
 }

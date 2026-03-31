@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2026-02-21: Weak Random Number Generation in Security Contexts
+- **Vulnerability:** Weak PRNG (`Math.random()`) was being used for generating passwords, device IDs, short codes, and backup codes. This predictably generated numbers, which could reduce entropy and lead to brute-forcing of security-sensitive values.
+- **Learning:** `Math.random()` in JS engines is not cryptographically secure. Relying on it for cryptographic or security-sensitive generation (e.g. passwords, secrets) is a severe flaw, and even "shuffling" via `.sort(() => Math.random() - 0.5)` introduces significant statistical bias.
+- **Prevention:** Always use `globalThis.crypto.getRandomValues()` or a secure library like `nanoid` (where appropriate) for any randomness impacting security. Use the Fisher-Yates algorithm with cryptographically secure random values when unbiased shuffling is needed.
