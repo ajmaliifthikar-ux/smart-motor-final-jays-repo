@@ -189,20 +189,24 @@ export class AIMemoryManager {
 
             const results: Array<{ contextId: string; text: string; score: number }> = []
 
-            for (const contextId of contextIds) {
-                const key = `context:${userId}:${contextId}`
-                const data = await redis.get(key).catch(() => null)
+            if (contextIds.length > 0) {
+                // Batch fetch all contexts to avoid N+1 queries
+                const keys = contextIds.map((contextId) => `context:${userId}:${contextId}`)
+                const dataList = await redis.mget(keys).catch(() => [])
 
-                if (!data) continue
+                for (let i = 0; i < contextIds.length; i++) {
+                    const data = dataList[i]
+                    if (!data) continue
 
-                const context = JSON.parse(data)
-                const score = this.cosineSimilarity(queryEmbedding, context.embedding)
+                    const context = JSON.parse(data)
+                    const score = this.cosineSimilarity(queryEmbedding, context.embedding)
 
-                results.push({
-                    contextId,
-                    text: context.text,
-                    score,
-                })
+                    results.push({
+                        contextId: contextIds[i],
+                        text: context.text,
+                        score,
+                    })
+                }
             }
 
             return results.sort((a, b) => b.score - a.score).slice(0, limit)
@@ -252,9 +256,10 @@ export class AIMemoryManager {
             -1
         )
 
-        // Delete all conversations
-        for (const convId of conversations) {
-            await redis.del(`conversation:${userId}:${convId}`)
+        // Delete all conversations (Batch optimization)
+        if (conversations.length > 0) {
+            const conversationKeys = conversations.map(convId => `conversation:${userId}:${convId}`)
+            await redis.del(conversationKeys)
         }
 
         // Delete conversation list
@@ -263,9 +268,10 @@ export class AIMemoryManager {
         // Get all context IDs
         const contexts = await redis.smembers(`user:${userId}:contexts`)
 
-        // Delete all contexts
-        for (const ctxId of contexts) {
-            await redis.del(`context:${userId}:${ctxId}`)
+        // Delete all contexts (Batch optimization)
+        if (contexts.length > 0) {
+            const contextKeys = contexts.map(ctxId => `context:${userId}:${ctxId}`)
+            await redis.del(contextKeys)
         }
 
         await redis.del(`user:${userId}:contexts`)
