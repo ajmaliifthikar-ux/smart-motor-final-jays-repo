@@ -14,3 +14,11 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2024-05-24 - [CRITICAL] Fixed Insecure Random Number Generation
+
+**Vulnerability:** Weak random number generation (`Math.random()`) was being used for security-sensitive operations such as password generation, TOTP backup codes, and short codes. These tokens are predictable, rendering them insecure and easily compromised.
+
+**Learning:** `Math.random()` provides pseudorandom numbers that are unsuitable for cryptographic applications. Repeatedly calling `globalThis.crypto.getRandomValues(new Uint32Array(1))` within loops (as commonly attempted when replacing `Math.random()`) introduces significant performance overhead due to constant memory allocation.
+
+**Prevention:** Always use `globalThis.crypto.getRandomValues()` with pre-allocated buffers (e.g., `new Uint32Array(N)` instantiated once outside the loop) for generating multiple tokens to ensure cryptographic security without compromising performance. Avoid biased array shuffle functions (`.sort(() => Math.random() - 0.5)`); implement a secure Fisher-Yates shuffle instead.
