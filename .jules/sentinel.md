@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2026-04-02 - Insecure Random Number Generation
+**Vulnerability:** Use of Math.random() for security-sensitive code generation.
+**Learning:** Math.random() is predictable. We must use crypto.getRandomValues(). Also, allocating buffers outside of loops is important for performance.
+**Prevention:** Use globalThis.crypto.getRandomValues() or nanoid for secure generation.
