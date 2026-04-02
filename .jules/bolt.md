@@ -1,0 +1,3 @@
+## 2025-04-02 - Hoisting Intl formatters for performance
+**Learning:** Repeatedly instantiating `Intl` objects (like `Intl.NumberFormat` or `Intl.DateTimeFormat`) inside functions or render loops introduces performance bottlenecks (taking ~1000x longer per call than reusing instances).
+**Action:** Always hoist `Intl` formatter instantiations to the module scope as constants for reuse, rather than creating new instances per format call.
