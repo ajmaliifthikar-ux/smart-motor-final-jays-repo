@@ -254,21 +254,31 @@ export function generateRandomPassword(): string {
 
   let password = ''
 
+  // Pre-allocate random values for char selection (12) + shuffling (11) = 23 needed
+  const randomValues = new Uint32Array(24)
+  globalThis.crypto.getRandomValues(randomValues)
+  let randomIdx = 0
+
   // Ensure all character types are included
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length))
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length))
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  password += special.charAt(Math.floor(Math.random() * special.length))
+  password += uppercase.charAt(randomValues[randomIdx++] % uppercase.length)
+  password += lowercase.charAt(randomValues[randomIdx++] % lowercase.length)
+  password += numbers.charAt(randomValues[randomIdx++] % numbers.length)
+  password += special.charAt(randomValues[randomIdx++] % special.length)
 
   // Fill rest with random characters from all types
   const allChars = uppercase + lowercase + numbers + special
   for (let i = password.length; i < 12; i++) {
-    password += allChars.charAt(Math.floor(Math.random() * allChars.length))
+    password += allChars.charAt(randomValues[randomIdx++] % allChars.length)
   }
 
-  // Shuffle password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
+  // Secure Fisher-Yates Shuffle
+  const passArray = password.split('')
+  for (let i = passArray.length - 1; i > 0; i--) {
+    const j = randomValues[randomIdx++] % (i + 1)
+    const temp = passArray[i]
+    passArray[i] = passArray[j]
+    passArray[j] = temp
+  }
+
+  return passArray.join('')
 }
