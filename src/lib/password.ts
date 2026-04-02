@@ -252,23 +252,37 @@ export function generateRandomPassword(): string {
   const numbers = '0123456789'
   const special = '!@#$%^&*()_+-=[]{}|,.<>?'
 
-  let password = ''
+  const targetLength = 12
+
+  // Create a buffer for all random numbers needed:
+  // 4 for initial chars + 8 for rest + 12 for shuffling = 24
+  const totalRandomsNeeded = 4 + (targetLength - 4) + targetLength
+  const randomBuffer = new Uint32Array(totalRandomsNeeded)
+  globalThis.crypto.getRandomValues(randomBuffer)
+
+  let bufferIndex = 0
+
+  const passwordChars: string[] = []
 
   // Ensure all character types are included
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length))
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length))
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  password += special.charAt(Math.floor(Math.random() * special.length))
+  passwordChars.push(uppercase.charAt(randomBuffer[bufferIndex++] % uppercase.length))
+  passwordChars.push(lowercase.charAt(randomBuffer[bufferIndex++] % lowercase.length))
+  passwordChars.push(numbers.charAt(randomBuffer[bufferIndex++] % numbers.length))
+  passwordChars.push(special.charAt(randomBuffer[bufferIndex++] % special.length))
 
   // Fill rest with random characters from all types
   const allChars = uppercase + lowercase + numbers + special
-  for (let i = password.length; i < 12; i++) {
-    password += allChars.charAt(Math.floor(Math.random() * allChars.length))
+  for (let i = passwordChars.length; i < targetLength; i++) {
+    passwordChars.push(allChars.charAt(randomBuffer[bufferIndex++] % allChars.length))
   }
 
-  // Shuffle password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
+  // Fisher-Yates shuffle for unbiased distribution
+  for (let i = passwordChars.length - 1; i > 0; i--) {
+    const j = randomBuffer[bufferIndex++] % (i + 1)
+    const temp = passwordChars[i]
+    passwordChars[i] = passwordChars[j]
+    passwordChars[j] = temp
+  }
+
+  return passwordChars.join('')
 }
