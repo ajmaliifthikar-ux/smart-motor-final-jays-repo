@@ -254,21 +254,34 @@ export function generateRandomPassword(): string {
 
   let password = ''
 
+  // Use cryptographically secure random numbers
+  const randomArray = new Uint32Array(12)
+  globalThis.crypto.getRandomValues(randomArray)
+  let randomIndex = 0
+
   // Ensure all character types are included
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length))
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length))
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  password += special.charAt(Math.floor(Math.random() * special.length))
+  password += uppercase.charAt(randomArray[randomIndex++] % uppercase.length)
+  password += lowercase.charAt(randomArray[randomIndex++] % lowercase.length)
+  password += numbers.charAt(randomArray[randomIndex++] % numbers.length)
+  password += special.charAt(randomArray[randomIndex++] % special.length)
 
   // Fill rest with random characters from all types
   const allChars = uppercase + lowercase + numbers + special
   for (let i = password.length; i < 12; i++) {
-    password += allChars.charAt(Math.floor(Math.random() * allChars.length))
+    password += allChars.charAt(randomArray[randomIndex++] % allChars.length)
   }
 
-  // Shuffle password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
+  // Secure Fisher-Yates shuffle
+  const chars = password.split('')
+  const shuffleArray = new Uint32Array(chars.length)
+  globalThis.crypto.getRandomValues(shuffleArray)
+
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = shuffleArray[i] % (i + 1)
+    const temp = chars[i]
+    chars[i] = chars[j]
+    chars[j] = temp
+  }
+
+  return chars.join('')
 }
