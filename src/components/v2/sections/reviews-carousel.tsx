@@ -139,10 +139,12 @@ export function ReviewsCarousel() {
 
                     <div className="flex items-center gap-3">
                         <button onClick={prev}
+                            aria-label="Previous review"
                             className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#121212] hover:text-white hover:border-[#121212] transition-all">
                             <ChevronLeft size={20} />
                         </button>
                         <button onClick={next}
+                            aria-label="Next review"
                             className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#121212] hover:text-white hover:border-[#121212] transition-all">
                             <ChevronRight size={20} />
                         </button>
@@ -243,6 +245,8 @@ export function ReviewsCarousel() {
                     {reviews.map((_, i) => (
                         <button
                             key={i}
+                            aria-label={`Go to review ${i + 1}`}
+                            aria-current={i === centreIdx ? 'true' : 'false'}
                             onClick={() => {
                                 if (!slidingRef.current) {
                                     const diff = ((i - centreIdx) % total + total) % total
