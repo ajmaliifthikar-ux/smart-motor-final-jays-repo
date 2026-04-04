@@ -99,13 +99,17 @@ function dueDateISO(days = 30) {
   return d.toISOString().split('T')[0]
 }
 
+// ⚡ Bolt Optimization: Hoisted Intl objects to prevent repeated instantiation
+const invoicePriceFormatter = new Intl.NumberFormat('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const invoiceDateFormatter = new Intl.DateTimeFormat('en-AE', { day: '2-digit', month: 'short', year: 'numeric' })
+
 function formatAED(n: number) {
-  return new Intl.NumberFormat('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n)
+  return invoicePriceFormatter.format(n)
 }
 
 function formatDate(iso: string) {
   if (!iso) return '—'
-  return new Intl.DateTimeFormat('en-AE', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(iso + 'T00:00:00'))
+  return invoiceDateFormatter.format(new Date(iso + 'T00:00:00'))
 }
 
 function defaultItem(): LineItem {

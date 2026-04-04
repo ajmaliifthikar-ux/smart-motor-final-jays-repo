@@ -6,19 +6,24 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+// ⚡ Bolt Optimization: Hoisted Intl objects to prevent repeated instantiation
+const priceFormatter = new Intl.NumberFormat('en-AE', {
+  style: 'currency',
+  currency: 'AED',
+  minimumFractionDigits: 0,
+})
+
+const dateFormatter = new Intl.DateTimeFormat('en-AE', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+})
+
 export function formatPrice(price: number): string {
-  return new Intl.NumberFormat('en-AE', {
-    style: 'currency',
-    currency: 'AED',
-    minimumFractionDigits: 0,
-  }).format(price)
+  return priceFormatter.format(price)
 }
 
 export function formatDate(date: Date | string): string {
-  return new Intl.DateTimeFormat('en-AE', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(date))
+  return dateFormatter.format(new Date(date))
 }
 
 export function publicPath(path: string) {
