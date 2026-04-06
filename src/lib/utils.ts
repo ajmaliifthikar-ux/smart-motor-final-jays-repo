@@ -6,19 +6,24 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+// ⚡ Performance optimization: Hoist Intl instances to avoid recreating them on every call
+const PRICE_FORMATTER = new Intl.NumberFormat('en-AE', {
+  style: 'currency',
+  currency: 'AED',
+  minimumFractionDigits: 0,
+})
+
+const DATE_FORMATTER = new Intl.DateTimeFormat('en-AE', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+})
+
 export function formatPrice(price: number): string {
-  return new Intl.NumberFormat('en-AE', {
-    style: 'currency',
-    currency: 'AED',
-    minimumFractionDigits: 0,
-  }).format(price)
+  return PRICE_FORMATTER.format(price)
 }
 
 export function formatDate(date: Date | string): string {
-  return new Intl.DateTimeFormat('en-AE', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(date))
+  return DATE_FORMATTER.format(new Date(date))
 }
 
 export function publicPath(path: string) {
