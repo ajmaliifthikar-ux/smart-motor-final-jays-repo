@@ -144,7 +144,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
+            <button aria-label="Close chat" onClick={onClose} className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -205,6 +205,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                                     }}
                                 />
                                 <button 
+                                    aria-label="Submit"
                                     className="absolute right-2 w-8 h-8 bg-[#121212] text-white rounded-lg flex items-center justify-center hover:bg-[#E62329] transition-colors"
                                     onClick={(e) => {
                                         const val = (e.currentTarget.previousSibling as HTMLInputElement).value
@@ -277,6 +278,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
               
               <div className="flex items-center gap-1">
                 <button
+                    aria-label={isVoiceMode ? 'Stop voice mode' : 'Start voice mode'}
                     onClick={isVoiceMode ? stopVoiceMode : startVoiceMode}
                     className={cn(
                     "w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-500 group",
@@ -289,6 +291,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 </button>
                 
                 <Button
+                    aria-label="Send message"
                     onClick={() => handleSend()}
                     disabled={isLoading || !input.trim() || isVoiceMode}
                     className="rounded-lg bg-[#121212] hover:bg-[#E62329] w-9 h-9 p-0 transition-all duration-500 shadow-xl"
