@@ -20,6 +20,8 @@ interface TrustedDevicesProps {
   onDevicesChanged: () => void
 }
 
+const LOCAL_TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone
+
 export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDevicesProps) {
   const [isLoading, setIsLoading] = useState(false)
 
@@ -109,7 +111,7 @@ export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDev
                     <p className="text-xs text-gray-400">
                       Last used{' '}
                       {new Date(device.lastUsedAt).toLocaleDateString(undefined, {
-                        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        timeZone: LOCAL_TIME_ZONE,
                       })}
                     </p>
                   </div>
