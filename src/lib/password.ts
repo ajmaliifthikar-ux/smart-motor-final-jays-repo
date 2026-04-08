@@ -254,21 +254,33 @@ export function generateRandomPassword(): string {
 
   let password = ''
 
+  // Pre-allocate a single Uint32Array for random values to save memory and processing overhead
+  // 4 required chars + (12 - 4) extra chars + 11 (for shuffling an array of 12) = 23 random values
+  const numRandomsRequired = 4 + 8 + 11;
+  const randomArray = new Uint32Array(numRandomsRequired);
+  globalThis.crypto.getRandomValues(randomArray);
+  let randomIndex = 0;
+
   // Ensure all character types are included
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length))
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length))
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  password += special.charAt(Math.floor(Math.random() * special.length))
+  password += uppercase.charAt(randomArray[randomIndex++] % uppercase.length)
+  password += lowercase.charAt(randomArray[randomIndex++] % lowercase.length)
+  password += numbers.charAt(randomArray[randomIndex++] % numbers.length)
+  password += special.charAt(randomArray[randomIndex++] % special.length)
 
   // Fill rest with random characters from all types
   const allChars = uppercase + lowercase + numbers + special
   for (let i = password.length; i < 12; i++) {
-    password += allChars.charAt(Math.floor(Math.random() * allChars.length))
+    password += allChars.charAt(randomArray[randomIndex++] % allChars.length)
   }
 
-  // Shuffle password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
+  // Shuffle password using secure Fisher-Yates algorithm
+  const passwordArray = password.split('')
+  for (let i = passwordArray.length - 1; i > 0; i--) {
+    const j = randomArray[randomIndex++] % (i + 1)
+    const temp = passwordArray[i]
+    passwordArray[i] = passwordArray[j]
+    passwordArray[j] = temp
+  }
+
+  return passwordArray.join('')
 }
