@@ -1,0 +1,3 @@
+## 2024-05-14 - Repeated Intl Object Instantiation Performance Bottleneck
+**Learning:** In React components or utility functions (e.g. `src/lib/utils.ts`, `src/app/admin/tools/invoice-gen/page.tsx`), repeatedly creating new `Intl.NumberFormat` or `Intl.DateTimeFormat` objects within formatters or loops creates significant memory and CPU overhead. These native APIs are expensive to initialize, and not caching them causes performance degradation, especially during heavy list rendering or recalculations.
+**Action:** Always hoist `Intl` formatter instances to module scope as constants rather than re-instantiating them on every function call or loop iteration.
