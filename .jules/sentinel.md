@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2026-02-23: Weak Random Password Generation
+- **Vulnerability:** `Math.random()` and `Array.prototype.sort()` were being used to generate and shuffle temporary admin passwords. This produces predictable passwords as `Math.random()` is not cryptographically secure, and V8's array sort algorithm does not provide an unbiased shuffle.
+- **Learning:** Temporary passwords or security tokens must never rely on standard PRNGs. Combining `Math.random()` with `sort()` for shuffling is both biased and vulnerable to guessing attacks.
+- **Prevention:** Always use `globalThis.crypto.getRandomValues()` with pre-allocated `Uint32Array` buffers for generating random characters, and use the Fisher-Yates algorithm securely seeded by `getRandomValues` for array shuffling.
