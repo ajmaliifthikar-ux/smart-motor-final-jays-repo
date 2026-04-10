@@ -6,19 +6,25 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+// ⚡ Bolt: Cache Intl objects at module scope to prevent recreating them on every format call
+// This optimization improves rendering performance for lists of prices and dates
+const AED_PRICE_FORMATTER = new Intl.NumberFormat('en-AE', {
+  style: 'currency',
+  currency: 'AED',
+  minimumFractionDigits: 0,
+});
+
+const SHORT_DATE_FORMATTER = new Intl.DateTimeFormat('en-AE', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+});
+
 export function formatPrice(price: number): string {
-  return new Intl.NumberFormat('en-AE', {
-    style: 'currency',
-    currency: 'AED',
-    minimumFractionDigits: 0,
-  }).format(price)
+  return AED_PRICE_FORMATTER.format(price)
 }
 
 export function formatDate(date: Date | string): string {
-  return new Intl.DateTimeFormat('en-AE', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(date))
+  return SHORT_DATE_FORMATTER.format(new Date(date))
 }
 
 export function publicPath(path: string) {
