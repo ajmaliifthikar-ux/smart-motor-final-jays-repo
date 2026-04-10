@@ -254,21 +254,46 @@ export function generateRandomPassword(): string {
 
   let password = ''
 
+  // Use a pre-allocated buffer for cryptographically secure random values
+  // We need 12 total characters (4 required + 8 random) + up to 11 shuffles = 23 max random values
+  const randomBuffer = new Uint32Array(24)
+  globalThis.crypto.getRandomValues(randomBuffer)
+  let randomIndex = 0
+
+  // Use rejection sampling to avoid modulo bias
+  const getSecureRandom = (max: number) => {
+    const limit = 0xffffffff - (0xffffffff % max)
+    let val: number
+    do {
+      if (randomIndex >= randomBuffer.length) {
+        globalThis.crypto.getRandomValues(randomBuffer)
+        randomIndex = 0
+      }
+      val = randomBuffer[randomIndex++]
+    } while (val >= limit)
+    return val % max
+  }
+
   // Ensure all character types are included
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length))
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length))
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  password += special.charAt(Math.floor(Math.random() * special.length))
+  password += uppercase.charAt(getSecureRandom(uppercase.length))
+  password += lowercase.charAt(getSecureRandom(lowercase.length))
+  password += numbers.charAt(getSecureRandom(numbers.length))
+  password += special.charAt(getSecureRandom(special.length))
 
   // Fill rest with random characters from all types
   const allChars = uppercase + lowercase + numbers + special
   for (let i = password.length; i < 12; i++) {
-    password += allChars.charAt(Math.floor(Math.random() * allChars.length))
+    password += allChars.charAt(getSecureRandom(allChars.length))
   }
 
-  // Shuffle password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
+  // Securely shuffle password using Fisher-Yates
+  const pwdArray = password.split('')
+  for (let i = pwdArray.length - 1; i > 0; i--) {
+    const j = getSecureRandom(i + 1)
+    const temp = pwdArray[i]
+    pwdArray[i] = pwdArray[j]
+    pwdArray[j] = temp
+  }
+
+  return pwdArray.join('')
 }
