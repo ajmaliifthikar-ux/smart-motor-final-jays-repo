@@ -1,0 +1,3 @@
+## 2025-04-10 - Hoist Intl Object Instantiations for Formatting Performance
+**Learning:** Instantiating `Intl` objects (like `Intl.NumberFormat` or `Intl.DateTimeFormat`) repeatedly inside functions or render loops introduces performance bottlenecks. This was especially critical in our invoice generation lists where many numbers and dates were formatted at once, causing redundant object allocations.
+**Action:** Always hoist `Intl` formatting objects to the module scope as reusable constants when their configurations (locale, style, fraction digits) are static.
