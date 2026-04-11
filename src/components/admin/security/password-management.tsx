@@ -185,6 +185,7 @@ export default function PasswordManagement({
                   type="button"
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   className="absolute right-3 top-2.5 text-gray-500"
+                  aria-label={showCurrentPassword ? "Hide current password" : "Show current password"}
                 >
                   {showCurrentPassword ? (
                     <EyeOff className="w-5 h-5" />
@@ -211,6 +212,7 @@ export default function PasswordManagement({
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
                   className="absolute right-3 top-2.5 text-gray-500"
+                  aria-label={showNewPassword ? "Hide new password" : "Show new password"}
                 >
                   {showNewPassword ? (
                     <EyeOff className="w-5 h-5" />
@@ -289,6 +291,7 @@ export default function PasswordManagement({
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-2.5 text-gray-500"
+                  aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
                 >
                   {showConfirmPassword ? (
                     <EyeOff className="w-5 h-5" />
