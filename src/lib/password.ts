@@ -251,24 +251,47 @@ export function generateRandomPassword(): string {
   const lowercase = 'abcdefghijklmnopqrstuvwxyz'
   const numbers = '0123456789'
   const special = '!@#$%^&*()_+-=[]{}|,.<>?'
-
-  let password = ''
-
-  // Ensure all character types are included
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length))
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length))
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  password += special.charAt(Math.floor(Math.random() * special.length))
-
-  // Fill rest with random characters from all types
   const allChars = uppercase + lowercase + numbers + special
-  for (let i = password.length; i < 12; i++) {
-    password += allChars.charAt(Math.floor(Math.random() * allChars.length))
+
+  // Allocate a single buffer for all random values needed (4 required + 8 padding + 11 shuffle = 23, but 64 is safe)
+  const randomValues = new Uint32Array(64)
+  globalThis.crypto.getRandomValues(randomValues)
+  let randomIndex = 0
+
+  // Helper to get a secure random integer in range [0, max) using rejection sampling
+  const getSecureRandomInt = (max: number): number => {
+    const limit = Math.floor(4294967296 / max) * max
+    let r: number
+    do {
+      if (randomIndex >= randomValues.length) {
+        globalThis.crypto.getRandomValues(randomValues)
+        randomIndex = 0
+      }
+      r = randomValues[randomIndex++]
+    } while (r >= limit)
+    return r % max
   }
 
-  // Shuffle password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
+  const passwordChars: string[] = []
+
+  // Ensure all character types are included
+  passwordChars.push(uppercase[getSecureRandomInt(uppercase.length)])
+  passwordChars.push(lowercase[getSecureRandomInt(lowercase.length)])
+  passwordChars.push(numbers[getSecureRandomInt(numbers.length)])
+  passwordChars.push(special[getSecureRandomInt(special.length)])
+
+  // Fill rest with random characters from all types
+  for (let i = passwordChars.length; i < 12; i++) {
+    passwordChars.push(allChars[getSecureRandomInt(allChars.length)])
+  }
+
+  // Securely shuffle the password array using Fisher-Yates
+  for (let i = passwordChars.length - 1; i > 0; i--) {
+    const j = getSecureRandomInt(i + 1)
+    const temp = passwordChars[i]
+    passwordChars[i] = passwordChars[j]
+    passwordChars[j] = temp
+  }
+
+  return passwordChars.join('')
 }
