@@ -86,7 +86,12 @@ const STATUS_CONFIG: Record<InvoiceStatus, { label: string; color: string; bg: s
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function uid() {
-  return Math.random().toString(36).slice(2, 9)
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return array[0].toString(36).slice(0, 7);
+  }
+  return Date.now().toString(36).slice(0, 7);
 }
 
 function todayISO() {
@@ -99,13 +104,17 @@ function dueDateISO(days = 30) {
   return d.toISOString().split('T')[0]
 }
 
+const AED_FORMATTER = new Intl.NumberFormat('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
 function formatAED(n: number) {
-  return new Intl.NumberFormat('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n)
+  return AED_FORMATTER.format(n)
 }
+
+const INVOICE_DATE_FORMATTER = new Intl.DateTimeFormat('en-AE', { day: '2-digit', month: 'short', year: 'numeric' })
 
 function formatDate(iso: string) {
   if (!iso) return '—'
-  return new Intl.DateTimeFormat('en-AE', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(iso + 'T00:00:00'))
+  return INVOICE_DATE_FORMATTER.format(new Date(iso + 'T00:00:00'))
 }
 
 function defaultItem(): LineItem {
@@ -370,7 +379,7 @@ function PrintModal({ invoice, totals, onClose }: {
 
 export default function InvoiceGenPage() {
   const [invoice, setInvoice] = useState<InvoiceData>({
-    invoiceNo: `SM-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+    invoiceNo: '', // Will be hydrated on mount to avoid impure renders
     date: todayISO(),
     dueDate: dueDateISO(30),
     customerName: '',
@@ -433,8 +442,17 @@ export default function InvoiceGenPage() {
   }, [])
 
   const resetInvoice = useCallback(() => {
+    let rand = 0;
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      const array = new Uint32Array(1);
+      crypto.getRandomValues(array);
+      rand = array[0] % 9000;
+    } else {
+      rand = Date.now() % 9000;
+    }
+
     setInvoice({
-      invoiceNo: `SM-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+      invoiceNo: `SM-${new Date().getFullYear()}-${String(rand + 1000)}`,
       date: todayISO(),
       dueDate: dueDateISO(30),
       customerName: '',

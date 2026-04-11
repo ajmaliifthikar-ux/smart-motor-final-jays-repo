@@ -22,6 +22,14 @@ interface TrustedDevicesProps {
 
 export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDevicesProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [userTimezone, setUserTimezone] = useState<string>('UTC')
+
+  // Resolve user timezone once on mount to avoid hydration mismatch between server (UTC) and client
+  useState(() => {
+    if (typeof window !== 'undefined') {
+      setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
+    }
+  })
 
   const getDeviceIcon = (name: string) => {
     if (name.toLowerCase().includes('mobile') || name.toLowerCase().includes('phone')) {
@@ -109,7 +117,7 @@ export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDev
                     <p className="text-xs text-gray-400">
                       Last used{' '}
                       {new Date(device.lastUsedAt).toLocaleDateString(undefined, {
-                        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        timeZone: userTimezone,
                       })}
                     </p>
                   </div>
@@ -135,7 +143,7 @@ export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDev
           <div className="text-sm text-blue-800">
             <p className="font-semibold text-blue-900 mb-1">Device Management</p>
             <ul className="list-disc list-inside space-y-1">
-              <li>Remove any devices you don't recognize</li>
+              <li>Remove any devices you don&apos;t recognize</li>
               <li>Keep only devices you actively use</li>
               <li>If compromised, remove device immediately</li>
             </ul>
