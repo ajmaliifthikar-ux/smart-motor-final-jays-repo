@@ -87,10 +87,26 @@ export function verifyTOTPCode(secret: string, code: string): boolean {
  */
 export function generateBackupCodes(count: number = TOTP_CONFIG.backupCodesCount): string[] {
   const codes: string[] = []
+  // Generate 8-character backup code (alphanumeric, no ambiguous chars)
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  const totalStates = 4294967296
+  const limit = totalStates - (totalStates % chars.length)
+
+  const buf = new Uint32Array(16)
+  let bufIdx = buf.length
 
   for (let i = 0; i < count; i++) {
-    // Generate 8-character backup code (alphanumeric, no ambiguous chars)
-    const code = Math.random().toString(36).substring(2, 10).toUpperCase()
+    let code = ''
+    while (code.length < 8) {
+      if (bufIdx >= buf.length) {
+        globalThis.crypto.getRandomValues(buf)
+        bufIdx = 0
+      }
+      const val = buf[bufIdx++]
+      if (val < limit) {
+        code += chars[val % chars.length]
+      }
+    }
     codes.push(code)
   }
 
@@ -170,8 +186,21 @@ export function validateTOTPSecret(secret: string): boolean {
 export function generateDeviceId(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   let result = ''
-  for (let i = 0; i < 32; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length))
+  const totalStates = 4294967296
+  const limit = totalStates - (totalStates % chars.length)
+
+  const buf = new Uint32Array(32)
+  let bufIdx = buf.length
+
+  while (result.length < 32) {
+    if (bufIdx >= buf.length) {
+      globalThis.crypto.getRandomValues(buf)
+      bufIdx = 0
+    }
+    const val = buf[bufIdx++]
+    if (val < limit) {
+      result += chars[val % chars.length]
+    }
   }
   return result
 }
