@@ -3,7 +3,7 @@
 import { addBrand, deleteBrand } from '@/actions/cms-actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useState, useTransition } from 'react'
+import { useTransition } from 'react'
 import { Loader2, Plus, Trash2 } from 'lucide-react'
 
 interface Brand {
@@ -78,9 +78,11 @@ export function BrandManager({ brands }: { brands: Brand[] }) {
                         <button
                             onClick={() => handleDelete(brand.id)}
                             disabled={isPending}
-                            className="absolute top-4 right-4 p-2 rounded-full bg-red-50 text-red-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
+                            aria-label={`Delete ${brand.name} brand`}
+                            title={`Delete ${brand.name} brand`}
+                            className="absolute top-4 right-4 p-2 rounded-full bg-red-50 text-red-500 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all hover:bg-red-500 hover:text-white disabled:opacity-50"
                         >
-                            <Trash2 size={16} />
+                            <Trash2 size={16} aria-hidden="true" />
                         </button>
                     </div>
                 ))}
