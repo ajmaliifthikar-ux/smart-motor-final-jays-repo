@@ -252,23 +252,47 @@ export function generateRandomPassword(): string {
   const numbers = '0123456789'
   const special = '!@#$%^&*()_+-=[]{}|,.<>?'
 
-  let password = ''
+  // Allocate a single buffer for multiple random values
+  const buffer = new Uint32Array(16)
+  let bufferIndex = buffer.length
+
+  // Helper for cryptographically secure random index with rejection sampling
+  const getSecureRandomIndex = (max: number): number => {
+    // Determine the highest multiple of max less than 2^32
+    // to avoid modulo bias
+    const limit = 4294967296 - (4294967296 % max)
+    let val: number
+    do {
+      if (bufferIndex >= buffer.length) {
+        globalThis.crypto.getRandomValues(buffer)
+        bufferIndex = 0
+      }
+      val = buffer[bufferIndex++]
+    } while (val >= limit)
+    return val % max
+  }
+
+  const passwordChars: string[] = []
 
   // Ensure all character types are included
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length))
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length))
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  password += special.charAt(Math.floor(Math.random() * special.length))
+  passwordChars.push(uppercase.charAt(getSecureRandomIndex(uppercase.length)))
+  passwordChars.push(lowercase.charAt(getSecureRandomIndex(lowercase.length)))
+  passwordChars.push(numbers.charAt(getSecureRandomIndex(numbers.length)))
+  passwordChars.push(special.charAt(getSecureRandomIndex(special.length)))
 
   // Fill rest with random characters from all types
   const allChars = uppercase + lowercase + numbers + special
-  for (let i = password.length; i < 12; i++) {
-    password += allChars.charAt(Math.floor(Math.random() * allChars.length))
+  for (let i = passwordChars.length; i < 12; i++) {
+    passwordChars.push(allChars.charAt(getSecureRandomIndex(allChars.length)))
   }
 
-  // Shuffle password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
+  // Shuffle password using Fisher-Yates and cryptographically secure random values
+  for (let i = passwordChars.length - 1; i > 0; i--) {
+    const j = getSecureRandomIndex(i + 1)
+    const temp = passwordChars[i]
+    passwordChars[i] = passwordChars[j]
+    passwordChars[j] = temp
+  }
+
+  return passwordChars.join('')
 }
