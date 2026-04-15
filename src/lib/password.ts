@@ -252,23 +252,61 @@ export function generateRandomPassword(): string {
   const numbers = '0123456789'
   const special = '!@#$%^&*()_+-=[]{}|,.<>?'
 
-  let password = ''
+  const getSecureRandomChar = (chars: string, buffer: Uint32Array, state: { index: number }): string => {
+    const maxStates = 4294967296
+    const limit = maxStates - (maxStates % chars.length)
+
+    while (true) {
+      if (state.index >= buffer.length) {
+        globalThis.crypto.getRandomValues(buffer)
+        state.index = 0
+      }
+      const val = buffer[state.index++]
+      if (val < limit) {
+        return chars[val % chars.length]
+      }
+    }
+  }
+
+  let passwordStr = ''
+  // Buffer for getting random values
+  const buffer = new Uint32Array(32)
+  globalThis.crypto.getRandomValues(buffer)
+  const state = { index: 0 }
 
   // Ensure all character types are included
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length))
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length))
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  password += special.charAt(Math.floor(Math.random() * special.length))
+  passwordStr += getSecureRandomChar(uppercase, buffer, state)
+  passwordStr += getSecureRandomChar(lowercase, buffer, state)
+  passwordStr += getSecureRandomChar(numbers, buffer, state)
+  passwordStr += getSecureRandomChar(special, buffer, state)
 
   // Fill rest with random characters from all types
   const allChars = uppercase + lowercase + numbers + special
-  for (let i = password.length; i < 12; i++) {
-    password += allChars.charAt(Math.floor(Math.random() * allChars.length))
+  for (let i = passwordStr.length; i < 12; i++) {
+    passwordStr += getSecureRandomChar(allChars, buffer, state)
   }
 
-  // Shuffle password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
+  // Shuffle password (Fisher-Yates)
+  const pwdArray = passwordStr.split('')
+  for (let i = pwdArray.length - 1; i > 0; i--) {
+    const maxStates = 4294967296
+    const limit = maxStates - (maxStates % (i + 1))
+    let j = -1
+    while (true) {
+      if (state.index >= buffer.length) {
+        globalThis.crypto.getRandomValues(buffer)
+        state.index = 0
+      }
+      const val = buffer[state.index++]
+      if (val < limit) {
+        j = val % (i + 1)
+        break
+      }
+    }
+    const temp = pwdArray[i]
+    pwdArray[i] = pwdArray[j]
+    pwdArray[j] = temp
+  }
+
+  return pwdArray.join('')
 }

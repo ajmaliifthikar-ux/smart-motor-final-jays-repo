@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2026-02-15: Insecure Random Number Generation for Password Generation
+- **Vulnerability:** `src/lib/password.ts` used the cryptographically insecure `Math.random()` combined with modulo arithmetic to pick random characters for passwords, and used `Array.prototype.sort(() => Math.random() - 0.5)` for shuffling. These methods introduce significant bias and predictability, making generated passwords vulnerable to brute-force attacks.
+- **Learning:** `Math.random()` should never be used for any security-sensitive operations. `Array.prototype.sort()` with a random comparator is not a uniform shuffle and is engine-dependent. Furthermore, simple modulo arithmetic with random numbers introduces modulo bias when the character set size is not a power of 2.
+- **Prevention:** Always use `globalThis.crypto.getRandomValues()` for secure random number generation. When mapping random integers to an array index, implement rejection sampling to eliminate modulo bias. Use the Fisher-Yates shuffle algorithm instead of sorting with a random comparator.
