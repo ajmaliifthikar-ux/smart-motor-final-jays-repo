@@ -131,11 +131,12 @@ export function ConversationManager({
                         {conv.title || `Conversation ${conv.id.slice(-6)}`}
                       </h4>
                       <button
+                        aria-label="Delete conversation"
                         onClick={(e) => {
                           e.stopPropagation()
                           handleDelete(conv.id)
                         }}
-                        className="p-1 hover:bg-red-50 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="p-1 hover:bg-red-50 rounded opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500 transition-opacity"
                       >
                         <Trash2 className="w-4 h-4 text-red-600" />
                       </button>
