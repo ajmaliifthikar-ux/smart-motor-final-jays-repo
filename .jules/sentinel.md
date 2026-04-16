@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2026-02-23: Insecure Randomness in Security Utilities
+- **Vulnerability:** `Math.random` was used to generate security-sensitive strings (TOTP backup codes, device IDs), making them susceptible to prediction and brute force attacks due to lack of cryptographic security.
+- **Learning:** Non-cryptographic PRNGs (`Math.random()`) should never be used to generate security tokens, device IDs, or backup recovery codes. Furthermore, simply mapping a random value via `% length` introduces modulo bias.
+- **Prevention:** Always use `globalThis.crypto.getRandomValues()` combined with rejection sampling to eliminate modulo bias when picking characters from a defined character set.
