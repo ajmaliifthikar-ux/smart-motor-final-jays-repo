@@ -1,0 +1,3 @@
+## 2024-05-18 - Repeated Intl instantiation inside formatters
+**Learning:** Instantiating `Intl.NumberFormat` and `Intl.DateTimeFormat` repeatedly inside formatting functions (`formatPrice`, `formatDate`, `formatAED`) causes significant overhead and excessive garbage collection because object creation for `Intl` instances is known to be expensive. This is highlighted in the memory instructions.
+**Action:** Always hoist `Intl.NumberFormat` and `Intl.DateTimeFormat` objects to the module scope (as constants) to reuse them and avoid redundant instantiation in functions like `formatPrice` and `formatDate` in `src/lib/utils.ts` and `src/app/admin/tools/invoice-gen/page.tsx`.

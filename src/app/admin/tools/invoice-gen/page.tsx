@@ -99,13 +99,15 @@ function dueDateISO(days = 30) {
   return d.toISOString().split('T')[0]
 }
 
+const aedFormatter = new Intl.NumberFormat('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 function formatAED(n: number) {
-  return new Intl.NumberFormat('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n)
+  return aedFormatter.format(n)
 }
 
+const dateFormatter = new Intl.DateTimeFormat('en-AE', { day: '2-digit', month: 'short', year: 'numeric' })
 function formatDate(iso: string) {
   if (!iso) return '—'
-  return new Intl.DateTimeFormat('en-AE', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(iso + 'T00:00:00'))
+  return dateFormatter.format(new Date(iso + 'T00:00:00'))
 }
 
 function defaultItem(): LineItem {
