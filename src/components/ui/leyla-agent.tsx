@@ -152,7 +152,7 @@ export function LeylaAgent() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto space-y-4 p-4">
+      <div role="log" aria-live="polite" className="flex-1 overflow-y-auto space-y-4 p-4">
         {messages.length === 0 ? (
           <div className="flex h-full items-center justify-center text-center text-muted-foreground">
             <div>

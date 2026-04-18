@@ -239,6 +239,7 @@ export function SmartAssistantFloating() {
                   </div>
                 </div>
                 <button
+                  aria-label="Close chat"
                   onClick={() => setIsOpen(false)}
                   className="p-3 hover:bg-white/10 rounded-full transition-colors text-white relative z-10"
                 >
@@ -247,7 +248,7 @@ export function SmartAssistantFloating() {
               </div>
 
               {/* Messages Area */}
-              <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 space-y-6 bg-[#FAFAF9] subtle-scrollbar">
+              <div ref={scrollRef} role="log" aria-live="polite" className="flex-1 overflow-y-auto p-8 space-y-6 bg-[#FAFAF9] subtle-scrollbar">
                 {messages.map((msg) => (
                   <motion.div
                     key={msg.id}

@@ -297,6 +297,8 @@ export function LiveChatPanel({
           {/* Messages */}
           <div
             ref={scrollRef}
+            role="log"
+            aria-live="polite"
             className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#FAFAF9]"
           >
             {messages.map((msg, idx) => (
@@ -371,6 +373,7 @@ export function LiveChatPanel({
             {/* Mode Toggle */}
             <div className="flex gap-2">
               <button
+                aria-label="Switch to Live mode"
                 onClick={() => setLiveMode(true)}
                 className={cn(
                   'flex-1 py-2 px-3 rounded-full text-xs font-black uppercase tracking-widest transition-all',
@@ -383,6 +386,7 @@ export function LiveChatPanel({
                 Live
               </button>
               <button
+                aria-label="Switch to Normal mode"
                 onClick={() => setLiveMode(false)}
                 className={cn(
                   'flex-1 py-2 px-3 rounded-full text-xs font-black uppercase tracking-widest transition-all',
