@@ -1,0 +1,3 @@
+## 2024-03-05 - Avoid unneeded Intl object instantiations
+**Learning:** Instantiating `Intl` formatters (like `Intl.NumberFormat` or `Intl.DateTimeFormat`) dynamically inside functions or React render loops is a significant performance bottleneck due to excessive garbage collection.
+**Action:** Always extract and hoist `Intl` formatting instances to the module scope as constants so they can be reused across function calls and renders. Additionally, rely on the native defaults of `Date.prototype.toLocaleDateString()` instead of computing system timezones using `Intl.DateTimeFormat().resolvedOptions().timeZone` when formatting dates to the local timezone.
