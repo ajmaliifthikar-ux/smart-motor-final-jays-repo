@@ -113,7 +113,7 @@ export function AgenticChat({
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div role="log" aria-live="polite" className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full">
             <div className="w-16 h-16 rounded-2xl bg-[#E62329]/10 flex items-center justify-center mb-4">
@@ -196,6 +196,7 @@ export function AgenticChat({
         >
           <input
             ref={inputRef}
+            aria-label="Message input"
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
