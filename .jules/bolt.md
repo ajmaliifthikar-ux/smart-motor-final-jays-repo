@@ -1,0 +1,3 @@
+## 2026-02-23 - Repeated Intl Object Instantiation Performance Bottleneck
+**Learning:** Repeatedly instantiating `Intl` objects (`Intl.NumberFormat`, `Intl.DateTimeFormat`) within functions or React render loops introduces a performance bottleneck due to excessive garbage collection and setup overhead.
+**Action:** Always hoist `Intl` formatting instances to the module scope as constants to reuse them and prevent excessive garbage collection, especially in utility functions (`src/lib/utils.ts`) and React components with frequent re-renders or lists (`src/app/admin/tools/invoice-gen/page.tsx`).
