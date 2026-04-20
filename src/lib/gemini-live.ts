@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { aiMemory } from './ai-memory'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
 export interface LiveSessionConfig {
   userId: string

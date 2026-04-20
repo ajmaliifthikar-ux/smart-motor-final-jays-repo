@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
 import { getAllBookings, getAllUsers, getAnalyticsLogs } from '@/lib/firebase-db'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
 export class StrategyAgent {
     private model: GenerativeModel
