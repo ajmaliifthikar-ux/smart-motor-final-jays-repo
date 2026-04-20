@@ -3,7 +3,7 @@ import { AgentConfig, Message, ToolDefinition } from '../core/types'
 import { memoryManager } from '../core/memory'
 import { knowledgeBase } from '../core/knowledge'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
 export class SmartAssistant {
     private model: GenerativeModel
