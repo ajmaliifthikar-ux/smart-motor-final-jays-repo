@@ -97,11 +97,23 @@ export function generateShortCode(
 ): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   const codes: string[] = []
+  const limit = 4294967296 - (4294967296 % chars.length)
+  const buffer = new Uint32Array(segments * charactersPerSegment)
+  globalThis.crypto.getRandomValues(buffer)
+  let bufferIndex = 0
 
   for (let i = 0; i < segments; i++) {
     let segment = ''
     for (let j = 0; j < charactersPerSegment; j++) {
-      segment += chars.charAt(Math.floor(Math.random() * chars.length))
+      let val
+      do {
+        if (bufferIndex >= buffer.length) {
+          globalThis.crypto.getRandomValues(buffer)
+          bufferIndex = 0
+        }
+        val = buffer[bufferIndex++]
+      } while (val >= limit)
+      segment += chars.charAt(val % chars.length)
     }
     codes.push(segment)
   }
@@ -163,8 +175,21 @@ export function generateAPIToken(): string {
 export function generateBackupCodeId(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   let code = ''
+  const limit = 4294967296 - (4294967296 % chars.length)
+  const buffer = new Uint32Array(8)
+  globalThis.crypto.getRandomValues(buffer)
+  let bufferIndex = 0
+
   for (let i = 0; i < 8; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length))
+    let val
+    do {
+      if (bufferIndex >= buffer.length) {
+        globalThis.crypto.getRandomValues(buffer)
+        bufferIndex = 0
+      }
+      val = buffer[bufferIndex++]
+    } while (val >= limit)
+    code += chars.charAt(val % chars.length)
   }
   return code
 }
