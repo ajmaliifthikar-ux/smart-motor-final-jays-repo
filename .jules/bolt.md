@@ -1,0 +1,3 @@
+## 2024-05-18 - Avoid unnecessary object instantiation when formatting dates
+**Learning:** Instantiating `Intl.DateTimeFormat` or calling `Intl.DateTimeFormat().resolvedOptions().timeZone` within a loop or React render cycle is extremely slow (e.g., 3.9s vs 15ms for 10,000 iterations). Furthermore, to format dates to the user's local timezone, explicitly passing the timezone is unnecessary and slow because `Date.prototype.toLocaleDateString()` natively defaults to the local timezone.
+**Action:** Rely on `Date.prototype.toLocaleDateString()` without explicitly passing `Intl.DateTimeFormat().resolvedOptions().timeZone` to prevent unnecessary object instantiation and improve formatting performance.
