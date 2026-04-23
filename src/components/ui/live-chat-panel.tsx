@@ -297,6 +297,8 @@ export function LiveChatPanel({
           {/* Messages */}
           <div
             ref={scrollRef}
+            role="log"
+            aria-live="polite"
             className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#FAFAF9]"
           >
             {messages.map((msg, idx) => (
@@ -401,6 +403,7 @@ export function LiveChatPanel({
               <Input
                 ref={inputRef}
                 value={input}
+                aria-label="Type your message"
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Ask me anything..."
@@ -409,6 +412,7 @@ export function LiveChatPanel({
               />
               <Button
                 onClick={handleSend}
+                aria-label="Send message"
                 disabled={isLoading || !input.trim()}
                 className="rounded-full bg-[#E62329] hover:bg-[#121212] text-white p-0 w-10 h-10 flex items-center justify-center"
               >
