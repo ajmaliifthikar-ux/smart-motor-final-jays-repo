@@ -6,19 +6,29 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+// ⚡ Bolt Performance Optimization:
+// Hoisted Intl.NumberFormat out of formatPrice to avoid expensive
+// instantiation on every function call/render loop.
+const priceFormatter = new Intl.NumberFormat('en-AE', {
+  style: 'currency',
+  currency: 'AED',
+  minimumFractionDigits: 0,
+})
+
 export function formatPrice(price: number): string {
-  return new Intl.NumberFormat('en-AE', {
-    style: 'currency',
-    currency: 'AED',
-    minimumFractionDigits: 0,
-  }).format(price)
+  return priceFormatter.format(price)
 }
 
+// ⚡ Bolt Performance Optimization:
+// Hoisted Intl.DateTimeFormat out of formatDate to avoid expensive
+// instantiation on every function call/render loop.
+const dateFormatter = new Intl.DateTimeFormat('en-AE', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+})
+
 export function formatDate(date: Date | string): string {
-  return new Intl.DateTimeFormat('en-AE', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(date))
+  return dateFormatter.format(new Date(date))
 }
 
 export function publicPath(path: string) {
