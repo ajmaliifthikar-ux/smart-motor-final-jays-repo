@@ -1,0 +1,3 @@
+## 2026-04-25 - Expensive Intl Instantiations
+**Learning:** Repeatedly instantiating `Intl` objects (`Intl.NumberFormat`, `Intl.DateTimeFormat`) inside formatting functions or React render loops creates significant garbage collection overhead, as their initialization is computationally expensive. Also, passing `Intl.DateTimeFormat().resolvedOptions().timeZone` to `toLocaleDateString()` is redundant because the method naturally defaults to the local timezone.
+**Action:** Always hoist `Intl` formatters to the module scope to reuse a single instance across function calls. Omit explicit timezone arguments when local time is the intended output.
