@@ -108,9 +108,7 @@ export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDev
                     </p>
                     <p className="text-xs text-gray-400">
                       Last used{' '}
-                      {new Date(device.lastUsedAt).toLocaleDateString(undefined, {
-                        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                      })}
+                      {new Date(device.lastUsedAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
