@@ -252,23 +252,52 @@ export function generateRandomPassword(): string {
   const numbers = '0123456789'
   const special = '!@#$%^&*()_+-=[]{}|,.<>?'
 
-  let password = ''
+  const buffer = new Uint32Array(16)
+  let bufferIndex = buffer.length
 
-  // Ensure all character types are included
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length))
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length))
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length))
-  password += special.charAt(Math.floor(Math.random() * special.length))
-
-  // Fill rest with random characters from all types
-  const allChars = uppercase + lowercase + numbers + special
-  for (let i = password.length; i < 12; i++) {
-    password += allChars.charAt(Math.floor(Math.random() * allChars.length))
+  const getSecureChar = (chars: string): string => {
+    const maxValid = 4294967295 - (4294967295 % chars.length)
+    while (true) {
+      if (bufferIndex >= buffer.length) {
+        globalThis.crypto.getRandomValues(buffer)
+        bufferIndex = 0
+      }
+      const val = buffer[bufferIndex++]
+      if (val < maxValid) return chars[val % chars.length]
+    }
   }
 
-  // Shuffle password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
+  const passArr: string[] = [
+    getSecureChar(uppercase),
+    getSecureChar(lowercase),
+    getSecureChar(numbers),
+    getSecureChar(special),
+  ]
+
+  const allChars = uppercase + lowercase + numbers + special
+  while (passArr.length < 12) {
+    passArr.push(getSecureChar(allChars))
+  }
+
+  // Secure Fisher-Yates shuffle
+  for (let i = passArr.length - 1; i > 0; i--) {
+    const maxValid = 4294967295 - (4294967295 % (i + 1))
+    let j = 0
+    while (true) {
+      if (bufferIndex >= buffer.length) {
+        globalThis.crypto.getRandomValues(buffer)
+        bufferIndex = 0
+      }
+      const val = buffer[bufferIndex++]
+      if (val < maxValid) {
+        j = val % (i + 1)
+        break
+      }
+    }
+    const temp = passArr[i]
+    passArr[i] = passArr[j]
+    passArr[j] = temp
+  }
+
+  return passArr.join('')
 }

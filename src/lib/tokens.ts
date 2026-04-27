@@ -98,10 +98,28 @@ export function generateShortCode(
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   const codes: string[] = []
 
+  const totalLength = segments * charactersPerSegment
+  const bufferLength = Math.ceil(totalLength * 1.5)
+  const buffer = new Uint32Array(bufferLength)
+  const maxValid = 4294967295 - (4294967295 % chars.length)
+
+  let bufferIndex = buffer.length
+
   for (let i = 0; i < segments; i++) {
     let segment = ''
     for (let j = 0; j < charactersPerSegment; j++) {
-      segment += chars.charAt(Math.floor(Math.random() * chars.length))
+      let charVal = -1
+      while (charVal === -1) {
+        if (bufferIndex >= buffer.length) {
+          globalThis.crypto.getRandomValues(buffer)
+          bufferIndex = 0
+        }
+        const val = buffer[bufferIndex++]
+        if (val < maxValid) {
+          charVal = val % chars.length
+        }
+      }
+      segment += chars.charAt(charVal)
     }
     codes.push(segment)
   }
@@ -163,8 +181,26 @@ export function generateAPIToken(): string {
 export function generateBackupCodeId(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   let code = ''
+
+  const bufferLength = 12
+  const buffer = new Uint32Array(bufferLength)
+  const maxValid = 4294967295 - (4294967295 % chars.length)
+
+  let bufferIndex = buffer.length
+
   for (let i = 0; i < 8; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length))
+    let charVal = -1
+    while (charVal === -1) {
+      if (bufferIndex >= buffer.length) {
+        globalThis.crypto.getRandomValues(buffer)
+        bufferIndex = 0
+      }
+      const val = buffer[bufferIndex++]
+      if (val < maxValid) {
+        charVal = val % chars.length
+      }
+    }
+    code += chars.charAt(charVal)
   }
   return code
 }
