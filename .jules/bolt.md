@@ -1,0 +1,3 @@
+## 2024-04-28 - Intl Allocation Overhead & Native Date Methods
+**Learning:** `Intl` object instantiations (like `new Intl.NumberFormat` or `new Intl.DateTimeFormat`) have high allocation and parsing overhead. Additionally, passing `timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone` to `toLocaleDateString()` is redundant because the native method inherently defaults to the local timezone. Using the redundant options object causes execution and instantiation overhead on every render for lists of items.
+**Action:** Always hoist and cache `Intl` formatter instances at the module level when used in formatting functions or render loops. Rely on parameterless `Date.prototype.toLocaleDateString()` for default local timezone formatting to skip unnecessary processing.
