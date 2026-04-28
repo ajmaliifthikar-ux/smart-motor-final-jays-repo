@@ -9,6 +9,11 @@
 
 ## Fixed Vulnerabilities
 
+### 2026-03-01: Unauthenticated API Key Exposure in Key Provider Endpoint
+- **Vulnerability:** The `/api/ai/get-key` endpoint provided the `GEMINI_API_KEY` to any unauthenticated caller, exposing sensitive API credentials to public access.
+- **Learning:** Endpoints designed to provide environment variables or API keys to the frontend must always verify the user's identity before responding. Even if an endpoint is undocumented, it can be discovered and abused if unprotected.
+- **Prevention:** Always wrap key-dispensing or sensitive endpoints with robust session checks (e.g., `await auth()`) and return `401 Unauthorized` for anonymous requests.
+
 ### 2026-02-15: Implicit User Enumeration & IDOR in Booking API
 - **Vulnerability:** Unauthenticated users could associate bookings with any existing user account by simply providing their email address in the request body.
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
