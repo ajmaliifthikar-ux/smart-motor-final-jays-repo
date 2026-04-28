@@ -107,10 +107,9 @@ export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDev
                       })}
                     </p>
                     <p className="text-xs text-gray-400">
-                      Last used{' '}
-                      {new Date(device.lastUsedAt).toLocaleDateString(undefined, {
-                        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                      })}
+                      {/* ⚡ Bolt: Native toLocaleDateString() already defaults to the local timezone.
+                          Avoiding explicit Intl options resolution eliminates unnecessary object instantiation and execution overhead on every render. */}
+                      Last used {new Date(device.lastUsedAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
