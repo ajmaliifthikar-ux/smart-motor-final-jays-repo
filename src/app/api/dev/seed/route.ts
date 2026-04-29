@@ -19,8 +19,6 @@ import {
 } from 'firebase/firestore'
 import { initializeApp, getApps } from 'firebase/app'
 
-const SEED_KEY = 'sm-seed-2026'
-
 function getDb() {
   const config = {
     apiKey: (process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '').trim(),
@@ -196,7 +194,9 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const key = searchParams.get('key')
 
-  if (key !== SEED_KEY) {
+  // SEC-FIX: Fail securely if the SEED_KEY environment variable is not set
+  // This prevents unauthorized access if the environment is misconfigured.
+  if (!process.env.SEED_KEY || key !== process.env.SEED_KEY) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

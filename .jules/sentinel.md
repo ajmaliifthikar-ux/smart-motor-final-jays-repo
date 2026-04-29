@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2026-04-29 - Hardcoded Secret and Missing Secure Defaults in Seed Endpoint
+**Vulnerability:** A hardcoded, plaintext secret (`SEED_KEY = 'sm-seed-2026'`) was used to authenticate access to the `/api/dev/seed` route. Additionally, if an environment variable approach was used but the variable was missing, the check would have bypassed security if `key` matched `undefined`.
+**Learning:** Hardcoded secrets in source code present a massive risk if code is leaked or reverse-engineered. More subtly, when refactoring to use environment variables for authentication, a missing environment variable check can result in failing open instead of failing securely, allowing bypass if the requested key matches the missing variable's falsy value.
+**Prevention:** Never commit plaintext secrets to the repository. Rely on `.env` variables or a secret manager. Furthermore, always implement a fail-secure pattern by verifying the existence of the expected environment secret (e.g., `if (!process.env.SECRET || key !== process.env.SECRET)`) before processing sensitive operations, defaulting to an unauthorized state when the secret is unconfigured.
