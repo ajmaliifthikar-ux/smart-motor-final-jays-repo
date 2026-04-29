@@ -349,6 +349,8 @@ export function SmartAssistantWithAudio() {
             <div
               ref={scrollRef}
               className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50"
+              role="log"
+              aria-live="polite"
             >
               {messages.map((msg) => (
                 <motion.div
@@ -423,12 +425,14 @@ export function SmartAssistantWithAudio() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Type your message..."
+                    aria-label="Chat input message"
                     disabled={isLoading}
                     className="flex-1"
                   />
                   <Button
                     type="submit"
                     disabled={isLoading || !input.trim()}
+                    aria-label="Send message"
                     className="bg-blue-600 hover:bg-blue-700 h-10 px-4"
                   >
                     {isLoading ? (
