@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2025-02-27 - Remove Hardcoded Gemini API Key Fallback
+**Vulnerability:** A hardcoded Google Gemini API key (`AIzaSy...`) was present as a fallback string across multiple files (`src/app/api/diag/gemini/route.ts`, `src/lib/agents/...`, etc.) when the `GEMINI_API_KEY` environment variable was missing.
+**Learning:** Hardcoding API keys directly in source code exposes credentials, leading to potential unauthorized access and billing abuse. To satisfy TypeScript's string requirement safely without risking credentials being pushed to source control, an empty string (`''`) should be used as the fallback for secrets.
+**Prevention:** Always use environment variables for sensitive keys and rely on proper fallback strategies (like empty strings) that naturally and securely fail during execution if the environment variable is not configured.
