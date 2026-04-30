@@ -150,7 +150,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
           </div>
 
           {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar" role="log" aria-live="polite">
             {messages.map((msg) => (
               <div key={msg.id} className="space-y-3">
                 <motion.div
@@ -265,6 +265,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
             <div className="flex gap-2 items-center bg-gray-50 rounded-2xl px-4 py-2 border border-gray-100 shadow-inner">
               <input
                 ref={inputRef}
+                aria-label="Chat input"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -277,6 +278,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
               
               <div className="flex items-center gap-1">
                 <button
+                    aria-label="Toggle voice mode"
                     onClick={isVoiceMode ? stopVoiceMode : startVoiceMode}
                     className={cn(
                     "w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-500 group",
@@ -289,6 +291,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 </button>
                 
                 <Button
+                    aria-label="Send message"
                     onClick={() => handleSend()}
                     disabled={isLoading || !input.trim() || isVoiceMode}
                     className="rounded-lg bg-[#121212] hover:bg-[#E62329] w-9 h-9 p-0 transition-all duration-500 shadow-xl"

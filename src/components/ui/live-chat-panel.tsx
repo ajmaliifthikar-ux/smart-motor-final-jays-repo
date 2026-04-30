@@ -298,6 +298,8 @@ export function LiveChatPanel({
           <div
             ref={scrollRef}
             className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#FAFAF9]"
+            role="log"
+            aria-live="polite"
           >
             {messages.map((msg, idx) => (
               <motion.div
@@ -400,6 +402,7 @@ export function LiveChatPanel({
             <div className="flex gap-2">
               <Input
                 ref={inputRef}
+                aria-label="Chat input"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -408,6 +411,7 @@ export function LiveChatPanel({
                 disabled={isLoading}
               />
               <Button
+                aria-label="Send message"
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
                 className="rounded-full bg-[#E62329] hover:bg-[#121212] text-white p-0 w-10 h-10 flex items-center justify-center"
