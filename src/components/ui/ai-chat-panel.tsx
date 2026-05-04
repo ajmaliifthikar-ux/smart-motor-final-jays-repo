@@ -150,7 +150,13 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
           </div>
 
           {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar">
+          <div
+            ref={scrollRef}
+            className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar"
+            role="log"
+            aria-live="polite"
+            aria-atomic="false"
+          >
             {messages.map((msg) => (
               <div key={msg.id} className="space-y-3">
                 <motion.div
@@ -198,6 +204,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                             <div className="relative flex items-center">
                                 <input 
                                     autoFocus
+                                    aria-label="Widget input"
                                     placeholder={msg.widget.placeholder || `Enter ${msg.widget.type}...`}
                                     className="w-full bg-white border-gray-200 rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-[#E62329] transition-all"
                                     onKeyDown={(e) => {
@@ -265,6 +272,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
             <div className="flex gap-2 items-center bg-gray-50 rounded-2xl px-4 py-2 border border-gray-100 shadow-inner">
               <input
                 ref={inputRef}
+                aria-label="Chat message input"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
