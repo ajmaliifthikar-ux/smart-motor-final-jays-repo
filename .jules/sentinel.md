@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2026-02-16 - Systemic Hardcoded API Key Exposure
+**Vulnerability:** The Gemini API key (`AIzaSy...`) was hardcoded as a fallback string across multiple files (diagnostics, API routes, agent implementations, and documentation), posing a severe risk of secret leakage and unauthorized API usage.
+**Learning:** Developers frequently hardcode secrets as fallbacks to bypass TypeScript constraints or during rapid prototyping, then forget to remove them. Relying on default fallbacks in source control compromises the entire system's security.
+**Prevention:** Always enforce environment variables for secrets. Use `process.env.SECRET || ''` to satisfy TypeScript without introducing hardcoded keys, ensuring missing secrets fail securely at runtime rather than silently exposing credentials.

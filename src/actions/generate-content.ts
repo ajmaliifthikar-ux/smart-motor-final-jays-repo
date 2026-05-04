@@ -5,7 +5,7 @@ import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { checkRateLimit, incrementRateLimit } from "@/lib/rate-limit"
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 
 export async function generateContent(formData: FormData) {
     const session = await auth()
