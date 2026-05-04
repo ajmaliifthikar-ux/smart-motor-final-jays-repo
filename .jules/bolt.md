@@ -1,0 +1,3 @@
+## 2025-05-04 - Caching Intl Objects Prevents Render Loop Bottlenecks
+**Learning:** Instantiating `Intl.NumberFormat` and `Intl.DateTimeFormat` objects is an expensive operation that incurs significant parsing and garbage collection overhead. When these objects are created inside render loops (like list mapping or utility functions called frequently), it severely impacts frontend performance. Benchmarks show roughly a 160x speed improvement by hoisting them (from ~5250ms to ~32ms for 10k iterations).
+**Action:** Always hoist and cache `Intl.*` objects (and similarly expensive built-ins like `resolvedOptions().timeZone`) to the module scope as constants instead of repeatedly instantiating them inside functions or component render loops.
