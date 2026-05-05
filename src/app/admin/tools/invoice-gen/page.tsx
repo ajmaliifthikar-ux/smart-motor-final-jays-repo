@@ -99,13 +99,19 @@ function dueDateISO(days = 30) {
   return d.toISOString().split('T')[0]
 }
 
+// ⚡ Bolt: Cache Intl formatters at module scope to prevent expensive re-instantiation during renders
+const AED_FORMATTER = new Intl.NumberFormat('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
 function formatAED(n: number) {
-  return new Intl.NumberFormat('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n)
+  return AED_FORMATTER.format(n)
 }
+
+// ⚡ Bolt: Cache Intl formatters at module scope to prevent expensive re-instantiation during renders
+const DATE_FORMATTER = new Intl.DateTimeFormat('en-AE', { day: '2-digit', month: 'short', year: 'numeric' })
 
 function formatDate(iso: string) {
   if (!iso) return '—'
-  return new Intl.DateTimeFormat('en-AE', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(iso + 'T00:00:00'))
+  return DATE_FORMATTER.format(new Date(iso + 'T00:00:00'))
 }
 
 function defaultItem(): LineItem {
