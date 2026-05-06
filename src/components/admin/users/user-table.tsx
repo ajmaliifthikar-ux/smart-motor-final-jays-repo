@@ -5,7 +5,7 @@ import { toggleUserRole, deleteUser } from '@/actions/user-actions'
 import { Button } from '@/components/ui/button'
 import { EditUserModal } from './edit-user-modal'
 import { formatDate } from '@/lib/utils'
-import { Shield, ShieldAlert, Trash2, User as UserIcon } from 'lucide-react'
+import { Shield, ShieldAlert, Trash2, User as UserIcon, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface User {
@@ -90,23 +90,30 @@ export function UserTable({ users }: { users: User[] }) {
                                 {formatDate(user.createdAt)}
                             </td>
                             <td className="px-6 py-4 text-right">
-                                <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
                                     <EditUserModal user={user} />
 
                                     <Button
                                         onClick={() => handleRoleToggle(user)}
                                         disabled={loadingId === user.id}
                                         variant="outline"
-                                        className="h-8 rounded-full text-xs hover:bg-[#121212] hover:text-white border-gray-200"
+                                        aria-label={user.role === 'ADMIN' ? `Demote ${user.name || 'user'}` : `Promote ${user.name || 'user'}`}
+                                        className="h-8 rounded-full text-xs hover:bg-[#121212] hover:text-white border-gray-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#121212]"
                                     >
                                         {user.role === 'ADMIN' ? 'Demote' : 'Promote'}
                                     </Button>
                                     <Button
                                         onClick={() => handleDelete(user.id)}
                                         disabled={loadingId === user.id}
-                                        className="h-8 w-8 rounded-full bg-red-50 text-red-600 hover:bg-red-600 hover:text-white p-0 flex items-center justify-center transition-colors"
+                                        aria-label={`Delete ${user.name || 'user'}`}
+                                        title={`Delete ${user.name || 'user'}`}
+                                        className="h-8 w-8 rounded-full bg-red-50 text-red-600 hover:bg-red-600 hover:text-white p-0 flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-600"
                                     >
-                                        <Trash2 className="h-4 w-4" />
+                                        {loadingId === user.id ? (
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <Trash2 className="h-4 w-4" />
+                                        )}
                                     </Button>
                                 </div>
                             </td>
