@@ -1,0 +1,3 @@
+## 2024-05-24 - Hoisting Intl instantiations to module scope
+**Learning:** Instantiating `Intl` objects (e.g., `Intl.NumberFormat`, `Intl.DateTimeFormat`) or computing values via `.resolvedOptions()` inside functions or React loops incurs noticeable garbage collection and parsing overhead in JavaScript. The codebase repeatedly recreated these instances inside formatting utilities (`formatPrice`, `formatDate`) and component maps.
+**Action:** Prevent repeated instantiation of `Intl` objects by hoisting and caching them as constants at the module scope. Use these cached formatters throughout the application to optimize memory usage and avoid unnecessary re-parsing.
