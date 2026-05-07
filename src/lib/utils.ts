@@ -28,6 +28,30 @@ export function publicPath(path: string) {
   return `${basePath}${cleanPath}`
 }
 
+/**
+ * Sanitizes HTML content while preserving specific whitelisted formatting tags.
+ * This is crucial for preventing XSS when rendering CMS-driven content via dangerouslySetInnerHTML.
+ */
+export function safeTitle(html: string | undefined | null): string {
+  if (!html) return '';
+  const escaped = html
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+
+  let safe = escaped.replace(/&lt;br\s*\/?&gt;/gi, '<br />');
+
+  safe = safe.replace(
+      /&lt;span\s+(?:class|className)=(?:&quot;|&#039;)(silver-shine|text-gray-500)(?:&quot;|&#039;)&gt;/gi,
+      '<span class="$1">'
+  );
+  safe = safe.replace(/&lt;\/span&gt;/gi, '</span>');
+
+  return safe;
+}
+
 // ─────────────────────────────────────────────────────────────
 // AUTO CONTRAST SYSTEM (WCAG 2.1 AA compliant)
 // ─────────────────────────────────────────────────────────────

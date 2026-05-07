@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2025-05-07 - Cross-Site Scripting (XSS) via dangerouslySetInnerHTML in CMS components
+**Vulnerability:** CMS-provided `title` strings were being passed directly to `dangerouslySetInnerHTML` in components like `WhySmartMotor` and `AboutSnippet` without prior sanitization, allowing an attacker with CMS access to execute arbitrary JavaScript on the page by injecting malicious HTML.
+**Learning:** Next.js and React require `dangerouslySetInnerHTML` for rendering markup that includes custom formatting. However, trusting dynamic input (even from a CMS) without escaping or validating the content creates a significant attack surface for Stored XSS. The unique requirement here is preserving specific decorative tags (`<br />` and `<span>` with particular classes) while neutralizing everything else.
+**Prevention:** Implemented a whitelist-by-reconstruction approach. A `safeTitle` utility now escapes *all* HTML characters (`<`, `>`, `&`, `"`, `'`) first, then uses regex to identify and strictly restore only the permitted tags (`<br />` and `<span class="...">` with explicitly whitelisted classes). All future usages of `dangerouslySetInnerHTML` containing CMS content must use `safeTitle` or a comparable sanitization utility.

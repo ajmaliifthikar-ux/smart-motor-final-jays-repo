@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { ArrowRightIcon } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, safeTitle } from '@/lib/utils'
 
 interface AboutSnippetProps {
     cmsData?: {
@@ -43,7 +43,7 @@ export function AboutSnippet({ cmsData }: AboutSnippetProps) {
                             "text-4xl font-black tracking-tighter uppercase leading-[0.9] mb-8",
                             theme === 'dark' ? "text-white" : "text-[#121212]"
                         )}
-                        dangerouslySetInnerHTML={{ __html: title }}
+                        dangerouslySetInnerHTML={{ __html: safeTitle(title) }}
                     />
 
                     <div className={cn(
