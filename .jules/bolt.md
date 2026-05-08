@@ -1,0 +1,3 @@
+## 2024-05-18 - Redis N+1 Pattern in Knowledge Base
+**Learning:** In backend operations utilizing `ioredis`, looping through IDs to make sequential `redis.get()` or `redis.smembers()` calls causes an N+1 query problem, severely increasing network latency and overall execution time. Attempting to parse unknown object types sequentially creates an expensive nested loop scenario.
+**Action:** Always batch these database requests. For set retrievals in a loop, replace it with `Promise.all` for parallel execution. For fetching values by key across an arbitrary set of IDs and types, construct the array of possible keys entirely in memory and dispatch a single `redis.mget(keys)` to fetch all required entities in one network round-trip.
