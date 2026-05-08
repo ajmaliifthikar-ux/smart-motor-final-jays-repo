@@ -60,21 +60,47 @@ export class KnowledgeBaseManager {
             const keywords = query.toLowerCase().split(' ')
             const matchedIds = new Set<string>()
 
-            // Find entries matching keywords
-            for (const keyword of keywords) {
-                const ids = await redis.smembers(`knowledge:keyword:${keyword}`).catch(() => [])
+            // Find entries matching keywords concurrently
+            const smembersPromises = keywords.map(keyword =>
+                redis.smembers(`knowledge:keyword:${keyword}`).catch(() => [])
+            )
+            const idsArrays = await Promise.all(smembersPromises)
+            for (const ids of idsArrays) {
                 ids.forEach(id => matchedIds.add(id))
             }
 
-            // Load all matched entries
+            // Load all matched entries concurrently
+            const limitedIds = Array.from(matchedIds).slice(0, limit)
+            if (limitedIds.length === 0) return []
+
+            const types = ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']
+            const keys: string[] = []
+
+            for (const id of limitedIds) {
+                for (const type of types) {
+                    keys.push(`knowledge:${type}:${id}`)
+                }
+            }
+
+            const data = await redis.mget(keys)
+
             const results: KnowledgeEntry[] = []
-            for (const id of Array.from(matchedIds).slice(0, limit)) {
-                // Try all types
-                for (const type of ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']) {
-                    const entry = await this.getKnowledge(type, id)
-                    if (entry) {
-                        results.push(entry)
-                        break
+            // mget returns values in the same order as keys
+            // We only want the first valid entry for each ID (which matches the original break behavior)
+            let dataIndex = 0
+            // Using a simple loop for 'limitedIds' to avoid unused variable errors if we don't need 'id'
+            for (let i = 0; i < limitedIds.length; i++) {
+                let foundForId = false
+                // Using a simple loop for 'types' to avoid unused variable errors if we don't need 'type'
+                for (let j = 0; j < types.length; j++) {
+                    const val = data[dataIndex++]
+                    if (!foundForId && val) {
+                        try {
+                            results.push(JSON.parse(val))
+                            foundForId = true
+                        } catch (err) {
+                            // ignore malformed JSON gracefully like the original
+                        }
                     }
                 }
             }
@@ -92,11 +118,20 @@ export class KnowledgeBaseManager {
     async getKnowledgeByType(type: string): Promise<KnowledgeEntry[]> {
         try {
             const ids = await redis.smembers(`knowledge:index:${type}`).catch(() => [])
-            const entries: KnowledgeEntry[] = []
+            if (ids.length === 0) return []
 
-            for (const id of ids) {
-                const entry = await this.getKnowledge(type, id)
-                if (entry) entries.push(entry)
+            const keys = ids.map(id => `knowledge:${type}:${id}`)
+            const data = await redis.mget(keys)
+
+            const entries: KnowledgeEntry[] = []
+            for (const val of data) {
+                if (val) {
+                    try {
+                        entries.push(JSON.parse(val))
+                    } catch (err) {
+                        // ignore malformed JSON
+                    }
+                }
             }
 
             return entries
