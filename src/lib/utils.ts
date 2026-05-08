@@ -28,6 +28,32 @@ export function publicPath(path: string) {
   return `${basePath}${cleanPath}`
 }
 
+export function safeTitle(html: string): string {
+  if (!html) return '';
+  const escaped = html
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+
+  let restored = escaped.replace(/&lt;br\s*\/?&gt;/gi, '<br />');
+
+  restored = restored.replace(
+    /&lt;span\s+(?:className|class)=&quot;(text-gray-500|silver-shine)&quot;&gt;/gi,
+    '<span class="$1">'
+  );
+
+  restored = restored.replace(
+    /&lt;span\s+(?:className|class)=&#039;(text-gray-500|silver-shine)&#039;&gt;/gi,
+    '<span class="$1">'
+  );
+
+  restored = restored.replace(/&lt;\/span&gt;/gi, '</span>');
+
+  return restored;
+}
+
 // ─────────────────────────────────────────────────────────────
 // AUTO CONTRAST SYSTEM (WCAG 2.1 AA compliant)
 // ─────────────────────────────────────────────────────────────
