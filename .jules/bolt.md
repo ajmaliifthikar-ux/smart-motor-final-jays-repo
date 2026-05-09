@@ -1,0 +1,3 @@
+## 2024-05-17 - Cache Intl objects to avoid instantiation overhead
+**Learning:** Instantiating `Intl.NumberFormat` and `Intl.DateTimeFormat` objects or calling `Intl.DateTimeFormat().resolvedOptions()` is computationally expensive in JavaScript. Doing this repeatedly inside render loops or frequently called formatters (like `formatPrice` or `formatDate`) introduces unnecessary garbage collection and parsing overhead that can degrade performance, especially on lists or tables.
+**Action:** Always hoist `Intl` object instantiations and options computations outside of functions or React render cycles, caching them as constants at the module scope so they are only instantiated once.
