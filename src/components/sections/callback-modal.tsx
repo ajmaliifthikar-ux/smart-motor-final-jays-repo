@@ -60,6 +60,7 @@ export function CallbackModal({ isOpen, onClose }: CallbackModalProps) {
               <button
                 onClick={handleClose}
                 className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                aria-label="Close modal"
               >
                 <XIcon size={24} />
               </button>
