@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2025-05-15 - Hardcoded API Keys Systemic Pattern
+**Vulnerability:** Systemic exposure of `GEMINI_API_KEY` hardcoded as fallbacks across 7 production source files and multiple documentation files.
+**Learning:** Hardcoded secrets often start as a convenience in one file during prototyping (e.g. `const key = process.env.API_KEY || 'AIzaSy...'`) but can rapidly proliferate through the codebase via copy-pasting to other files, agents, and documentation, compounding the risk.
+**Prevention:** Never use hardcoded keys as environment fallbacks. Always use strict initialization (e.g. `const key = process.env.KEY || ''` followed by `if (!key) throw new Error(...)`). Configure lint rules like `no-hardcoded-credentials` to block this pattern.
