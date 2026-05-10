@@ -23,13 +23,16 @@ export async function setSessionCookie(idToken: string) {
         const ua = headerStore.get('user-agent') || 'unknown'
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://smartmotorlatest.vercel.app'
 
-        fetch(`${appUrl}/api/notifications/send`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-notification-key': process.env.NOTIFICATION_SECRET || 'sm-notify-secret',
-            },
-            body: JSON.stringify({
+        if (!process.env.NOTIFICATION_SECRET) {
+            console.error('NOTIFICATION_SECRET is missing. Cannot send notification.');
+        } else {
+            fetch(`${appUrl}/api/notifications/send`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-notification-key': process.env.NOTIFICATION_SECRET,
+                },
+                body: JSON.stringify({
                 event: 'login',
                 data: {
                     email: decoded?.email || 'unknown',
@@ -38,7 +41,8 @@ export async function setSessionCookie(idToken: string) {
                     device: ua.length > 80 ? ua.slice(0, 80) + '…' : ua,
                 },
             }),
-        }).catch(() => {}) // Non-blocking — never fail the login
+            }).catch(() => {}) // Non-blocking — never fail the login
+        }
     } catch {}
 
     return { success: true }
