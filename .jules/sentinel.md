@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2025-02-17 - Hardcoded Fallback Secrets Removed from Codebase
+**Vulnerability:** Several API routes and actions (`api/bookings/route.ts`, `api/notifications/send/route.ts`, `api/cron/daily-report/route.ts`, `api/admin/invitations/send-bulk/route.ts`, `actions/firebase-auth.ts`) were falling back to hardcoded strings (e.g. `'sm-notify-secret'`, `'admin-setup-secret'`, `'smartmotor-cron-secret'`) if their corresponding environment variables were missing. This allowed unauthenticated actors with access to the source code to trigger internal actions or bypass authorization checks by supplying the hardcoded fallback secret.
+**Learning:** Hardcoded fallbacks undermine environment-based configuration and pose a high risk of credential leakage. If an environment variable is omitted or misconfigured, it's safer for the application to fail securely (and loudly) than to silently accept a known, hardcoded fallback secret.
+**Prevention:** Avoid providing default values to sensitive configuration properties in the format `process.env.SECRET || 'default-secret'`. Ensure that the absence of a secret throws an error or safely rejects the request by enforcing the presence of the environment variable (e.g., `!!process.env.SECRET`).
