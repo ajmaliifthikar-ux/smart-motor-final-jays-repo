@@ -113,7 +113,7 @@ export function AgenticChat({
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4" role="log" aria-live="polite" aria-atomic="false">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full">
             <div className="w-16 h-16 rounded-2xl bg-[#E62329]/10 flex items-center justify-center mb-4">
@@ -202,6 +202,7 @@ export function AgenticChat({
             placeholder={placeholder}
             disabled={loading}
             className="flex-1 px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-[#121212] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E62329]/20 focus:bg-white disabled:opacity-50"
+            aria-label="Chat message"
           />
           <button
             type="submit"
@@ -212,6 +213,7 @@ export function AgenticChat({
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : 'bg-[#E62329] text-white hover:bg-[#c91e23] shadow-md'
             )}
+            aria-label="Send message"
           >
             {loading ? (
               <>
