@@ -3,13 +3,16 @@ import { AgentConfig, Message, ToolDefinition } from '../core/types'
 import { memoryManager } from '../core/memory'
 import { knowledgeBase } from '../core/knowledge'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
-
 export class SmartAssistant {
     private model: GenerativeModel
     private config: AgentConfig
 
     constructor() {
+        if (!process.env.GEMINI_API_KEY) {
+            throw new Error('GEMINI_API_KEY is not configured');
+        }
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
         this.config = {
             model: 'gemini-2.5-flash',
             systemPrompt: `You are a helpful AI Assistant for Smart Motor, a luxury car service center in UAE.
