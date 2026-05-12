@@ -158,3 +158,26 @@ export function getContrastInputClasses(bgColor?: string): { text: string; place
 export function getContrastStyle(bgColor?: string): React.CSSProperties {
   return { color: getContrastTextColor(bgColor ?? '') }
 }
+
+/**
+ * Sanitizes user-provided CMS HTML strings to prevent XSS.
+ * Selectively allows <br /> and <span> tags with specific classes.
+ */
+export function safeTitle(unsafe: string | undefined): string {
+  if (!unsafe) return ''
+  const escapeHtml = (text: string) => text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+
+  let sanitized = escapeHtml(unsafe)
+  // Restore whitelisted <br>
+  sanitized = sanitized.replace(/&lt;br\s*\/?&gt;/gi, '<br />')
+  // Restore whitelisted <span className="text-gray-500"> or <span class="silver-shine">
+  sanitized = sanitized.replace(/&lt;span\s+(?:class|className)=(&quot;|&#39;)(text-gray-500|silver-shine)\1&gt;/gi, '<span class="$2">')
+  // Restore closing </span>
+  sanitized = sanitized.replace(/&lt;\/span&gt;/gi, '</span>')
+  return sanitized
+}
