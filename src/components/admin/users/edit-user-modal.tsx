@@ -63,7 +63,7 @@ export function EditUserModal({ user }: { user: User }) {
     return (
         <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger asChild>
-                <Button variant="ghost" className="h-8 w-8 rounded-full p-0">
+                <Button variant="ghost" aria-label={`Edit user ${user.name || 'Unnamed User'}`} className="h-8 w-8 rounded-full p-0">
                     <Pencil className="h-4 w-4" />
                 </Button>
             </Dialog.Trigger>
@@ -75,7 +75,7 @@ export function EditUserModal({ user }: { user: User }) {
                             Edit User
                         </Dialog.Title>
                         <Dialog.Close asChild>
-                            <button className="rounded-full p-2 hover:bg-gray-100 transition-colors">
+                            <button aria-label="Close dialog" className="rounded-full p-2 hover:bg-gray-100 transition-colors">
                                 <X className="h-4 w-4 text-gray-500" />
                             </button>
                         </Dialog.Close>
