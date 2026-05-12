@@ -20,6 +20,9 @@ interface TrustedDevicesProps {
   onDevicesChanged: () => void
 }
 
+// ⚡ Bolt: Cache timezone to avoid recomputing via Intl.DateTimeFormat().resolvedOptions() during render
+const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
 export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDevicesProps) {
   const [isLoading, setIsLoading] = useState(false)
 
@@ -109,7 +112,7 @@ export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDev
                     <p className="text-xs text-gray-400">
                       Last used{' '}
                       {new Date(device.lastUsedAt).toLocaleDateString(undefined, {
-                        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        timeZone: userTimeZone,
                       })}
                     </p>
                   </div>
