@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { cn } from '@/lib/utils'
+import { cn, safeTitle } from '@/lib/utils'
 
 const features = [
     {
@@ -114,7 +114,7 @@ export function WhySmartMotor({ cmsData }: WhySmartMotorProps) {
                             "text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.9] mb-10",
                             theme === 'dark' ? "text-white" : "text-[#121212]"
                         )}
-                        dangerouslySetInnerHTML={{ __html: title }}
+                        dangerouslySetInnerHTML={{ __html: safeTitle(title) }}
                     />
 
                     <div className="space-y-5">

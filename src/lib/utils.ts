@@ -158,3 +158,23 @@ export function getContrastInputClasses(bgColor?: string): { text: string; place
 export function getContrastStyle(bgColor?: string): React.CSSProperties {
   return { color: getContrastTextColor(bgColor ?? '') }
 }
+
+
+export function safeTitle(html: string): string {
+  if (!html) return '';
+  let escaped = html
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+  escaped = escaped.replace(/&lt;br\s*\/?&gt;/gi, '<br />');
+
+  // Find authorized spans and their closing tags and restore them
+  // This regex matches an authorized span and then lazily matches content until the next </span>
+  const spanRegex = /&lt;span\s+(?:class|className)=(&quot;|&#39;)(text-gray-500|silver-shine)\1&gt;([\s\S]*?)&lt;\/span&gt;/gi;
+  escaped = escaped.replace(spanRegex, '<span class="$2">$3</span>');
+
+  return escaped;
+}

@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2026-03-01 - XSS Vulnerability in CMS Title Rendering
+**Vulnerability:** The CMS data properties like `title` in components such as `why-smart-motor.tsx` and `about-snippet.tsx` were being rendered directly using `dangerouslySetInnerHTML={{ __html: title }}` without any sanitization, allowing arbitrary HTML/JS injection if the CMS data was compromised.
+**Learning:** We need to allow specific HTML tags (like `<br />` and explicitly styled `<span>` tags) for legitimate CMS content, meaning simple text replacement or blanket escaping isn't sufficient as it breaks intended UI layouts.
+**Prevention:** Always use the whitelist-by-reconstruction pattern implemented in the `safeTitle` utility (`src/lib/utils.ts`) which escapes all HTML entities first, then uses strict regular expressions to selectively restore only explicitly authorized tags and classes.
