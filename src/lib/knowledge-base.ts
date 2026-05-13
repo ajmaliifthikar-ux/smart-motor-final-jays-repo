@@ -66,22 +66,42 @@ export class KnowledgeBaseManager {
                 ids.forEach(id => matchedIds.add(id))
             }
 
-            // Load all matched entries
+            const idsToFetch = Array.from(matchedIds).slice(0, limit)
+            if (idsToFetch.length === 0) return []
+
+            const types = ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']
+            const keysToFetch: string[] = []
+
+            for (let _i = 0; _i < idsToFetch.length; _i++) {
+                for (const type of types) {
+                    keysToFetch.push(`knowledge:${type}:${idsToFetch[_i]}`)
+                }
+            }
+
+            // ⚡ Bolt: Replace N+1 sequential redis.get queries with a single batched mget request
+            // Previously we did up to (limit * 6) individual get requests.
+            const dataArray = await redis.mget(keysToFetch)
             const results: KnowledgeEntry[] = []
-            for (const id of Array.from(matchedIds).slice(0, limit)) {
-                // Try all types
-                for (const type of ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']) {
-                    const entry = await this.getKnowledge(type, id)
-                    if (entry) {
-                        results.push(entry)
-                        break
+            let dataIndex = 0
+
+            for (let _i = 0; _i < idsToFetch.length; _i++) {
+                let foundForId = false
+                for (let i = 0; i < types.length; i++) {
+                    const data = dataArray[dataIndex++]
+                    if (data && !foundForId) {
+                        try {
+                            results.push(JSON.parse(data))
+                            foundForId = true // Simulate the 'break' from the original sequential code
+                        } catch {
+                            // Ignore JSON parse errors and continue
+                        }
                     }
                 }
             }
 
             return results
-        } catch (e) {
-            console.error('Search Knowledge error:', e)
+        } catch {
+            console.error('Search Knowledge error:')
             return []
         }
     }
@@ -92,15 +112,27 @@ export class KnowledgeBaseManager {
     async getKnowledgeByType(type: string): Promise<KnowledgeEntry[]> {
         try {
             const ids = await redis.smembers(`knowledge:index:${type}`).catch(() => [])
+            if (ids.length === 0) return []
+
+            const keys = ids.map(id => `knowledge:${type}:${id}`)
+
+            // ⚡ Bolt: Replace N+1 sequential redis.get queries with a single batched mget request
+            // This reduces network roundtrips from O(N) to O(1) for category listing.
+            const dataArray = await redis.mget(keys)
             const entries: KnowledgeEntry[] = []
 
-            for (const id of ids) {
-                const entry = await this.getKnowledge(type, id)
-                if (entry) entries.push(entry)
+            for (const data of dataArray) {
+                if (data) {
+                    try {
+                        entries.push(JSON.parse(data))
+                    } catch {
+                        // Ignore JSON parse errors
+                    }
+                }
             }
 
             return entries
-        } catch (e) {
+        } catch {
             return []
         }
     }

@@ -1,0 +1,3 @@
+## 2024-05-18 - Redis N+1 Query Optimization in Knowledge Base
+**Learning:** Sequential `await redis.get()` calls inside a loop (N+1 queries) create significant network latency bottlenecks, especially when fetching items by category index or iterating over multiple potential key combinations. In the Knowledge Base, `searchKnowledge` generated up to `limit * 6` queries.
+**Action:** Always replace sequential Redis loops with batched operations like `redis.mget` or `redis.pipeline()`. When restructuring logic for `mget`, ensure JSON parsing `try...catch` blocks and index mapping logic from the sequential operations are explicitly re-implemented to correctly handle missing keys (`null` values) and errors gracefully.
