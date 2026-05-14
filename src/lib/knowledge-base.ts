@@ -60,21 +60,56 @@ export class KnowledgeBaseManager {
             const keywords = query.toLowerCase().split(' ')
             const matchedIds = new Set<string>()
 
-            // Find entries matching keywords
-            for (const keyword of keywords) {
-                const ids = await redis.smembers(`knowledge:keyword:${keyword}`).catch(() => [])
-                ids.forEach(id => matchedIds.add(id))
+            // Find entries matching keywords efficiently using pipeline
+            if (keywords.length > 0) {
+                const pipeline = redis.pipeline()
+                for (const keyword of keywords) {
+                    pipeline.smembers(`knowledge:keyword:${keyword}`)
+                }
+                const pipelineResults = await pipeline.exec().catch(() => []) || []
+
+                for (const result of pipelineResults) {
+                    if (result[0]) continue // Error in pipeline command
+                    const ids = result[1] as string[]
+                    ids.forEach(id => matchedIds.add(id))
+                }
             }
 
             // Load all matched entries
             const results: KnowledgeEntry[] = []
-            for (const id of Array.from(matchedIds).slice(0, limit)) {
-                // Try all types
-                for (const type of ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']) {
-                    const entry = await this.getKnowledge(type, id)
-                    if (entry) {
-                        results.push(entry)
-                        break
+            const selectedIds = Array.from(matchedIds).slice(0, limit)
+
+            if (selectedIds.length === 0) return results
+
+            // Instead of trying every type for every ID (which is selectedIds.length * 6 N+1 calls),
+            // let's create a batch request for all possible keys and parse valid ones.
+            const types = ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']
+            const keysToFetch: string[] = []
+
+            for (const id of selectedIds) {
+                for (const type of types) {
+                    keysToFetch.push(`knowledge:${type}:${id}`)
+                }
+            }
+
+            if (keysToFetch.length > 0) {
+                const dataArray = await redis.mget(...keysToFetch).catch(() => [])
+
+                // Track IDs we've already found to ensure we only get one per ID
+                const foundIds = new Set<string>()
+
+                for (let i = 0; i < dataArray.length; i++) {
+                    const data = dataArray[i]
+                    if (data) {
+                        try {
+                            const entry = JSON.parse(data) as KnowledgeEntry
+                            if (!foundIds.has(entry.id)) {
+                                results.push(entry)
+                                foundIds.add(entry.id)
+                            }
+                        } catch {
+                            // Ignore parse errors
+                        }
                     }
                 }
             }
@@ -94,13 +129,23 @@ export class KnowledgeBaseManager {
             const ids = await redis.smembers(`knowledge:index:${type}`).catch(() => [])
             const entries: KnowledgeEntry[] = []
 
-            for (const id of ids) {
-                const entry = await this.getKnowledge(type, id)
-                if (entry) entries.push(entry)
+            if (ids.length === 0) return entries
+
+            const keys = ids.map(id => `knowledge:${type}:${id}`)
+            const dataArray = await redis.mget(...keys).catch(() => [])
+
+            for (const data of dataArray) {
+                if (data) {
+                    try {
+                        entries.push(JSON.parse(data))
+                    } catch {
+                        // Ignore parse errors to keep matching original behavior
+                    }
+                }
             }
 
             return entries
-        } catch (e) {
+        } catch {
             return []
         }
     }
