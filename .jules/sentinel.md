@@ -14,3 +14,7 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+## 2026-02-15 - XSS via DangerouslySetInnerHTML
+**Vulnerability:** CMS-driven UI sections (`why-smart-motor.tsx`, `about-snippet.tsx`) were rendering user-controlled fields directly via `dangerouslySetInnerHTML` without proper sanitization, leading to potential Cross-Site Scripting (XSS).
+**Learning:** Writing custom regex-based HTML sanitizers is a security anti-pattern and often breaks formatting tags (like `<strong>`, `<b>`) or fails to account for how elements use attributes (e.g., `class` vs `className` in raw HTML vs JSX).
+**Prevention:** Always use established security libraries like `isomorphic-dompurify` configured with an explicit allowlist of tags and attributes to sanitize HTML strings prior to injection.

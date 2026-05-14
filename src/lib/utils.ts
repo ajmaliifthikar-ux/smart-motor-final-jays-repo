@@ -158,3 +158,19 @@ export function getContrastInputClasses(bgColor?: string): { text: string; place
 export function getContrastStyle(bgColor?: string): React.CSSProperties {
   return { color: getContrastTextColor(bgColor ?? '') }
 }
+
+import DOMPurify from 'isomorphic-dompurify'
+
+/**
+ * Safely sanitizes HTML content for `dangerouslySetInnerHTML`.
+ * It uses `isomorphic-dompurify` to prevent XSS attacks while safely
+ * preserving allowable styling tags and CSS classes.
+ */
+export function safeTitle(html: string | undefined | null): string {
+  if (!html) return ''
+
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'span', 'br', 'p', 'div'],
+    ALLOWED_ATTR: ['class', 'className', 'href', 'target', 'rel'],
+  })
+}
