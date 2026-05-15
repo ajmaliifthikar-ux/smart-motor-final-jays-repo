@@ -94,6 +94,8 @@ export function Tooltip({ content, children, position = 'top', className, delay 
       className={cn('relative inline-flex', className)}
       onMouseEnter={!isTouchDevice ? show : undefined}
       onMouseLeave={!isTouchDevice ? hide : undefined}
+      onFocus={!isTouchDevice ? show : undefined}
+      onBlur={!isTouchDevice ? hide : undefined}
       onTouchStart={isTouchDevice ? handleTap : undefined}
     >
       {children}
