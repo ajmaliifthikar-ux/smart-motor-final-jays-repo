@@ -6,19 +6,30 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+// ⚡ Bolt Performance Optimization:
+// Hoisted `Intl.NumberFormat` to module scope.
+// Instantiating `Intl` formatters is computationally expensive.
+// Reusing a single instance avoids overhead during repeated calls.
+const priceFormatter = new Intl.NumberFormat('en-AE', {
+  style: 'currency',
+  currency: 'AED',
+  minimumFractionDigits: 0,
+});
+
 export function formatPrice(price: number): string {
-  return new Intl.NumberFormat('en-AE', {
-    style: 'currency',
-    currency: 'AED',
-    minimumFractionDigits: 0,
-  }).format(price)
+  return priceFormatter.format(price)
 }
 
+// ⚡ Bolt Performance Optimization:
+// Hoisted `Intl.DateTimeFormat` to module scope to avoid
+// expensive instantiation on every function call.
+const dateFormatter = new Intl.DateTimeFormat('en-AE', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+});
+
 export function formatDate(date: Date | string): string {
-  return new Intl.DateTimeFormat('en-AE', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(date))
+  return dateFormatter.format(new Date(date))
 }
 
 export function publicPath(path: string) {
