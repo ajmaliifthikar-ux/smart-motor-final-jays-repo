@@ -78,7 +78,7 @@ export async function POST(req: Request) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'x-notification-key': process.env.NOTIFICATION_SECRET || 'sm-notify-secret',
+                'x-notification-key': process.env.NOTIFICATION_SECRET || '',
             },
             body: JSON.stringify({
                 event: 'booking_new',
