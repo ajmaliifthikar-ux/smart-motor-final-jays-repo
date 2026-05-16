@@ -1,0 +1,3 @@
+## 2024-05-16 - Redis Batch Fetch JSON Parsing Caution
+**Learning:** While refactoring sequential database fetching to batch `mget`, I learned that direct inline parsing (like `JSON.parse`) bypasses abstraction boundaries. Also, `ioredis` returns strings that need `JSON.parse`, whereas `@upstash/redis` automatically parses JSON; checking which client is in use is critical to avoid double-parsing objects.
+**Action:** Always maintain or reuse existing parsing abstraction layers (like calling `getKnowledge` recursively or carefully matching its logic) and be aware of the Redis client in use when deciding whether to `JSON.parse()` the returned batch results.

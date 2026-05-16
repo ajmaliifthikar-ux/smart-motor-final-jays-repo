@@ -54,6 +54,8 @@ export class KnowledgeBaseManager {
 
     /**
      * Search knowledge by keywords
+     * ⚡ Bolt: Optimized N+1 Redis queries using batch redis.mget()
+     * Expected impact: O(1) Redis roundtrips instead of O(N * T) where N is limit and T is types
      */
     async searchKnowledge(query: string, limit: number = 5): Promise<KnowledgeEntry[]> {
         try {
@@ -66,19 +68,44 @@ export class KnowledgeBaseManager {
                 ids.forEach(id => matchedIds.add(id))
             }
 
-            // Load all matched entries
+            // Load all matched entries using mget to prevent N+1 queries
+            const targetIds = Array.from(matchedIds).slice(0, limit)
+            if (targetIds.length === 0) return []
+
+            const types = ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']
+
+            // Build all possible keys for these IDs across all types
+            const keysToFetch: string[] = []
+            for (const id of targetIds) {
+                for (const type of types) {
+                    keysToFetch.push(`knowledge:${type}:${id}`)
+                }
+            }
+
+            // Fetch all potentially matching keys in a single batch request
             const results: KnowledgeEntry[] = []
-            for (const id of Array.from(matchedIds).slice(0, limit)) {
-                // Try all types
-                for (const type of ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']) {
-                    const entry = await this.getKnowledge(type, id)
-                    if (entry) {
-                        results.push(entry)
-                        break
+            if (keysToFetch.length > 0) {
+                const data = await redis.mget(keysToFetch)
+
+                // Keep track of which IDs we've found to respect the limit and avoid duplicates across types if that edge case exists
+                const foundIds = new Set<string>()
+
+                for (const item of data) {
+                    if (item) {
+                        try {
+                            const entry: KnowledgeEntry = JSON.parse(item)
+                            if (!foundIds.has(entry.id)) {
+                                foundIds.add(entry.id)
+                                results.push(entry)
+                            }
+                        } catch (e) {
+                            console.error('Failed to parse knowledge entry from batch:', e)
+                        }
                     }
                 }
             }
 
+            // Ensure we return sorted by the original matched IDs order if needed, but for now just returning them
             return results
         } catch (e) {
             console.error('Search Knowledge error:', e)
@@ -88,15 +115,29 @@ export class KnowledgeBaseManager {
 
     /**
      * Get all knowledge of a specific type
+     * ⚡ Bolt: Optimized N+1 Redis queries using batch redis.mget()
+     * Expected impact: O(1) Redis roundtrips instead of O(N) where N is number of entries
      */
     async getKnowledgeByType(type: string): Promise<KnowledgeEntry[]> {
         try {
             const ids = await redis.smembers(`knowledge:index:${type}`).catch(() => [])
+
+            if (ids.length === 0) return []
+
+            const keys = ids.map(id => `knowledge:${type}:${id}`)
             const entries: KnowledgeEntry[] = []
 
-            for (const id of ids) {
-                const entry = await this.getKnowledge(type, id)
-                if (entry) entries.push(entry)
+            // Fetch all entries in a single network request
+            const data = await redis.mget(keys)
+
+            for (const item of data) {
+                if (item) {
+                    try {
+                        entries.push(JSON.parse(item))
+                    } catch (e) {
+                        console.error('Failed to parse knowledge entry from batch:', e)
+                    }
+                }
             }
 
             return entries
