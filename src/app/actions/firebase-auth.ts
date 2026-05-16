@@ -27,7 +27,7 @@ export async function setSessionCookie(idToken: string) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'x-notification-key': process.env.NOTIFICATION_SECRET || 'sm-notify-secret',
+                'x-notification-key': process.env.NOTIFICATION_SECRET || '',
             },
             body: JSON.stringify({
                 event: 'login',
