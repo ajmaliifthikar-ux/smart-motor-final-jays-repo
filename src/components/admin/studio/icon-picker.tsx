@@ -33,6 +33,7 @@ export function IconPicker({ selectedIcon, onSelect }: IconPickerProps) {
       <DialogTrigger asChild>
         <button 
           type="button"
+          aria-label={selectedIcon ? `Selected icon: ${selectedIcon.replace('.png', '')}` : 'Pick an icon'}
           className="w-20 h-20 rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 hover:border-[#E62329] hover:bg-[#E62329]/5 transition-all group"
         >
           {selectedIcon ? (
@@ -58,12 +59,13 @@ export function IconPicker({ selectedIcon, onSelect }: IconPickerProps) {
             Icon <span className="text-[#E62329]">Library</span>
           </DialogTitle>
           <div className="relative mt-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} aria-hidden="true" />
             <input
               placeholder="Search icons..."
+              aria-label="Search icons"
               className="w-full bg-gray-50 border-none rounded-2xl py-3 pl-10 pr-4 text-xs font-bold uppercase tracking-widest focus:ring-2 focus:ring-[#E62329]/20 transition-all outline-none"
               value={search}
-              onChange={(e) => setSearch(search)} // Fixed: typo
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
         </DialogHeader>
@@ -72,6 +74,7 @@ export function IconPicker({ selectedIcon, onSelect }: IconPickerProps) {
           {filteredIcons.map((icon) => (
             <button
               key={icon}
+              aria-label={`Select icon: ${icon.replace('.png', '')}`}
               onClick={() => { onSelect(icon); setIsOpen(false) }}
               className={cn(
                 "aspect-square rounded-2xl border-2 flex items-center justify-center p-4 transition-all hover:scale-110",
