@@ -22,23 +22,28 @@ export async function setSessionCookie(idToken: string) {
         const ip = headerStore.get('x-forwarded-for') || headerStore.get('x-real-ip') || 'unknown'
         const ua = headerStore.get('user-agent') || 'unknown'
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://smartmotorlatest.vercel.app'
+        const notificationSecret = process.env.NOTIFICATION_SECRET
 
-        fetch(`${appUrl}/api/notifications/send`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-notification-key': process.env.NOTIFICATION_SECRET || 'sm-notify-secret',
-            },
-            body: JSON.stringify({
-                event: 'login',
-                data: {
-                    email: decoded?.email || 'unknown',
-                    time: new Date().toLocaleString('en-AE', { timeZone: 'Asia/Dubai' }),
-                    ip,
-                    device: ua.length > 80 ? ua.slice(0, 80) + '…' : ua,
+        if (notificationSecret) {
+            fetch(`${appUrl}/api/notifications/send`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-notification-key': notificationSecret,
                 },
-            }),
-        }).catch(() => {}) // Non-blocking — never fail the login
+                body: JSON.stringify({
+                    event: 'login',
+                    data: {
+                        email: decoded?.email || 'unknown',
+                        time: new Date().toLocaleString('en-AE', { timeZone: 'Asia/Dubai' }),
+                        ip,
+                        device: ua.length > 80 ? ua.slice(0, 80) + '…' : ua,
+                    },
+                }),
+            }).catch(() => {}) // Non-blocking — never fail the login
+        } else {
+            console.warn('NOTIFICATION_SECRET is missing. Login notification not sent.')
+        }
     } catch {}
 
     return { success: true }
