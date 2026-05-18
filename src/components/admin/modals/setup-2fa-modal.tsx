@@ -176,6 +176,7 @@ export default function Setup2FAModal({ isOpen, onClose, onSuccess }: Setup2FAMo
                     <span className="flex-1 break-all">{setupData.secret}</span>
                     <button
                       onClick={handleCopySecret}
+                      aria-label="Copy secret"
                       className="flex-shrink-0 p-1 hover:bg-gray-200 rounded"
                     >
                       {copied ? (
