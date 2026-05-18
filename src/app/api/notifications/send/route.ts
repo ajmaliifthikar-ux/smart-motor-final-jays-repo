@@ -103,7 +103,10 @@ export async function POST(req: NextRequest) {
   try {
     // Internal requests can pass a special server-side key
     const serverKey = req.headers.get('x-notification-key')
-    const isServerCall = serverKey === (process.env.NOTIFICATION_SECRET || 'sm-notify-secret')
+    const notificationSecret = process.env.NOTIFICATION_SECRET
+
+    // Disallow server call if notificationSecret is completely missing
+    const isServerCall = notificationSecret ? serverKey === notificationSecret : false
 
     if (!isServerCall) {
       // For admin-triggered notifications, verify session
