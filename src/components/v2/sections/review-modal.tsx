@@ -87,7 +87,7 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
                     <h3 className="text-xl font-black uppercase tracking-tight text-[#121212]">Share Your Experience</h3>
                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Direct Post to Google & Facebook</p>
                   </div>
-                  <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                  <button onClick={onClose} aria-label="Close modal" className="p-2 hover:bg-gray-100 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-[#121212] focus-visible:ring-offset-2">
                     <X size={20} />
                   </button>
                 </div>
@@ -96,14 +96,17 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
                   {/* Rating */}
                   <div className="flex flex-col items-center justify-center py-4 bg-gray-50 rounded-3xl border border-gray-100">
                     <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3">Overall Rating</span>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2" role="radiogroup" aria-label="Rating">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
                           key={star}
+                          role="radio"
+                          aria-checked={rating === star}
+                          aria-label={`${star} star${star > 1 ? 's' : ''}`}
                           onMouseEnter={() => setHover(star)}
                           onMouseLeave={() => setHover(0)}
                           onClick={() => setRating(star)}
-                          className="transition-transform active:scale-90 hover:scale-110"
+                          className="transition-transform active:scale-90 hover:scale-110 focus-visible:ring-2 focus-visible:ring-[#121212] focus-visible:ring-offset-2 rounded-full"
                         >
                           <Star
                             size={32}
