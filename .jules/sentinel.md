@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2026-02-15: Missing Authentication on Secret API Endpoint
+- **Vulnerability:** The endpoint `/api/ai/get-key` was exposing the `GEMINI_API_KEY` to any client without requiring any authentication.
+- **Learning:** API endpoints serving sensitive environmental secrets to client-side code must enforce the same authentication constraints as other user-specific data endpoints.
+- **Prevention:** Always verify a valid `user-token` using `adminAuth.verifyIdToken(token)` before returning backend secrets to the frontend.
