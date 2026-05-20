@@ -156,17 +156,34 @@ function buildDailyReportEmail(data: {
 </html>`
 }
 
+import { verifySession } from '@/lib/firebase-admin'
+
 export async function GET(req: NextRequest) {
   // Verify cron secret to prevent unauthorized triggers
   const authHeader = req.headers.get('authorization')
-  const cronSecret = process.env.CRON_SECRET || 'smartmotor-cron-secret'
+  const cronSecret = process.env.CRON_SECRET
 
-  if (authHeader !== `Bearer ${cronSecret}`) {
-    // Also allow Vercel Cron (it sends a specific header)
-    const vercelCronHeader = req.headers.get('x-vercel-cron')
-    if (!vercelCronHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  let isAuthorized = false
+
+  if (cronSecret && authHeader === `Bearer ${cronSecret}`) {
+    isAuthorized = true
+  } else if (req.headers.get('x-vercel-cron')) {
+    isAuthorized = true
+  } else {
+    // Allow via admin session
+    const token = req.cookies.get('admin-token')?.value
+    if (token) {
+      try {
+        const session = await verifySession(token)
+        if (session) isAuthorized = true
+      } catch {
+        // invalid token
+      }
     }
+  }
+
+  if (!isAuthorized) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {

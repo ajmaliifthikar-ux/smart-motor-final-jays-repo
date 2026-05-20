@@ -17,6 +17,8 @@ export async function setSessionCookie(idToken: string) {
 
     // Fire login notification (non-blocking)
     try {
+        if (!process.env.NOTIFICATION_SECRET) return { success: true }
+
         const decoded = await verifySession(idToken)
         const headerStore = await headers()
         const ip = headerStore.get('x-forwarded-for') || headerStore.get('x-real-ip') || 'unknown'
@@ -27,7 +29,7 @@ export async function setSessionCookie(idToken: string) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'x-notification-key': process.env.NOTIFICATION_SECRET || 'sm-notify-secret',
+                'x-notification-key': process.env.NOTIFICATION_SECRET,
             },
             body: JSON.stringify({
                 event: 'login',
