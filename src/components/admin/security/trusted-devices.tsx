@@ -20,6 +20,12 @@ interface TrustedDevicesProps {
   onDevicesChanged: () => void
 }
 
+// ⚡ Bolt: Cache local timeZone and formatters to avoid Intl evaluation inside map
+const localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+const dateFormatter = new Intl.DateTimeFormat(undefined, { timeZone: localTimeZone })
+const fullDateFormatter = new Intl.DateTimeFormat(undefined)
+const timeFormatter = new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit' })
+
 export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDevicesProps) {
   const [isLoading, setIsLoading] = useState(false)
 
@@ -100,17 +106,12 @@ export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDev
                     </div>
                     <p className="text-sm text-gray-500 mt-1">IP: {device.ipAddress}</p>
                     <p className="text-xs text-gray-400 mt-2">
-                      Added on {new Date(device.createdAt).toLocaleDateString()}{' '}
-                      {new Date(device.createdAt).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
+                      Added on {fullDateFormatter.format(new Date(device.createdAt))}{' '}
+                      {timeFormatter.format(new Date(device.createdAt))}
                     </p>
                     <p className="text-xs text-gray-400">
                       Last used{' '}
-                      {new Date(device.lastUsedAt).toLocaleDateString(undefined, {
-                        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                      })}
+                      {dateFormatter.format(new Date(device.lastUsedAt))}
                     </p>
                   </div>
                 </div>
