@@ -14,3 +14,7 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+## 2024-05-24 - Hardcoded fallback secret for admin setup
+**Vulnerability:** A hardcoded fallback value (`'admin-setup-secret'`) was used in `src/app/api/admin/invitations/send-bulk/route.ts` if the environment variable `ADMIN_SETUP_SECRET` was missing. This allows an unauthorized user to guess the secret and perform an action intended for authorized admins.
+**Learning:** Fallback values should not be used for secrets. If a secret is missing, the application should fail securely.
+**Prevention:** Remove fallback secrets and ensure environment variables are properly configured.
