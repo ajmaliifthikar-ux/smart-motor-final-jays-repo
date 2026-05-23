@@ -85,6 +85,10 @@ const STATUS_CONFIG: Record<InvoiceStatus, { label: string; color: string; bg: s
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+// Cache Intl formatters to avoid expensive instantiation on every call (⚡ Bolt optimization)
+const aedFormatter = new Intl.NumberFormat('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const dateFormatter = new Intl.DateTimeFormat('en-AE', { day: '2-digit', month: 'short', year: 'numeric' })
+
 function uid() {
   return Math.random().toString(36).slice(2, 9)
 }
@@ -100,12 +104,12 @@ function dueDateISO(days = 30) {
 }
 
 function formatAED(n: number) {
-  return new Intl.NumberFormat('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n)
+  return aedFormatter.format(n)
 }
 
 function formatDate(iso: string) {
   if (!iso) return '—'
-  return new Intl.DateTimeFormat('en-AE', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(iso + 'T00:00:00'))
+  return dateFormatter.format(new Date(iso + 'T00:00:00'))
 }
 
 function defaultItem(): LineItem {
