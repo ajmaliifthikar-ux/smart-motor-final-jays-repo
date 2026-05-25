@@ -159,9 +159,9 @@ function buildDailyReportEmail(data: {
 export async function GET(req: NextRequest) {
   // Verify cron secret to prevent unauthorized triggers
   const authHeader = req.headers.get('authorization')
-  const cronSecret = process.env.CRON_SECRET || 'smartmotor-cron-secret'
+  const cronSecret = process.env.CRON_SECRET
 
-  if (authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     // Also allow Vercel Cron (it sends a specific header)
     const vercelCronHeader = req.headers.get('x-vercel-cron')
     if (!vercelCronHeader) {
