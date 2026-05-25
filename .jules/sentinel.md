@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2026-02-15: Hardcoded Secret Fallbacks
+- **Vulnerability:** Found hardcoded fallback values for sensitive secrets (`admin-setup-secret`, `smartmotor-cron-secret`, `sm-notify-secret`) in API routes when environment variables were missing.
+- **Learning:** Using predictable, hardcoded fallbacks for secrets exposes the system to unauthorized access and defeats the purpose of secret keys if the environment configuration is accidentally missing.
+- **Prevention:** Always enforce explicit environment variable configuration for secrets and implement fail-closed logic (e.g., rejecting unauthorized requests) if required secrets are not defined. Never use hardcoded fallback strings for production secrets.
