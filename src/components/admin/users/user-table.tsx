@@ -90,7 +90,7 @@ export function UserTable({ users }: { users: User[] }) {
                                 {formatDate(user.createdAt)}
                             </td>
                             <td className="px-6 py-4 text-right">
-                                <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
                                     <EditUserModal user={user} />
 
                                     <Button
@@ -98,6 +98,7 @@ export function UserTable({ users }: { users: User[] }) {
                                         disabled={loadingId === user.id}
                                         variant="outline"
                                         className="h-8 rounded-full text-xs hover:bg-[#121212] hover:text-white border-gray-200"
+                                        aria-label={user.role === 'ADMIN' ? `Demote ${user.name}` : `Promote ${user.name}`}
                                     >
                                         {user.role === 'ADMIN' ? 'Demote' : 'Promote'}
                                     </Button>
@@ -105,6 +106,7 @@ export function UserTable({ users }: { users: User[] }) {
                                         onClick={() => handleDelete(user.id)}
                                         disabled={loadingId === user.id}
                                         className="h-8 w-8 rounded-full bg-red-50 text-red-600 hover:bg-red-600 hover:text-white p-0 flex items-center justify-center transition-colors"
+                                        aria-label={`Delete ${user.name}`}
                                     >
                                         <Trash2 className="h-4 w-4" />
                                     </Button>
