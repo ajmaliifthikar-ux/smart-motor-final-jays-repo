@@ -63,7 +63,7 @@ export function EditUserModal({ user }: { user: User }) {
     return (
         <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger asChild>
-                <Button variant="ghost" className="h-8 w-8 rounded-full p-0">
+                <Button variant="ghost" className="h-8 w-8 rounded-full p-0" aria-label="Edit user">
                     <Pencil className="h-4 w-4" />
                 </Button>
             </Dialog.Trigger>
