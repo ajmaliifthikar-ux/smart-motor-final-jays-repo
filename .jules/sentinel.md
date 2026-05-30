@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2026-05-30 - Fix Google Places API Key Exposure
+**Vulnerability:** The backend API key `GOOGLE_PLACES_API_KEY` was being directly appended to Google Maps photo URLs (`photoUrls` array) and returned to the frontend via the `/api/google/reviews` endpoint. This exposed a critical backend secret directly to client-side code and user browsers.
+**Learning:** Third-party APIs that require backend keys for image fetching (like Google Places photos) must be proxied through the server rather than exposing the direct URL and key to the frontend.
+**Prevention:** Implement a server-side proxy endpoint (e.g., `/api/google/photo`) that takes necessary parameters (like a photo reference) and securely appends the API key backend-side before making the request and forwarding the response buffer to the client.

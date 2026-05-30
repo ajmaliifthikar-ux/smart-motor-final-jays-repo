@@ -54,8 +54,9 @@ export async function GET() {
         const place = data.result
 
         // Build photo URLs (max 6)
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || ''
         const photoUrls: string[] = (place.photos || []).slice(0, 6).map((p: { photo_reference: string }) =>
-            `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${p.photo_reference}&key=${API_KEY}`
+            `${baseUrl}/api/google/photo?maxwidth=800&ref=${p.photo_reference}`
         )
 
         // Map Google reviews
