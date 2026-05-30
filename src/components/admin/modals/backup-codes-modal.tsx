@@ -88,6 +88,7 @@ export default function BackupCodesModal({
                         navigator.clipboard.writeText(code)
                         toast.success('Code copied')
                       }}
+                      aria-label="Copy backup code"
                       className="text-gray-400 hover:text-gray-600"
                     >
                       <Copy className="w-3 h-3" />

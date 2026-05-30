@@ -33,6 +33,7 @@ export function IconPicker({ selectedIcon, onSelect }: IconPickerProps) {
       <DialogTrigger asChild>
         <button 
           type="button"
+          aria-label="Open icon picker"
           className="w-20 h-20 rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 hover:border-[#E62329] hover:bg-[#E62329]/5 transition-all group"
         >
           {selectedIcon ? (
@@ -73,6 +74,7 @@ export function IconPicker({ selectedIcon, onSelect }: IconPickerProps) {
             <button
               key={icon}
               onClick={() => { onSelect(icon); setIsOpen(false) }}
+              aria-label={`Select ${icon} icon`}
               className={cn(
                 "aspect-square rounded-2xl border-2 flex items-center justify-center p-4 transition-all hover:scale-110",
                 selectedIcon === icon ? "border-[#E62329] bg-[#E62329]/5" : "border-gray-50 bg-gray-50/30 hover:border-gray-200"
