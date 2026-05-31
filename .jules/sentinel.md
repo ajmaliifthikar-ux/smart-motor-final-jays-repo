@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2026-02-16: Hardcoded API Key & Application Startup Crashes
+- **Vulnerability:** The Google Gemini API key was hardcoded as a fallback string (`process.env.GEMINI_API_KEY || 'AIzaSy...'`) and instantiated globally at the module level.
+- **Learning:** Hardcoding secrets exposes them to source control. However, when replacing them with strict environment variable checks, if the global instantiation is kept (e.g. `const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)`), the application will instantly crash on startup if the key is missing in any environment (like CI/CD or local dev) because the module is evaluated immediately upon import.
+- **Prevention:** Always remove hardcoded secrets. When enforcing environment variable presence, wrap the instantiation in lazy initialization blocks or move it inside the request handlers/class methods. This ensures the application can still boot and only fails securely when the specific protected feature is actively requested.
