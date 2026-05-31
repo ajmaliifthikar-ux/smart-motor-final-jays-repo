@@ -298,6 +298,9 @@ export function LiveChatPanel({
           <div
             ref={scrollRef}
             className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#FAFAF9]"
+            role="log"
+            aria-live="polite"
+            aria-atomic="false"
           >
             {messages.map((msg, idx) => (
               <motion.div
@@ -404,6 +407,7 @@ export function LiveChatPanel({
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Ask me anything..."
+                aria-label="Ask me anything..."
                 className="flex-1 rounded-full border-gray-300 bg-gray-50 placeholder-gray-500 focus:bg-white focus:border-[#E62329]"
                 disabled={isLoading}
               />

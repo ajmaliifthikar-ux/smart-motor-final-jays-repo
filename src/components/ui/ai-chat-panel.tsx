@@ -150,7 +150,13 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
           </div>
 
           {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar">
+          <div
+            ref={scrollRef}
+            className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar"
+            role="log"
+            aria-live="polite"
+            aria-atomic="false"
+          >
             {messages.map((msg) => (
               <div key={msg.id} className="space-y-3">
                 <motion.div
@@ -199,6 +205,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                                 <input 
                                     autoFocus
                                     placeholder={msg.widget.placeholder || `Enter ${msg.widget.type}...`}
+                                    aria-label={msg.widget.placeholder || `Enter ${msg.widget.type}...`}
                                     className="w-full bg-white border-gray-200 rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-[#E62329] transition-all"
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') handleSend((e.target as HTMLInputElement).value)
@@ -271,6 +278,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                   if (e.key === 'Enter') handleSend()
                 }}
                 placeholder="Ask anything..."
+                aria-label="Ask anything..."
                 className="flex-1 text-xs font-bold bg-transparent border-0 py-2 focus:ring-0 placeholder:text-gray-300"
                 disabled={isLoading || isVoiceMode}
               />
