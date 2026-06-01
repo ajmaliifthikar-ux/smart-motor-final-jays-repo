@@ -13,7 +13,7 @@ The Smart Motor platform now includes a fully functional bidirectional audio str
 ```
 Name: gemini-2.5-flash-native-audio-preview-12-2025
 Type: Multimodal (Audio + Text)
-API Key: AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk
+API Key: <REDACTED>
 Status: Active & Verified
 ```
 
@@ -68,7 +68,7 @@ src/
     └── use-native-audio.ts         (React hook)
 
 .env.local
-└── GEMINI_API_KEY=AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk
+└── GEMINI_API_KEY=<REDACTED>
 ```
 
 ---
@@ -400,7 +400,7 @@ function ServiceVoiceAssistant() {
 ### Vercel Setup
 1. Add to environment variables:
    ```
-   GEMINI_API_KEY=AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk
+   GEMINI_API_KEY=<REDACTED>
    ```
 
 2. Deploy with:
