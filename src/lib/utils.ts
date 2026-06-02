@@ -6,19 +6,24 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+// Cache Intl formatters to prevent garbage collection and parsing overhead during render
+const aedPriceFormatter = new Intl.NumberFormat('en-AE', {
+  style: 'currency',
+  currency: 'AED',
+  minimumFractionDigits: 0,
+})
+
 export function formatPrice(price: number): string {
-  return new Intl.NumberFormat('en-AE', {
-    style: 'currency',
-    currency: 'AED',
-    minimumFractionDigits: 0,
-  }).format(price)
+  return aedPriceFormatter.format(price)
 }
 
+const mediumDateFormatter = new Intl.DateTimeFormat('en-AE', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+})
+
 export function formatDate(date: Date | string): string {
-  return new Intl.DateTimeFormat('en-AE', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(date))
+  return mediumDateFormatter.format(new Date(date))
 }
 
 export function publicPath(path: string) {
