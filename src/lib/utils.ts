@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import type React from "react"
+import React from "react"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -157,4 +157,52 @@ export function getContrastInputClasses(bgColor?: string): { text: string; place
  */
 export function getContrastStyle(bgColor?: string): React.CSSProperties {
   return { color: getContrastTextColor(bgColor ?? '') }
+}
+
+/**
+ * Safely parse and reconstruct string titles containing safe HTML like <br /> and <span>.
+ * This prevents XSS attacks when rendering CMS content by stripping out dangerous tags like <script>.
+ */
+export function safeTitle(htmlString: string): (string | React.ReactElement)[] {
+    if (!htmlString) return [];
+
+    // We split by tags we want to allow, capturing the tags themselves to reconstruct them
+    const tokens = htmlString.split(/(<br\s*\/?>|<span[^>]*>|<\/span>)/gi);
+
+    const elements: (string | React.ReactElement)[] = [];
+    let keyCounter = 0;
+
+    // Using a stack to handle nested or consecutive spans properly
+    const activeSpans: { className: string }[] = [];
+
+    for (const token of tokens) {
+        if (!token) continue;
+
+        const lowerToken = token.toLowerCase();
+
+        if (lowerToken.startsWith('<br')) {
+            elements.push(React.createElement('br', { key: `br-${keyCounter++}` }));
+        } else if (lowerToken.startsWith('<span')) {
+            // Extract className if present
+            const classMatch = token.match(/className=["']([^"']+)["']/i) || token.match(/class=["']([^"']+)["']/i);
+            const className = classMatch ? classMatch[1] : '';
+            activeSpans.push({ className });
+        } else if (lowerToken === '</span>') {
+            activeSpans.pop();
+        } else {
+            // Text node
+            if (activeSpans.length > 0) {
+                // Wrap text in the currently active span
+                const currentSpan = activeSpans[activeSpans.length - 1];
+                elements.push(React.createElement('span', {
+                    key: `span-${keyCounter++}`,
+                    className: currentSpan.className
+                }, token));
+            } else {
+                elements.push(token);
+            }
+        }
+    }
+
+    return elements;
 }

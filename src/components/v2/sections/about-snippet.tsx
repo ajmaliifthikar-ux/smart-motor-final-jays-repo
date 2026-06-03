@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { ArrowRightIcon } from 'lucide-react'
+import DOMPurify from 'isomorphic-dompurify'
 import { cn } from '@/lib/utils'
 
 interface AboutSnippetProps {
@@ -43,7 +44,7 @@ export function AboutSnippet({ cmsData }: AboutSnippetProps) {
                             "text-4xl font-black tracking-tighter uppercase leading-[0.9] mb-8",
                             theme === 'dark' ? "text-white" : "text-[#121212]"
                         )}
-                        dangerouslySetInnerHTML={{ __html: title }}
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(title, { ALLOWED_TAGS: ['br', 'span', 'b', 'strong', 'i', 'em'], ALLOWED_ATTR: ['class', 'className'] }) }}
                     />
 
                     <div className={cn(
