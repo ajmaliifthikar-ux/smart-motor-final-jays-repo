@@ -92,15 +92,27 @@ export class KnowledgeBaseManager {
     async getKnowledgeByType(type: string): Promise<KnowledgeEntry[]> {
         try {
             const ids = await redis.smembers(`knowledge:index:${type}`).catch(() => [])
-            const entries: KnowledgeEntry[] = []
+            if (ids.length === 0) return []
 
-            for (const id of ids) {
-                const entry = await this.getKnowledge(type, id)
-                if (entry) entries.push(entry)
+            // ⚡ Bolt: Use mget to fetch all entries in a single network request
+            // Replaces N+1 `this.getKnowledge()` calls
+            const keys = ids.map(id => `knowledge:${type}:${id}`)
+            const data = await redis.mget(...keys)
+
+            const entries: KnowledgeEntry[] = []
+            for (const item of data) {
+                if (item) {
+                    try {
+                        entries.push(JSON.parse(item))
+                    } catch (e) {
+                        console.error('Failed to parse knowledge entry:', e)
+                    }
+                }
             }
 
             return entries
         } catch (e) {
+            console.error('getKnowledgeByType error:', e)
             return []
         }
     }
