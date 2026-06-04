@@ -102,6 +102,9 @@ export function Navbar() {
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className={cn('lg:hidden p-2 rounded-lg text-[#121212]')}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-menu"
           >
             {isMobileMenuOpen ? <XIcon size={24} /> : <MenuIcon size={24} />}
           </button>
@@ -109,7 +112,7 @@ export function Navbar() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden fixed inset-0 top-20 z-40 bg-black/95 backdrop-blur-xl overflow-y-auto">
+          <div id="mobile-menu" className="lg:hidden fixed inset-0 top-20 z-40 bg-black/95 backdrop-blur-xl overflow-y-auto">
             <div className="mt-3 pb-4 border-t border-[#ECECEA] p-4 max-w-5xl mx-auto">
             <div className="flex flex-col gap-1">
               {navLinks.map((link) => (
