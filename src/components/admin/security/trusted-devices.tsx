@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge'
 import { AlertCircle, Smartphone, Monitor, Laptop, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 
+const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
 interface Device {
   id: string
   name: string
@@ -109,7 +111,7 @@ export default function TrustedDevices({ devices, onDevicesChanged }: TrustedDev
                     <p className="text-xs text-gray-400">
                       Last used{' '}
                       {new Date(device.lastUsedAt).toLocaleDateString(undefined, {
-                        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        timeZone: userTimeZone,
                       })}
                     </p>
                   </div>
