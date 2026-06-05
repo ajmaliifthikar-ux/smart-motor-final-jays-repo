@@ -79,8 +79,9 @@ export function EmergencyFAB() {
                         <Tooltip content={fab.label} position="left">
                             <button
                                 onClick={fab.onClick}
+                                aria-label={fab.label}
                                 className={cn(
-                                    "w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 relative overflow-hidden",
+                                    "w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-950",
                                     fab.color,
                                     fab.textColor,
                                     fab.borderColor && `border ${fab.borderColor}`,
@@ -119,7 +120,11 @@ export function EmergencyFAB() {
                             exit={{ scale: 0.9, y: 40 }}
                             className="bg-white w-full max-w-4xl h-[80vh] rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row relative"
                         >
-                            <button onClick={() => setShowTowFlow(false)} className="absolute top-6 right-6 z-50 p-2 bg-white rounded-full hover:bg-gray-100 transition-colors shadow-md">
+                            <button
+                                onClick={() => setShowTowFlow(false)}
+                                aria-label="Close towing interface"
+                                className="absolute top-6 right-6 z-50 p-2 bg-white rounded-full hover:bg-gray-100 transition-colors shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950"
+                            >
                                 <X size={20} />
                             </button>
                             {/* ... (Existing Tow UI Logic simplified/preserved if needed, creating a placeholder for now to save space as user focused on FAB redesign. 
