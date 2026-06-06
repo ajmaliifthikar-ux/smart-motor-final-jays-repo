@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2026-02-15 - Implicit User Enumeration & IDOR in Booking API
+**Vulnerability:** Unauthenticated users could associate bookings with any existing user account by simply providing their email address in the request body.
+**Learning:** Never trust client-provided email addresses to link resources to existing user accounts without authentication, as this exposes user existence and allows unauthorized data association.
+**Prevention:** Always use authenticated session data (e.g., await auth()) to identify the user for resource linking.
