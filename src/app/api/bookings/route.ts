@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server'
-import { getUserByEmail, createBooking } from '@/lib/firebase-db'
+import { createBooking } from '@/lib/firebase-db'
 import { getServiceSlots } from '@/lib/booking-utils'
 import { z } from 'zod'
 import { traceIntegration } from '@/lib/diagnostics'
 import { Timestamp } from 'firebase/firestore'
+import { auth } from '@/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -46,10 +47,10 @@ export async function POST(req: Request) {
         // 2. Proceed with Booking
         let userId: string | null = null
 
-        // Try to link to existing user via Firebase
-        const existingUser = await getUserByEmail(data.email)
-        if (existingUser) {
-            userId = existingUser.id
+        // Try to link to existing user via Firebase securely using session
+        const session = await auth()
+        if (session?.user?.id) {
+            userId = session.user.id
         }
 
         const bookingData = await traceIntegration(
