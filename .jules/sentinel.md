@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2026-06-08 - Remove Hardcoded AIza API Keys and Avoid Top-Level Client Instantiation
+**Vulnerability:** A hardcoded Gemini API key (`AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk`) was being used as a fallback across multiple files, exposing sensitive credentials. Additionally, top-level instantiations of the `GoogleGenerativeAI` client using `process.env.GEMINI_API_KEY` without fallbacks would cause application startup crashes if the environment variable was missing.
+**Learning:** Hardcoded secrets in source code present critical security risks, and top-level client initialization makes the application brittle by crashing at startup rather than during specific request execution.
+**Prevention:** Avoid hardcoded secrets and environment variable fallbacks in the codebase. Always enforce explicit environment variable configuration using lazy initialization inside class constructors, methods, or request handlers, ensuring fail-closed logic if the required secrets are not defined.
