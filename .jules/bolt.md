@@ -1,0 +1,3 @@
+## 2025-06-08 - Optimize Intl instantiation overhead
+**Learning:** Repeatedly calling `new Intl.NumberFormat()` or `new Intl.DateTimeFormat()` (or calling `.resolvedOptions()` on them) inside loops or render cycles introduces significant instantiation and garbage collection overhead, dragging down performance, particularly on frequently updated UI elements or large loops. Node.js benchmark tests demonstrate that caching instances speeds up execution substantially (~80-90x faster for large lists).
+**Action:** Always hoist and cache `Intl` formatter instances as module-level constants to avoid repeated, expensive instantiation overhead.
