@@ -1,8 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { aiMemory } from './ai-memory'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
-
 export interface LiveSessionConfig {
   userId: string
   conversationId: string
@@ -26,8 +24,14 @@ export class GeminiLiveSession {
   private config: LiveSessionConfig
   private tokenCount = 0
   private systemPrompt: string
+  private genAI: GoogleGenerativeAI
 
   constructor(config: LiveSessionConfig) {
+    const apiKey = process.env.GEMINI_API_KEY
+    if (!apiKey) {
+      throw new Error('GEMINI_API_KEY is not defined')
+    }
+    this.genAI = new GoogleGenerativeAI(apiKey)
     this.config = config
     this.systemPrompt = config.systemPrompt || this.getDefaultSystemPrompt()
   }
@@ -87,7 +91,7 @@ Customer: ${userMessage}
 Respond helpfully and professionally:
 `
 
-      const model = genAI.getGenerativeModel({
+      const model = this.genAI.getGenerativeModel({
         model: 'gemini-2.5-flash',
       })
 
