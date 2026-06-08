@@ -446,6 +446,7 @@ export function BookingForm() {
                   type="button" 
                   variant="secondary" 
                   onClick={prevStep} 
+                  aria-label="Previous step"
                   className="rounded-full h-14 w-14 p-0 border-2 border-gray-100 hover:bg-[#121212] hover:text-white transition-all duration-500"
                 >
                   <ChevronLeft size={24} />
