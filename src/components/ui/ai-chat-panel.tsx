@@ -144,7 +144,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
+            <button aria-label="Close chat" onClick={onClose} className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -277,6 +277,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
               
               <div className="flex items-center gap-1">
                 <button
+                    aria-label={isVoiceMode ? "Stop voice mode" : "Start voice mode"}
                     onClick={isVoiceMode ? stopVoiceMode : startVoiceMode}
                     className={cn(
                     "w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-500 group",

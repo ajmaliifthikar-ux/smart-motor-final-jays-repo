@@ -131,6 +131,7 @@ export function ConversationManager({
                         {conv.title || `Conversation ${conv.id.slice(-6)}`}
                       </h4>
                       <button
+                        aria-label="Delete conversation"
                         onClick={(e) => {
                           e.stopPropagation()
                           handleDelete(conv.id)
