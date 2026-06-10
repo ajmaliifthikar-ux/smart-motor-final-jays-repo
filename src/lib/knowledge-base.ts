@@ -60,21 +60,41 @@ export class KnowledgeBaseManager {
             const keywords = query.toLowerCase().split(' ')
             const matchedIds = new Set<string>()
 
-            // Find entries matching keywords
-            for (const keyword of keywords) {
-                const ids = await redis.smembers(`knowledge:keyword:${keyword}`).catch(() => [])
-                ids.forEach(id => matchedIds.add(id))
-            }
+            // Find entries matching keywords in parallel
+            // ⚡ Bolt: Fetch all keyword sets in parallel instead of sequentially
+            const allIds = await Promise.all(
+                keywords.map(keyword => redis.smembers(`knowledge:keyword:${keyword}`).catch(() => []))
+            )
+            allIds.forEach(ids => ids.forEach(id => matchedIds.add(id)))
 
             // Load all matched entries
             const results: KnowledgeEntry[] = []
-            for (const id of Array.from(matchedIds).slice(0, limit)) {
-                // Try all types
-                for (const type of ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']) {
-                    const entry = await this.getKnowledge(type, id)
-                    if (entry) {
-                        results.push(entry)
-                        break
+            const targetIds = Array.from(matchedIds).slice(0, limit)
+            if (targetIds.length === 0) return []
+
+            const types = ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']
+
+            // ⚡ Bolt: Use pipeline/mget to fetch all possible combinations instead of N+1 sequential getKnowledge calls
+            const keysToFetch: string[] = []
+            for (const id of targetIds) {
+                for (const type of types) {
+                    keysToFetch.push(`knowledge:${type}:${id}`)
+                }
+            }
+
+            const rawEntries = await redis.mget(keysToFetch).catch(() => [])
+
+            // Group back by ID and find the first matching type
+            for (let i = 0; i < targetIds.length; i++) {
+                for (let j = 0; j < types.length; j++) {
+                    const rawEntry = rawEntries[i * types.length + j]
+                    if (rawEntry) {
+                        try {
+                            results.push(JSON.parse(rawEntry))
+                            break // Move to next ID once we found the matching type for this ID
+                        } catch {
+                            // ignore parse error
+                        }
                     }
                 }
             }
@@ -92,15 +112,23 @@ export class KnowledgeBaseManager {
     async getKnowledgeByType(type: string): Promise<KnowledgeEntry[]> {
         try {
             const ids = await redis.smembers(`knowledge:index:${type}`).catch(() => [])
-            const entries: KnowledgeEntry[] = []
+            if (ids.length === 0) return []
 
-            for (const id of ids) {
-                const entry = await this.getKnowledge(type, id)
-                if (entry) entries.push(entry)
-            }
+            // ⚡ Bolt: Replace N+1 sequential getKnowledge calls with a single mget
+            const keys = ids.map(id => `knowledge:${type}:${id}`)
+            const rawEntries = await redis.mget(keys).catch(() => [])
 
-            return entries
-        } catch (e) {
+            return rawEntries
+                .map(entry => {
+                    if (!entry) return null
+                    try {
+                        return JSON.parse(entry) as KnowledgeEntry
+                    } catch {
+                        return null
+                    }
+                })
+                .filter((entry): entry is KnowledgeEntry => entry !== null)
+        } catch {
             return []
         }
     }
