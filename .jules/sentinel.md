@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2024-05-24 - Removed Hardcoded Gemini API Key
+**Vulnerability:** Hardcoded API key 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk' was found in fallback environment variable initializations.
+**Learning:** API keys must never be hardcoded into the source as fallback strings. If the environment variable is not present, it should fail gracefully rather than succeed using a compromised fallback key.
+**Prevention:** Ensure API keys are strictly read from environment variables or secure credential stores without using hardcoded strings as defaults.
