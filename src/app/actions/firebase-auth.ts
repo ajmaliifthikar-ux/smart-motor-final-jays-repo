@@ -23,22 +23,24 @@ export async function setSessionCookie(idToken: string) {
         const ua = headerStore.get('user-agent') || 'unknown'
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://smartmotorlatest.vercel.app'
 
-        fetch(`${appUrl}/api/notifications/send`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-notification-key': process.env.NOTIFICATION_SECRET || 'sm-notify-secret',
-            },
-            body: JSON.stringify({
-                event: 'login',
-                data: {
-                    email: decoded?.email || 'unknown',
-                    time: new Date().toLocaleString('en-AE', { timeZone: 'Asia/Dubai' }),
-                    ip,
-                    device: ua.length > 80 ? ua.slice(0, 80) + '…' : ua,
+        if (process.env.NOTIFICATION_SECRET) {
+            fetch(`${appUrl}/api/notifications/send`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-notification-key': process.env.NOTIFICATION_SECRET,
                 },
-            }),
-        }).catch(() => {}) // Non-blocking — never fail the login
+                body: JSON.stringify({
+                    event: 'login',
+                    data: {
+                        email: decoded?.email || 'unknown',
+                        time: new Date().toLocaleString('en-AE', { timeZone: 'Asia/Dubai' }),
+                        ip,
+                        device: ua.length > 80 ? ua.slice(0, 80) + '…' : ua,
+                    },
+                }),
+            }).catch(() => {}) // Non-blocking — never fail the login
+        }
     } catch {}
 
     return { success: true }
