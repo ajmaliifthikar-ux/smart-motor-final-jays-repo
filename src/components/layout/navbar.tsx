@@ -84,6 +84,7 @@ export function Navbar() {
 
             <button
               onClick={handleLangSwitch}
+              aria-label="Switch language"
               className={cn(
                 "flex items-center gap-2 px-4 py-2 rounded-full border transition-all text-[10px] font-black uppercase tracking-widest",
                 isScrolled
@@ -102,6 +103,8 @@ export function Navbar() {
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className={cn('lg:hidden p-2 rounded-lg text-[#121212]')}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? <XIcon size={24} /> : <MenuIcon size={24} />}
           </button>
@@ -134,6 +137,7 @@ export function Navbar() {
               </button>
               <button
                 onClick={handleLangSwitch}
+                aria-label="Switch language"
                 className="mt-2 flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-white/30 text-white hover:border-white text-[10px] font-black uppercase tracking-widest"
               >
                 <GlobeIcon size={12} />
