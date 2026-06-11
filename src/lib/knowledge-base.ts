@@ -68,13 +68,19 @@ export class KnowledgeBaseManager {
 
             // Load all matched entries
             const results: KnowledgeEntry[] = []
-            for (const id of Array.from(matchedIds).slice(0, limit)) {
-                // Try all types
-                for (const type of ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']) {
-                    const entry = await this.getKnowledge(type, id)
-                    if (entry) {
-                        results.push(entry)
-                        break
+            // ⚡ Bolt: Use redis.mget to prevent N+1 query problem during search loading
+            const targetIds = Array.from(matchedIds).slice(0, limit)
+            if (targetIds.length > 0) {
+                const types = ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']
+                const keysToFetch = targetIds.flatMap(id => types.map(type => `knowledge:${type}:${id}`))
+                const dataArray = await redis.mget(keysToFetch)
+
+                for (let i = 0; i < targetIds.length; i++) {
+                    for (let j = 0; j < types.length; j++) {
+                        const data = dataArray[i * types.length + j]
+                        if (data) {
+                            try { results.push(JSON.parse(data)); break; } catch { continue; }
+                        }
                     }
                 }
             }
@@ -94,13 +100,19 @@ export class KnowledgeBaseManager {
             const ids = await redis.smembers(`knowledge:index:${type}`).catch(() => [])
             const entries: KnowledgeEntry[] = []
 
-            for (const id of ids) {
-                const entry = await this.getKnowledge(type, id)
-                if (entry) entries.push(entry)
+            // ⚡ Bolt: Batch redis.mget instead of sequential lookups
+            if (ids.length > 0) {
+                const keys = ids.map(id => `knowledge:${type}:${id}`)
+                const dataArray = await redis.mget(keys)
+                for (const data of dataArray) {
+                    if (data) {
+                        try { entries.push(JSON.parse(data)) } catch { continue; }
+                    }
+                }
             }
 
             return entries
-        } catch (e) {
+        } catch {
             return []
         }
     }
