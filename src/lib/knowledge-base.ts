@@ -66,15 +66,29 @@ export class KnowledgeBaseManager {
                 ids.forEach(id => matchedIds.add(id))
             }
 
-            // Load all matched entries
+            // Load all matched entries using MGET to prevent N+1 queries
             const results: KnowledgeEntry[] = []
-            for (const id of Array.from(matchedIds).slice(0, limit)) {
-                // Try all types
-                for (const type of ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']) {
-                    const entry = await this.getKnowledge(type, id)
-                    if (entry) {
-                        results.push(entry)
-                        break
+            const searchIds = Array.from(matchedIds).slice(0, limit)
+            const types = ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']
+
+            if (searchIds.length > 0) {
+                const keysToFetch: string[] = []
+                for (const id of searchIds) {
+                    for (const type of types) {
+                        keysToFetch.push(`knowledge:${type}:${id}`)
+                    }
+                }
+
+                const rawData = await redis.mget(...keysToFetch)
+
+                for (let i = 0; i < searchIds.length; i++) {
+                    for (let j = 0; j < types.length; j++) {
+                        const index = i * types.length + j
+                        const data = rawData[index]
+                        if (data) {
+                            results.push(JSON.parse(data))
+                            break // Move to the next ID once found
+                        }
                     }
                 }
             }
@@ -94,9 +108,15 @@ export class KnowledgeBaseManager {
             const ids = await redis.smembers(`knowledge:index:${type}`).catch(() => [])
             const entries: KnowledgeEntry[] = []
 
-            for (const id of ids) {
-                const entry = await this.getKnowledge(type, id)
-                if (entry) entries.push(entry)
+            if (ids.length > 0) {
+                const keys = ids.map(id => `knowledge:${type}:${id}`)
+                // Use MGET to prevent N+1 queries
+                const rawData = await redis.mget(...keys)
+
+                for (let i = 0; i < rawData.length; i++) {
+                    const data = rawData[i]
+                    if (data) entries.push(JSON.parse(data))
+                }
             }
 
             return entries
