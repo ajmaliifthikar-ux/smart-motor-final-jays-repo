@@ -1,12 +1,11 @@
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
 import { getAllBookings, getAllUsers, getAnalyticsLogs } from '@/lib/firebase-db'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
-
 export class StrategyAgent {
     private model: GenerativeModel
 
     constructor() {
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string)
         const systemPrompt = `You are the Smart Motor Business Researcher & Consultant.
         Role: Enterprise-grade research and strategy advisor (PhD-level rigor + founder-style practicality).
         
