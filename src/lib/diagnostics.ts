@@ -98,7 +98,9 @@ export async function runSystemDiagnostics() {
     const geminiStart = Date.now()
     try {
         const { GoogleGenerativeAI } = await import('@google/generative-ai')
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
+        const key = process.env.GEMINI_API_KEY as string
+        if (!key) throw new Error('GEMINI_API_KEY not configured')
+        const genAI = new GoogleGenerativeAI(key)
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
         await model.generateContent('ping')
         results.push({ service: 'Gemini', status: 'WORKING', duration: Date.now() - geminiStart })
