@@ -5,7 +5,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { adminDb } from '@/lib/firebase-admin'
+import { cookies } from 'next/headers'
+import { adminDb, verifySession } from '@/lib/firebase-admin'
 import admin from '@/lib/firebase-admin'
 import { sendEmail } from '@/lib/email'
 
@@ -159,12 +160,27 @@ function buildDailyReportEmail(data: {
 export async function GET(req: NextRequest) {
   // Verify cron secret to prevent unauthorized triggers
   const authHeader = req.headers.get('authorization')
-  const cronSecret = process.env.CRON_SECRET || 'smartmotor-cron-secret'
+  const cronSecret = process.env.CRON_SECRET
 
-  if (authHeader !== `Bearer ${cronSecret}`) {
+  // Fail securely if CRON_SECRET is not configured in environment
+  const hasValidSecretAuth = cronSecret ? authHeader === `Bearer ${cronSecret}` : false
+
+  if (!hasValidSecretAuth) {
     // Also allow Vercel Cron (it sends a specific header)
     const vercelCronHeader = req.headers.get('x-vercel-cron')
-    if (!vercelCronHeader) {
+
+    // As a final fallback for manual admin UI triggers, verify session
+    let hasValidSession = false
+    try {
+      const cookieStore = await cookies()
+      const token = cookieStore.get('admin-token')?.value
+      if (token) {
+        const session = await verifySession(token)
+        hasValidSession = !!session
+      }
+    } catch {}
+
+    if (!vercelCronHeader && !hasValidSession) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
   }
