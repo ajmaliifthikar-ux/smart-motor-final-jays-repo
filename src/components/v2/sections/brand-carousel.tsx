@@ -60,13 +60,18 @@ function BrandSlot({
                     style={{ width: baseSize, height: baseSize, padding: 12 }}
                 >
                     {!imgError && brand.logoFile ? (
-                        <img
-                            src={`/brands-carousel/${brand.logoFile}`}
-                            alt={brand.name}
-                            onError={() => setImgError(true)}
-                            className="w-full h-full object-contain transition-all duration-700 group-hover:scale-110"
-                            draggable={false}
-                        />
+                        <>
+                            {/* ⚡ Bolt: Lazy load carousel logos to improve initial load */}
+                            <img
+                                src={`/brands-carousel/${brand.logoFile}`}
+                                alt={brand.name}
+                                onError={() => setImgError(true)}
+                                className="w-full h-full object-contain transition-all duration-700 group-hover:scale-110"
+                                draggable={false}
+                                loading="lazy"
+                                decoding="async"
+                            />
+                        </>
                     ) : (
                         <span className="text-[10px] font-black uppercase text-gray-400 tracking-tighter text-center leading-tight">
                             {brand.name.substring(0, 3)}

@@ -35,12 +35,17 @@ function BrandItem({ brand, language, scale, opacity }: {
         >
             <div className="w-24 h-12 flex items-center justify-center">
                 {!imgError ? (
-                    <img
-                        src={`/brands/${brand.logoFile}`}
-                        alt={brand.name}
-                        onError={() => setImgError(true)}
-                        className="w-full h-full object-contain transition-all duration-500 drop-shadow-sm"
-                    />
+                    <>
+                        {/* ⚡ Bolt: Lazy load marquee logos to improve initial load */}
+                        <img
+                            src={`/brands/${brand.logoFile}`}
+                            alt={brand.name}
+                            onError={() => setImgError(true)}
+                            className="w-full h-full object-contain transition-all duration-500 drop-shadow-sm"
+                            loading="lazy"
+                            decoding="async"
+                        />
+                    </>
                 ) : (
                     <span className="text-lg font-black uppercase text-gray-400 group-hover:text-black transition-colors tracking-tighter">
                         {brand.name}
