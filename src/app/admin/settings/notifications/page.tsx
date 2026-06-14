@@ -114,11 +114,11 @@ export default function NotificationsPage() {
   const runDailyReportNow = async () => {
     setRunningCron(true)
     try {
-      const res = await fetch('/api/cron/daily-report', {
-        headers: { 'Authorization': 'Bearer smartmotor-cron-secret' }
-      })
+      // Endpoint `/api/cron/daily-report` now supports admin session validation.
+      // Simply fetching it (since we have a valid cookie) is enough to authorize.
+      const res = await fetch('/api/cron/daily-report')
       const data = await res.json()
-      if (data.success) {
+      if (res.ok && data.success) {
         showToast(`Daily report sent! Bookings: ${data.stats?.bookings?.today || 0} today, ${data.stats?.subscribers || 0} subscribers`)
       } else {
         showToast(data.error || 'Report failed', 'error')
@@ -312,7 +312,7 @@ export default function NotificationsPage() {
         <ol className="space-y-3 text-sm text-gray-300">
           {[
             <>Add <code className="bg-gray-800 px-1.5 py-0.5 rounded text-xs text-green-400">NOTIFICATION_EMAILS=dev@smartmotor.ae,boss1@example.com,boss2@example.com</code> to Vercel env vars</>,
-            <>Add <code className="bg-gray-800 px-1.5 py-0.5 rounded text-xs text-green-400">CRON_SECRET=your-secret</code> to Vercel (default: <code className="bg-gray-800 px-1.5 py-0.5 rounded text-xs text-green-400">smartmotor-cron-secret</code>)</>,
+            <>Add <code className="bg-gray-800 px-1.5 py-0.5 rounded text-xs text-green-400">CRON_SECRET=your-secret</code> to Vercel</>,
             <>Vercel cron is configured in <code className="bg-gray-800 px-1.5 py-0.5 rounded text-xs text-green-400">vercel.json</code> — runs at 8:00 AM UAE automatically</>,
             <>Test each event alert using the <strong className="text-white">Test</strong> buttons above</>,
             <>Login notifications: hook <code className="bg-gray-800 px-1.5 py-0.5 rounded text-xs text-green-400">POST /api/notifications/send</code> into auth flow</>,
