@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2025-02-24 - Unauthenticated API Key Endpoint
+**Vulnerability:** The `/api/ai/get-key` endpoint exposed the `GEMINI_API_KEY` to any client without requiring authentication, allowing anonymous extraction of backend secrets.
+**Learning:** Endpoints designed to proxy or serve credentials to the frontend must enforce authentication boundaries to prevent unauthorized consumption.
+**Prevention:** Always implement dual authentication checks (NextAuth and Firebase Admin) on API routes that expose or handle sensitive configuration data.

@@ -3,10 +3,34 @@
  * Never expose in .env.local - only server-side
  */
 
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { auth } from '@/auth'
+import { adminAuth } from '@/lib/firebase-admin'
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const session = await auth();
+    let isAuthenticated = !!session;
+
+    if (!isAuthenticated) {
+      const token = req.cookies.get('user-token')?.value;
+      if (token) {
+        try {
+          await adminAuth.verifyIdToken(token);
+          isAuthenticated = true;
+        } catch {
+          // invalid token
+        }
+      }
+    }
+
+    if (!isAuthenticated) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const apiKey = process.env.GEMINI_API_KEY
 
     if (!apiKey) {
