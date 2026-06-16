@@ -27,16 +27,27 @@ export function AdvancedLogoSlider({ brands: initialBrands }: { brands?: BrandIt
 
     if (total === 0) return null
 
-    // Update container width for spacing calculations
+    // Update container width for spacing calculations (with debounce for performance)
     useEffect(() => {
+        let timeoutId: NodeJS.Timeout
+
         const updateWidth = () => {
             if (containerRef.current) {
                 setContainerWidth(containerRef.current.offsetWidth)
             }
         }
+
+        const handleResize = () => {
+            clearTimeout(timeoutId)
+            timeoutId = setTimeout(updateWidth, 150)
+        }
+
         updateWidth()
-        window.addEventListener('resize', updateWidth)
-        return () => window.removeEventListener('resize', updateWidth)
+        window.addEventListener('resize', handleResize)
+        return () => {
+            clearTimeout(timeoutId)
+            window.removeEventListener('resize', handleResize)
+        }
     }, [])
 
     // Continuous auto-advance
