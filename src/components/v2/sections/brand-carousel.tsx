@@ -110,11 +110,23 @@ export function BrandCarousel() {
         fetchBrands()
     }, [])
 
+    // Debounced check for performance optimization during window resize
     useEffect(() => {
+        let timeoutId: NodeJS.Timeout
+
         const checkMobile = () => setIsMobile(window.innerWidth < 768)
+
+        const handleResize = () => {
+            clearTimeout(timeoutId)
+            timeoutId = setTimeout(checkMobile, 150)
+        }
+
         checkMobile()
-        window.addEventListener('resize', checkMobile)
-        return () => window.removeEventListener('resize', checkMobile)
+        window.addEventListener('resize', handleResize)
+        return () => {
+            clearTimeout(timeoutId)
+            window.removeEventListener('resize', handleResize)
+        }
     }, [])
 
     const advance = useCallback(() => {
