@@ -113,8 +113,20 @@ export function BrandCarousel() {
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768)
         checkMobile()
-        window.addEventListener('resize', checkMobile)
-        return () => window.removeEventListener('resize', checkMobile)
+
+        // Optimization: Debounce the resize event to prevent layout thrashing
+        // and reduce excessive state updates when window is resized.
+        let timeoutId: NodeJS.Timeout
+        const handleResize = () => {
+            clearTimeout(timeoutId)
+            timeoutId = setTimeout(checkMobile, 150)
+        }
+
+        window.addEventListener('resize', handleResize)
+        return () => {
+            clearTimeout(timeoutId)
+            window.removeEventListener('resize', handleResize)
+        }
     }, [])
 
     const advance = useCallback(() => {
