@@ -68,13 +68,28 @@ export class KnowledgeBaseManager {
 
             // Load all matched entries
             const results: KnowledgeEntry[] = []
-            for (const id of Array.from(matchedIds).slice(0, limit)) {
-                // Try all types
-                for (const type of ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']) {
-                    const entry = await this.getKnowledge(type, id)
-                    if (entry) {
-                        results.push(entry)
-                        break
+            const idsArray = Array.from(matchedIds).slice(0, limit)
+            const types = ['service', 'vehicle', 'faq', 'skill', 'policy', 'product']
+
+            // Build keys for mget
+            const keys: string[] = []
+            for (const id of idsArray) {
+                for (const type of types) {
+                    keys.push(`knowledge:${type}:${id}`)
+                }
+            }
+
+            if (keys.length > 0) {
+                const data = await redis.mget(keys)
+
+                for (let i = 0; i < idsArray.length; i++) {
+                    for (let j = 0; j < types.length; j++) {
+                        const index = i * types.length + j
+                        const entryData = data[index]
+                        if (entryData) {
+                            results.push(JSON.parse(entryData))
+                            break
+                        }
                     }
                 }
             }
@@ -94,9 +109,15 @@ export class KnowledgeBaseManager {
             const ids = await redis.smembers(`knowledge:index:${type}`).catch(() => [])
             const entries: KnowledgeEntry[] = []
 
-            for (const id of ids) {
-                const entry = await this.getKnowledge(type, id)
-                if (entry) entries.push(entry)
+            if (ids.length > 0) {
+                const keys = ids.map(id => `knowledge:${type}:${id}`)
+                const data = await redis.mget(keys)
+
+                for (const entryData of data) {
+                    if (entryData) {
+                        entries.push(JSON.parse(entryData))
+                    }
+                }
             }
 
             return entries
