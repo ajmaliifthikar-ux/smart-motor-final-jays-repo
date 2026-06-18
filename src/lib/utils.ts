@@ -158,3 +158,17 @@ export function getContrastInputClasses(bgColor?: string): { text: string; place
 export function getContrastStyle(bgColor?: string): React.CSSProperties {
   return { color: getContrastTextColor(bgColor ?? '') }
 }
+
+import DOMPurify from 'isomorphic-dompurify';
+
+/**
+ * Escapes HTML characters to prevent XSS but allows specific whitelisted tags
+ * like <br />, <span> with classes, and closing </span>.
+ */
+export function safeTitle(htmlString: string): string {
+  if (!htmlString) return '';
+  return DOMPurify.sanitize(htmlString, {
+    ALLOWED_TAGS: ['br', 'span'],
+    ALLOWED_ATTR: ['class', 'className'],
+  });
+}
