@@ -7,7 +7,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import { ConversationState, ConversationPhase, CustomerData } from './leyla-conversation-state'
 import { getSpellingVerification, getCarBrandPhonetic } from './phonetic-alphabet'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string)
 
 /**
  * System prompt for Leyla persona
