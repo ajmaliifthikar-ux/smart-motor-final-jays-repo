@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI, GenerativeModel, SchemaType } from '@google/generative-ai'
 import { calendarTools } from '@/lib/tools/calendar-tools'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string)
 
 export class BookingCoordinator {
     private model: GenerativeModel
