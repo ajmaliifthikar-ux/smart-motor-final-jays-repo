@@ -88,14 +88,16 @@ export function Testimonials() {
 
               <div className="flex gap-4">
                 <button
+                  aria-label="Previous testimonial"
                   onClick={handlePrev}
-                  className="w-14 h-14 rounded-2xl border border-gray-200 flex items-center justify-center hover:bg-black hover:text-white transition-all group"
+                  className="w-14 h-14 rounded-2xl border border-gray-200 flex items-center justify-center hover:bg-black hover:text-white transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
                 >
                   <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
                 </button>
                 <button
+                  aria-label="Next testimonial"
                   onClick={handleNext}
-                  className="w-14 h-14 rounded-2xl border border-gray-200 flex items-center justify-center hover:bg-black hover:text-white transition-all group"
+                  className="w-14 h-14 rounded-2xl border border-gray-200 flex items-center justify-center hover:bg-black hover:text-white transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
                 >
                   <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
                 </button>
