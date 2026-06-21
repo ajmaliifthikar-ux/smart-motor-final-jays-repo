@@ -1,7 +1,11 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { aiMemory } from './ai-memory'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
+const getGenAI = () => {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) throw new Error('GEMINI_API_KEY is not configured');
+    return new GoogleGenerativeAI(apiKey);
+};
 
 export interface LiveSessionConfig {
   userId: string
@@ -87,7 +91,7 @@ Customer: ${userMessage}
 Respond helpfully and professionally:
 `
 
-      const model = genAI.getGenerativeModel({
+      const model = getGenAI().getGenerativeModel({
         model: 'gemini-2.5-flash',
       })
 

@@ -1,0 +1,8 @@
+Title: 🛡️ Sentinel: [CRITICAL] Fix hardcoded Gemini API key vulnerability
+
+Description:
+🚨 Severity: CRITICAL
+💡 Vulnerability: A hardcoded Gemini API key ('AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk') was found directly embedded in multiple files across the codebase, including API routes, library files, agent classes, and documentation files.
+🎯 Impact: This exposes a sensitive authentication secret, allowing unauthorized access to the Google Generative AI services using this key. This can lead to increased billing costs, quota exhaustion, and potential data exposure.
+🔧 Fix: Removed the hardcoded key from all source files and documentation. Implemented explicit validation and lazy initialization to ensure `GEMINI_API_KEY` is retrieved securely from the environment variables (`process.env.GEMINI_API_KEY`).
+✅ Verification: Ran `grep -rn 'AIzaSy' .` to confirm the hardcoded string is no longer present. Ran local tests and build to ensure functionality without regressions.
