@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+### 2026-03-01 - Remove Hardcoded Secrets
+- **Vulnerability:** Hardcoded `GEMINI_API_KEY` was found across multiple source and documentation files, combined with top-level SDK instantiation.
+- **Learning:** Hardcoding secrets exposes credentials, and top-level initializations of external SDKs that validate keys can lead to application startup or build failures in Next.js if environment variables are not loaded or missing.
+- **Prevention:** Always initialize third-party SDKs requiring secrets inside request handlers, functions, or constructors rather than at the module scope, and fail securely by explicitly validating `process.env.KEY` instead of relying on default fallback values.
