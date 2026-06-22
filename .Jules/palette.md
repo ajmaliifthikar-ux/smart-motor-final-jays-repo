@@ -1,3 +1,6 @@
 ## 2025-05-22 - Chat Accessibility
 **Learning:** Chat interfaces often lack screen reader support for incoming messages which makes them unusable for blind users.
 **Action:** Always add `role="log"` and `aria-live="polite"` to message containers and `aria-label` to input fields in chat components.
+## 2024-10-25 - Custom Carousel Keyboard A11y
+**Learning:** Custom interactive carousels built heavily on position calculations and non-standard HTML elements (like `div`s as slides and simple icon-only `button`s for navigation dots) are completely invisible to screen readers and keyboard navigation unless explicitly mapped. Standard CSS focus indicators are often accidentally suppressed or difficult to see against custom dark backgrounds.
+**Action:** When implementing custom pagination indicators (like dots) in a carousel, always implement the standard `tablist`/`tab` ARIA pattern (`role="tablist"` on container, `role="tab"` on items) along with `aria-selected` state tracking. Ensure that icon-only navigation buttons always have `aria-label`s and explicitly apply `focus-visible:ring-2 focus-visible:ring-black` (or theme equivalent) to ensure keyboard users can actually see their focus path.

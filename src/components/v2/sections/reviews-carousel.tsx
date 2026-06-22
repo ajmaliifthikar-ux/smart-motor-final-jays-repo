@@ -139,11 +139,13 @@ export function ReviewsCarousel() {
 
                     <div className="flex items-center gap-3">
                         <button onClick={prev}
-                            className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#121212] hover:text-white hover:border-[#121212] transition-all">
+                            aria-label="Previous review"
+                            className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#121212] hover:text-white hover:border-[#121212] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">
                             <ChevronLeft size={20} />
                         </button>
                         <button onClick={next}
-                            className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#121212] hover:text-white hover:border-[#121212] transition-all">
+                            aria-label="Next review"
+                            className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#121212] hover:text-white hover:border-[#121212] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">
                             <ChevronRight size={20} />
                         </button>
                         <button onClick={() => setIsModalOpen(true)}
@@ -239,10 +241,13 @@ export function ReviewsCarousel() {
                 </div>
 
                 {/* ── Dots ───────────────────────────────────────────────── */}
-                <div className="flex justify-center gap-2 mt-10">
+                <div className="flex justify-center gap-2 mt-10" role="tablist" aria-label="Review pagination">
                     {reviews.map((_, i) => (
                         <button
                             key={i}
+                            role="tab"
+                            aria-selected={i === centreIdx}
+                            aria-label={`Go to review ${i + 1}`}
                             onClick={() => {
                                 if (!slidingRef.current) {
                                     const diff = ((i - centreIdx) % total + total) % total
@@ -255,7 +260,7 @@ export function ReviewsCarousel() {
                                 }
                             }}
                             className={cn(
-                                'h-1.5 rounded-full transition-all duration-500',
+                                'h-1.5 rounded-full transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2',
                                 i === centreIdx ? 'w-8 bg-[#E62329]' : 'w-2 bg-gray-300 hover:bg-gray-400'
                             )}
                         />
