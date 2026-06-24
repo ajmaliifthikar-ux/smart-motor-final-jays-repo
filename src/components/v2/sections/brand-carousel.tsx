@@ -113,8 +113,19 @@ export function BrandCarousel() {
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768)
         checkMobile()
-        window.addEventListener('resize', checkMobile)
-        return () => window.removeEventListener('resize', checkMobile)
+
+        // ⚡ Bolt: Debounce resize handler to reduce re-renders
+        let timeoutId: NodeJS.Timeout
+        const handleResize = () => {
+            clearTimeout(timeoutId)
+            timeoutId = setTimeout(checkMobile, 150)
+        }
+
+        window.addEventListener('resize', handleResize)
+        return () => {
+            window.removeEventListener('resize', handleResize)
+            clearTimeout(timeoutId) // Clean up timeout to prevent memory leaks
+        }
     }, [])
 
     const advance = useCallback(() => {
