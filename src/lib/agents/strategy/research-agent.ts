@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
 import { getAllBookings, getAllUsers, getAnalyticsLogs } from '@/lib/firebase-db'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
+
 
 export class StrategyAgent {
     private model: GenerativeModel
@@ -23,7 +23,7 @@ export class StrategyAgent {
         Context: You have access to Smart Motor's internal platform metrics (anonymized) and the digital business landscape.
         `
 
-        this.model = genAI.getGenerativeModel({
+        const apiKey = process.env.GEMINI_API_KEY; if (!apiKey) throw new Error('GEMINI_API_KEY is missing'); const genAI = new GoogleGenerativeAI(apiKey); this.model = genAI.getGenerativeModel({
             model: 'gemini-3-pro-preview',
             systemInstruction: systemPrompt
         })
