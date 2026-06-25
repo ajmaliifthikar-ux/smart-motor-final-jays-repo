@@ -57,8 +57,11 @@ export function FAQ({ initialFaqs }: { initialFaqs?: FAQType[] }) {
                 )}
               >
                 <button
+                  id={`faq-button-${faq.id}`}
                   onClick={() => toggleFaq(index)}
-                  className="w-full flex items-center justify-between p-8 text-left bg-transparent hover:bg-white transition-colors"
+                  aria-expanded={openIndex === index}
+                  aria-controls={`faq-content-${faq.id}`}
+                  className="w-full flex items-center justify-between p-8 text-left bg-transparent hover:bg-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#E62329]"
                 >
                   <span className="font-black text-black text-xl uppercase tracking-tighter pr-4">
                     {faq.question}
@@ -75,6 +78,9 @@ export function FAQ({ initialFaqs }: { initialFaqs?: FAQType[] }) {
                 <AnimatePresence initial={false}>
                   {openIndex === index && (
                     <motion.div
+                      id={`faq-content-${faq.id}`}
+                      role="region"
+                      aria-labelledby={`faq-button-${faq.id}`}
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
