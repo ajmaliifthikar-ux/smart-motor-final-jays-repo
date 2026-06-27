@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2024-06-27 - Remove Hardcoded API Keys and Fix Top-Level SDK Instantiation
+**Vulnerability:** A hardcoded `GEMINI_API_KEY` fallback was found in multiple files, creating a critical vulnerability where the key could be exposed in the source code.
+**Learning:** Using fallbacks like `|| 'AIzaSyD9nwv...'` in source files leaks secrets. Also, instantiating SDKs (like `GoogleGenerativeAI`) at the top-level module scope without throwing errors when keys are missing masks missing configuration and can cause unexpected behavior.
+**Prevention:** Always rely strictly on explicit environment variable injection. Prevent application startup by throwing errors inside functions/classes when required keys are missing, instead of using insecure defaults. Ensure SDK instantiations are safely scoped within functions or constructors.
