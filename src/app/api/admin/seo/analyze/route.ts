@@ -3,11 +3,14 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import { createSEOReport } from '@/lib/firebase-db'
 import { requireAdmin } from '@/lib/session'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
 
 export async function POST(req: NextRequest) {
     try {
         await requireAdmin()
+        // Security: Avoid global instantiation and explicit key validation to prevent secret leaks
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
+        const genAI = new GoogleGenerativeAI(apiKey);
 
         const { url } = await req.json()
 
