@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2026-02-20 - [Fix Hardcoded Gemini API Key]
+**Vulnerability:** The GoogleGenerativeAI client was instantiated across multiple services with a hardcoded Gemini API key fallback (`AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk`) in the source code.
+**Learning:** Hardcoded secrets in source code pose a critical security risk as they can be easily extracted from version control or compiled client bundles, leading to unauthorized API usage and potential data breaches.
+**Prevention:** Always use environment variables for sensitive credentials (e.g., `process.env.GEMINI_API_KEY`). Implement explicit validation during initialization to ensure the key is present, and fail securely (e.g., throwing an error) if it is missing, rather than relying on insecure fallbacks.

@@ -1,7 +1,10 @@
 import redis from './redis'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
+// 🛡️ Sentinel: Validate API key explicitly and fail securely
+const apiKey = process.env.GEMINI_API_KEY
+if (!apiKey) throw new Error('GEMINI_API_KEY is not configured')
+const genAI = new GoogleGenerativeAI(apiKey)
 
 // Types
 export interface Message {
@@ -343,8 +346,11 @@ Customer: ${userMessage}
 
         try {
             const { GoogleGenerativeAI } = await import('@google/generative-ai')
-            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
-            const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+            // 🛡️ Sentinel: Validate API key explicitly and fail securely
+            const localApiKey = process.env.GEMINI_API_KEY
+            if (!localApiKey) throw new Error('GEMINI_API_KEY is not configured')
+            const localGenAI = new GoogleGenerativeAI(localApiKey)
+            const model = localGenAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
             const result = await model.generateContent(prompt)
             const response = result.response.text()
