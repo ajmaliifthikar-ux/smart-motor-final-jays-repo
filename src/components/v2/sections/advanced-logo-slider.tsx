@@ -35,8 +35,19 @@ export function AdvancedLogoSlider({ brands: initialBrands }: { brands?: BrandIt
             }
         }
         updateWidth()
-        window.addEventListener('resize', updateWidth)
-        return () => window.removeEventListener('resize', updateWidth)
+
+        // ⚡ Bolt: Debounce resize events to prevent layout thrashing and reduce redundant re-renders
+        let timeoutId: NodeJS.Timeout
+        const debouncedUpdateWidth = () => {
+            clearTimeout(timeoutId)
+            timeoutId = setTimeout(updateWidth, 150)
+        }
+
+        window.addEventListener('resize', debouncedUpdateWidth)
+        return () => {
+            window.removeEventListener('resize', debouncedUpdateWidth)
+            clearTimeout(timeoutId) // ⚡ Bolt: Clear pending timeouts on unmount to prevent memory leaks
+        }
     }, [])
 
     // Continuous auto-advance
