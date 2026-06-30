@@ -144,13 +144,13 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
+            <button onClick={onClose} aria-label="Close chat" className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar">
+          <div ref={scrollRef} role="log" aria-live="polite" className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar">
             {messages.map((msg) => (
               <div key={msg.id} className="space-y-3">
                 <motion.div
@@ -265,6 +265,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
             <div className="flex gap-2 items-center bg-gray-50 rounded-2xl px-4 py-2 border border-gray-100 shadow-inner">
               <input
                 ref={inputRef}
+                aria-label="Ask anything"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -278,8 +279,9 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
               <div className="flex items-center gap-1">
                 <button
                     onClick={isVoiceMode ? stopVoiceMode : startVoiceMode}
+                    aria-label="Toggle voice mode"
                     className={cn(
-                    "w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-500 group",
+                    "w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-500 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black",
                     isVoiceMode 
                         ? "bg-[#E62329] text-white animate-pulse shadow-lg shadow-[#E62329]/30" 
                         : "text-gray-400 hover:bg-gray-200 hover:text-[#121212]"
@@ -290,8 +292,9 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 
                 <Button
                     onClick={() => handleSend()}
+                    aria-label="Send message"
                     disabled={isLoading || !input.trim() || isVoiceMode}
-                    className="rounded-lg bg-[#121212] hover:bg-[#E62329] w-9 h-9 p-0 transition-all duration-500 shadow-xl"
+                    className="rounded-lg bg-[#121212] hover:bg-[#E62329] w-9 h-9 p-0 transition-all duration-500 shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
                 >
                     {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 </Button>
