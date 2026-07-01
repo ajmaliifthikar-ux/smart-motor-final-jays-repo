@@ -339,7 +339,7 @@ function LoginContent() {
                                     autoComplete="current-password webauthn"
                                     className="block w-full rounded-2xl border-0 py-5 pl-12 pr-12 text-sm font-bold bg-gray-50/50 ring-1 ring-inset ring-gray-100 focus:ring-2 focus:ring-[#121212] focus:bg-white transition-all outline-none"
                                 />
-                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#121212] transition-colors">
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#121212] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black" aria-label={showPassword ? "Hide password" : "Show password"}>
                                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
                             </div>
