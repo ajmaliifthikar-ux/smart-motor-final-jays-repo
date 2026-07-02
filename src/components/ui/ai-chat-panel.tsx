@@ -144,13 +144,14 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10">
+            <button onClick={onClose} aria-label="Close chat"
+              className="p-2.5 bg-white/5 hover:bg-[#E62329] rounded-full transition-all text-white/40 hover:text-white relative z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAF9]/30 subtle-scrollbar" role="log" aria-live="polite">
             {messages.map((msg) => (
               <div key={msg.id} className="space-y-3">
                 <motion.div
@@ -197,6 +198,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                         ) : (
                             <div className="relative flex items-center">
                                 <input 
+                                    aria-label="Chat input"
                                     autoFocus
                                     placeholder={msg.widget.placeholder || `Enter ${msg.widget.type}...`}
                                     className="w-full bg-white border-gray-200 rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-[#E62329] transition-all"
@@ -205,7 +207,8 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                                     }}
                                 />
                                 <button 
-                                    className="absolute right-2 w-8 h-8 bg-[#121212] text-white rounded-lg flex items-center justify-center hover:bg-[#E62329] transition-colors"
+                                    aria-label="Send message"
+                                    className="absolute right-2 w-8 h-8 bg-[#121212] text-white rounded-lg flex items-center justify-center hover:bg-[#E62329] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
                                     onClick={(e) => {
                                         const val = (e.currentTarget.previousSibling as HTMLInputElement).value
                                         if (val) handleSend(val)
@@ -251,6 +254,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                   {isSpeaking ? "Agent Speaking" : "Listening..."}
                 </p>
                 <button 
+                  aria-label="Stop voice mode"
                   onClick={stopVoiceMode}
                   className="mt-6 px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-[7px] font-black uppercase tracking-widest text-white/60 transition-all border border-white/5 relative z-10"
                 >
@@ -277,9 +281,10 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
               
               <div className="flex items-center gap-1">
                 <button
+                    aria-label={isVoiceMode ? "Stop voice mode" : "Start voice mode"}
                     onClick={isVoiceMode ? stopVoiceMode : startVoiceMode}
                     className={cn(
-                    "w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-500 group",
+                    "w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-500 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black",
                     isVoiceMode 
                         ? "bg-[#E62329] text-white animate-pulse shadow-lg shadow-[#E62329]/30" 
                         : "text-gray-400 hover:bg-gray-200 hover:text-[#121212]"
@@ -289,6 +294,7 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
                 </button>
                 
                 <Button
+                    aria-label="Send text message"
                     onClick={() => handleSend()}
                     disabled={isLoading || !input.trim() || isVoiceMode}
                     className="rounded-lg bg-[#121212] hover:bg-[#E62329] w-9 h-9 p-0 transition-all duration-500 shadow-xl"
