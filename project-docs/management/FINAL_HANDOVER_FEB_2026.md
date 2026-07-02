@@ -29,7 +29,7 @@ The Smart Motor platform has been transformed into a high-fidelity, app-like sof
 - **Fast Chat/Articles:** `gemini-2.5-flash`
 - **Strategy Lab (Reasoning):** `gemini-3-pro-preview`
 - **Native Audio (Foundation):** `gemini-2.5-flash-native-audio-preview-12-2025`
-- **API Key:** `AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk` (Active/Verified)
+- **API Key:** `YOUR_GEMINI_API_KEY` (Active/Verified)
 
 ---
 
@@ -73,7 +73,7 @@ npx prisma db seed
 
 ### Production Deployment
 When pushing updates to Vercel, ensure the following environment variables are set:
-- `GEMINI_API_KEY`: `AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk`
+- `GEMINI_API_KEY`: `YOUR_GEMINI_API_KEY`
 - `DATABASE_URL`: Your GreenGeeks MySQL string.
 - `FIREBASE_PRIVATE_KEY`: The full RSA key.
 

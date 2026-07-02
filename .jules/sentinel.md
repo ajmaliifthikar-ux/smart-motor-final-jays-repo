@@ -14,3 +14,8 @@
 - **Fix:** Switched to session-based user identification using `await auth()`. Bookings are now only associated with a `userId` if a valid session exists.
 - **File:** `src/app/api/bookings/route.ts`
 - **Mitigation:** Always use authenticated session data for linking resources to users instead of untrusted request payloads.
+
+## 2026-02-16 - [CRITICAL] Systemic Hardcoded Secret Removal
+**Vulnerability:** The Gemini API key (AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk) was hardcoded as a fallback across multiple files, documentation, and module-level SDK instantiations, exposing the credential and risking unauthorized usage.
+**Learning:** Global SDK instantiations relying on fallback keys to bypass build errors create a systemic security flaw. Keys must be validated strictly within execution contexts (handlers, constructors) and fail securely if absent, without using default values.
+**Prevention:** Ensure SDK clients are instantiated inside function scope or constructors. Validate all required environment variables explicitly and throw errors if missing, rather than applying string fallbacks.
