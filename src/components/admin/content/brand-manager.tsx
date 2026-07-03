@@ -78,7 +78,8 @@ export function BrandManager({ brands }: { brands: Brand[] }) {
                         <button
                             onClick={() => handleDelete(brand.id)}
                             disabled={isPending}
-                            className="absolute top-4 right-4 p-2 rounded-full bg-red-50 text-red-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
+                            aria-label={`Delete ${brand.name}`}
+                            className="absolute top-4 right-4 p-2 rounded-full bg-red-50 text-red-500 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black transition-all hover:bg-red-500 hover:text-white"
                         >
                             <Trash2 size={16} />
                         </button>
