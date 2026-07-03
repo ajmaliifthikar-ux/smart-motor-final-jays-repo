@@ -7,7 +7,6 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import { ConversationState, ConversationPhase, CustomerData } from './leyla-conversation-state'
 import { getSpellingVerification, getCarBrandPhonetic } from './phonetic-alphabet'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 
 /**
  * System prompt for Leyla persona
@@ -77,6 +76,9 @@ export async function generateLeylaResponse(
   messageHistory: Array<{ role: 'user' | 'assistant'; content: string }>
 ): Promise<LeylaResponse> {
   try {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) throw new Error('GEMINI_API_KEY is not defined');
+    const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
     // Build context about current conversation phase
