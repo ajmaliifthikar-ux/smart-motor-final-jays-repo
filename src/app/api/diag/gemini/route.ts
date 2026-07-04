@@ -42,8 +42,10 @@ export async function GET() {
 
     // 3. Test Gemini (Dedicated Key)
     results.services.push(await test('Gemini AI', async () => {
-        const key = process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk'
-        const genAI = new GoogleGenerativeAI(key)
+        // 🛡️ Sentinel: Removed hardcoded API key and added explicit environment variable validation to prevent credential leakage.
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) throw new Error('Missing GEMINI_API_KEY');
+        const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
         const res = await model.generateContent('ping')
         return res.response.text().slice(0, 10)
