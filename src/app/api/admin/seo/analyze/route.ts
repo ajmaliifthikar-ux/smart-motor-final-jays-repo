@@ -3,10 +3,13 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import { createSEOReport } from '@/lib/firebase-db'
 import { requireAdmin } from '@/lib/session'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
-
 export async function POST(req: NextRequest) {
     try {
+        // 🛡️ Sentinel: Removed hardcoded API key and added explicit environment variable validation to prevent credential leakage.
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) throw new Error('Missing GEMINI_API_KEY');
+        const genAI = new GoogleGenerativeAI(apiKey);
+
         await requireAdmin()
 
         const { url } = await req.json()
