@@ -1,12 +1,17 @@
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
 import { getAllBookings, getAllUsers, getAnalyticsLogs } from '@/lib/firebase-db'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
-
 export class StrategyAgent {
     private model: GenerativeModel
 
     constructor() {
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) {
+            // SECURITY: Explicitly validate API key
+            throw new Error('GEMINI_API_KEY is missing');
+        }
+        const genAI = new GoogleGenerativeAI(apiKey);
+
         const systemPrompt = `You are the Smart Motor Business Researcher & Consultant.
         Role: Enterprise-grade research and strategy advisor (PhD-level rigor + founder-style practicality).
         
