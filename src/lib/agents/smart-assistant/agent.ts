@@ -3,7 +3,6 @@ import { AgentConfig, Message, ToolDefinition } from '../core/types'
 import { memoryManager } from '../core/memory'
 import { knowledgeBase } from '../core/knowledge'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
 
 export class SmartAssistant {
     private model: GenerativeModel
@@ -28,6 +27,10 @@ export class SmartAssistant {
             temperature: 0.7
         }
 
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) throw new Error('GEMINI_API_KEY is missing');
+        // Security: Explicit key validation
+        const genAI = new GoogleGenerativeAI(apiKey);
         this.model = genAI.getGenerativeModel({
             model: this.config.model,
             systemInstruction: this.config.systemPrompt

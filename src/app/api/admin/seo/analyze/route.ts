@@ -3,7 +3,6 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import { createSEOReport } from '@/lib/firebase-db'
 import { requireAdmin } from '@/lib/session'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
 
 export async function POST(req: NextRequest) {
     try {
@@ -21,6 +20,10 @@ export async function POST(req: NextRequest) {
         const html = await response.text()
 
         // 2. Prepare the prompt for Gemini
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) throw new Error('GEMINI_API_KEY is missing');
+        // Security: Explicit key validation, no hardcoded fallbacks
+        const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
         const prompt = `
