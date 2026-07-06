@@ -29,14 +29,25 @@ export function AdvancedLogoSlider({ brands: initialBrands }: { brands?: BrandIt
 
     // Update container width for spacing calculations
     useEffect(() => {
+        let timeoutId: ReturnType<typeof setTimeout>
         const updateWidth = () => {
             if (containerRef.current) {
                 setContainerWidth(containerRef.current.offsetWidth)
             }
         }
+
+        // ⚡ Bolt: Debounced resize event to prevent layout thrashing and reduce redundant state updates
+        const debouncedUpdateWidth = () => {
+            clearTimeout(timeoutId)
+            timeoutId = setTimeout(updateWidth, 150)
+        }
+
         updateWidth()
-        window.addEventListener('resize', updateWidth)
-        return () => window.removeEventListener('resize', updateWidth)
+        window.addEventListener('resize', debouncedUpdateWidth)
+        return () => {
+            window.removeEventListener('resize', debouncedUpdateWidth)
+            clearTimeout(timeoutId)
+        }
     }, [])
 
     // Continuous auto-advance
