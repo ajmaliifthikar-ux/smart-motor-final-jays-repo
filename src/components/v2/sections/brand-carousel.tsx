@@ -111,10 +111,21 @@ export function BrandCarousel() {
     }, [])
 
     useEffect(() => {
+        let timeoutId: ReturnType<typeof setTimeout>
         const checkMobile = () => setIsMobile(window.innerWidth < 768)
+
+        // ⚡ Bolt: Debounced resize event to prevent layout thrashing
+        const debouncedCheckMobile = () => {
+            clearTimeout(timeoutId)
+            timeoutId = setTimeout(checkMobile, 150)
+        }
+
         checkMobile()
-        window.addEventListener('resize', checkMobile)
-        return () => window.removeEventListener('resize', checkMobile)
+        window.addEventListener('resize', debouncedCheckMobile)
+        return () => {
+            window.removeEventListener('resize', debouncedCheckMobile)
+            clearTimeout(timeoutId)
+        }
     }, [])
 
     const advance = useCallback(() => {
