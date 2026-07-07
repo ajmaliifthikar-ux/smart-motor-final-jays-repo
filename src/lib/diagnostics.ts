@@ -98,7 +98,10 @@ export async function runSystemDiagnostics() {
     const geminiStart = Date.now()
     try {
         const { GoogleGenerativeAI } = await import('@google/generative-ai')
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyD9nwv7J0MXrgk9O5xcBl-ptLBjfIjzxnk')
+        const apiKey = process.env.GEMINI_API_KEY;
+        // Security fix: Enforce explicit validation of API key and remove hardcoded secret
+        if (!apiKey) throw new Error('GEMINI_API_KEY is not defined');
+        const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
         await model.generateContent('ping')
         results.push({ service: 'Gemini', status: 'WORKING', duration: Date.now() - geminiStart })
