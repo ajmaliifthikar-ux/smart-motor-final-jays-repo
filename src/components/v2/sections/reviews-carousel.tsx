@@ -139,15 +139,17 @@ export function ReviewsCarousel() {
 
                     <div className="flex items-center gap-3">
                         <button onClick={prev}
-                            className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#121212] hover:text-white hover:border-[#121212] transition-all">
+                            aria-label="Previous review"
+                            className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#121212] hover:text-white hover:border-[#121212] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">
                             <ChevronLeft size={20} />
                         </button>
                         <button onClick={next}
-                            className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#121212] hover:text-white hover:border-[#121212] transition-all">
+                            aria-label="Next review"
+                            className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#121212] hover:text-white hover:border-[#121212] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">
                             <ChevronRight size={20} />
                         </button>
                         <button onClick={() => setIsModalOpen(true)}
-                            className="ml-2 bg-[#121212] text-white px-8 py-4 rounded-full text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#E62329] transition-all shadow-xl flex items-center gap-2 group">
+                            className="ml-2 bg-[#121212] text-white px-8 py-4 rounded-full text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#E62329] transition-all shadow-xl flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black">
                             Leave a Review
                             <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
                         </button>
@@ -239,10 +241,13 @@ export function ReviewsCarousel() {
                 </div>
 
                 {/* ── Dots ───────────────────────────────────────────────── */}
-                <div className="flex justify-center gap-2 mt-10">
+                <div className="flex justify-center gap-2 mt-10" role="tablist" aria-label="Review pagination">
                     {reviews.map((_, i) => (
                         <button
                             key={i}
+                            role="tab"
+                            aria-label={`Go to review ${i + 1}`}
+                            aria-selected={i === centreIdx}
                             onClick={() => {
                                 if (!slidingRef.current) {
                                     const diff = ((i - centreIdx) % total + total) % total
@@ -255,7 +260,7 @@ export function ReviewsCarousel() {
                                 }
                             }}
                             className={cn(
-                                'h-1.5 rounded-full transition-all duration-500',
+                                'h-1.5 rounded-full transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black',
                                 i === centreIdx ? 'w-8 bg-[#E62329]' : 'w-2 bg-gray-300 hover:bg-gray-400'
                             )}
                         />
